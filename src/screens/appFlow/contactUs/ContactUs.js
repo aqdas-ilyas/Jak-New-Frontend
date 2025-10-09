@@ -1,0 +1,142 @@
+import React, { useState } from 'react'
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Linking } from 'react-native'
+import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, appIcons } from '../../../services'
+import appStyles from '../../../services/utilities/appStyles'
+import Header from '../../../components/header'
+import { LocalizationContext } from '../../../language/LocalizationContext'
+
+const socialButton = [
+    // { id: 1, img: appIcons.facebookContact },
+    { id: 2, img: appIcons.twitterContact },
+    // { id: 3, img: appIcons.linkedinContact },
+    { id: 4, img: appIcons.webContact },
+]
+
+const ContactUs = (props) => {
+    const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const contactUsList = [
+        { id: 1, mainTitle: LocalizedStrings.chat_to_us, desc: LocalizedStrings.our_friendly_team_is_here_to_help, email: 'Admin@jak-app.com', img: appIcons.chatToUs },
+        // { id: 2, mainTitle: LocalizedStrings.phone, desc: LocalizedStrings.lorem_ipsum_dolor_sit_amet, email: '+966570578852', img: appIcons.phoneToUs },
+    ]
+
+    const openWhatsAppChat = (whatsApp) => {
+        // Construct the deep link to open WhatsApp with the phone number
+        const url = `whatsapp://send?phone=${whatsApp}`;
+
+        // Check if the WhatsApp app is installed and open the chat
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                return Linking.openURL(url);
+            } else {
+                console.log("WhatsApp is not installed on this device.");
+            }
+        }).catch(error => {
+            console.error("An error occurred while opening WhatsApp:", error);
+        });
+    };
+
+    const handleEmailPress = (strEmail) => {
+        const email = strEmail;
+        const mailtoURL = `mailto:${email}`;
+
+        Linking.openURL(mailtoURL).catch((err) => console.error('Error opening email app', err));
+    };
+
+    return (
+        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+            <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.contact_us} />
+            <View style={{ flex: 1 }}>
+                <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pulvinar bibendum magna Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pulvinar bibendum magna</Text>
+                <FlatList
+                    data={contactUsList}
+                    keyExtractor={(item, index) => index}
+                    ListFooterComponent={
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => openWhatsAppChat('+966570578852')}>
+                            <Image source={appIcons.whatsapp} style={styles.whatsappIcon} />
+                        </TouchableOpacity>
+                    }
+                    renderItem={({ item, index }) => {
+                        return (
+                            <View key={index} style={{ flexDirection: "row", alignItems: "flex-start", margin: wp(2) }}>
+                                <Image source={item.img} style={styles.ImageStyle} />
+                                <View style={{ marginLeft: wp(3) }}>
+                                    <Text style={[styles.mainTitle]}>{item.mainTitle}</Text>
+                                    <Text style={[styles.mainDesc]}>{item.desc}</Text>
+                                    <Text onPress={() => handleEmailPress(item.email)} style={[styles.emailText]}>{item.email}</Text>
+                                </View>
+                            </View>
+                        )
+                    }}
+                />
+
+            </View>
+
+
+            <View style={[appStyles.ph20, { alignItems: "center", justifyContent: "center" }]}>
+                <FlatList
+                    horizontal
+                    data={socialButton}
+                    keyExtractor={(item, index) => index}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <View key={index} style={{ margin: wp(2) }}>
+                                <Image source={item.img} style={styles.ContactImageStyle} />
+                            </View>
+                        )
+                    }}
+                />
+            </View>
+        </SafeAreaView>
+    )
+}
+
+export default ContactUs
+
+const styles = StyleSheet.create({
+    mainTitle: {
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistSemiBold,
+        color: colors.BlackSecondary,
+        lineHeight: 24,
+        textAlign: 'left'
+    },
+    mainDesc: {
+        fontSize: hp(1.4),
+        fontFamily: fontFamily.UrbanistLight,
+        color: colors.descriptionColor,
+        lineHeight: 22,
+        textAlign: 'left'
+    },
+    emailText: {
+        fontSize: hp(1.4),
+        fontFamily: fontFamily.UrbanistMedium,
+        color: colors.BlackSecondary,
+        lineHeight: 22,
+        textAlign: 'left'
+    },
+    mainDes: {
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistRegular,
+        color: colors.descriptionColor,
+        lineHeight: 24,
+        textAlign: 'left'
+    },
+    ImageStyle: {
+        width: wp(12),
+        height: wp(12),
+        resizeMode: 'contain',
+    },
+    ContactImageStyle: {
+        width: wp(15),
+        height: wp(15),
+        resizeMode: 'contain',
+    },
+    whatsappIcon: {
+        width: heightPixel(50),
+        height: heightPixel(50),
+        resizeMode: 'contain',
+        margin: wp(2)
+        // alignSelf: "flex-end",
+        // marginTop: -wp(7)
+    },
+})
