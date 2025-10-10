@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -22,21 +22,21 @@ import {
   emailFormat,
   passwordFormat,
 } from '../../../services';
-import {appIcons, appImages} from '../../../services/utilities/assets';
+import { appIcons, appImages } from '../../../services/utilities/assets';
 import appStyles from '../../../services/utilities/appStyles';
 import Button from '../../../components/button';
 import Header from '../../../components/header';
-import {Input} from '../../../components/input';
+import { Input } from '../../../components/input';
 import CheckBox from '@react-native-community/checkbox';
-import {LocalizationContext} from '../../../language/LocalizationContext';
+import { LocalizationContext } from '../../../language/LocalizationContext';
 import RNRestart from 'react-native-restart'; // Import package from node modules
 import ToggleSwitch from 'toggle-switch-react-native';
-import {showMessage} from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 import routs from '../../../api/routs';
-import {callApi, Method} from '../../../api/apiCaller';
-import {getDeviceId} from 'react-native-device-info';
-import {Loader} from '../../../components/loader/Loader';
-import {useDispatch} from 'react-redux';
+import { callApi, Method } from '../../../api/apiCaller';
+import { getDeviceId } from 'react-native-device-info';
+import { Loader } from '../../../components/loader/Loader';
+import { useDispatch } from 'react-redux';
 import {
   saveLoginRemember,
   saveNumberLogin,
@@ -47,13 +47,13 @@ import {
   googleLoginData,
   _fetchCountryAbbrevicationCode,
 } from '../../../services/helpingMethods';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import CountryInput from '../../../components/countryPicker/CountryPicker';
-import {isPossibleNumber} from 'libphonenumber-js';
+import { isPossibleNumber } from 'libphonenumber-js';
 
 const SignIn = props => {
   const dispatch = useDispatch();
-  const {appLanguage, LocalizedStrings, setAppLanguage} =
+  const { appLanguage, LocalizedStrings, setAppLanguage } =
     React.useContext(LocalizationContext);
 
   const [email, setEmail] = useState('');
@@ -116,12 +116,12 @@ const SignIn = props => {
     // }
 
     if (!isPossibleNumber(`+${countryCode}` + phoneNumber)) {
-      showMessage({message: 'Invalid Phone Number', type: 'danger'});
+      showMessage({ message: 'Invalid Phone Number', type: 'danger' });
       return false;
     }
 
     if (password.length < 4) {
-      showMessage({message: 'Please enter a strong password', type: 'danger'});
+      showMessage({ message: 'Please enter a strong password', type: 'danger' });
       return false;
     }
     // if (!passValue) {
@@ -135,7 +135,7 @@ const SignIn = props => {
       const onSuccess = response => {
         setIsLoading(false);
         console.log('res while login====>', response);
-        showMessage({message: response?.message, type: 'success'});
+        showMessage({ message: response?.message, type: 'success' });
         dispatch(updateUser(response?.data));
         dispatch(
           setToken({
@@ -147,7 +147,7 @@ const SignIn = props => {
         dispatch(saveNumberLogin(true));
 
         if (response?.act === 'login-granted') {
-          props.navigation.navigate(routes.tab, {screen: routes.home});
+          props.navigation.navigate(routes.tab, { screen: routes.home });
         } else if (response?.act === 'incomplete-profile') {
           props?.navigation?.navigate(routes.createProfile, {
             number: `${countryCode + phoneNumber}`,
@@ -157,7 +157,7 @@ const SignIn = props => {
             props?.navigation?.navigate(routes.preferences);
           } else {
             if (response?.act == 'admin-pending') {
-              props.navigation.navigate(routes.tab, {screen: routes.home});
+              props.navigation.navigate(routes.tab, { screen: routes.home });
               // props?.navigation?.navigate(routes.preferences);
               // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
             } else if (response?.act == 'incomplete-subscription') {
@@ -169,19 +169,19 @@ const SignIn = props => {
             }
           }
         } else if (response?.act == 'admin-pending') {
-          props.navigation.navigate(routes.tab, {screen: routes.home});
+          props.navigation.navigate(routes.tab, { screen: routes.home });
           // props?.navigation?.navigate(routes.preferences);
           // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
         } else if (response?.act == 'incomplete-subscription') {
           props?.navigation?.navigate(routes.subscription);
-          showMessage({message: 'You are not subscribed yet!', type: 'danger'});
+          showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
         }
       };
 
       const onError = error => {
         setIsLoading(false);
         console.log('error while login====>', error);
-        showMessage({message: error?.message, type: 'danger'});
+        showMessage({ message: error?.message, type: 'danger' });
 
         if (error?.errorType == 'number-not-verify') {
           props.navigation.navigate(routes.otp, {
@@ -196,7 +196,7 @@ const SignIn = props => {
       const bodyParams = {
         number: `${countryCode + phoneNumber}`,
         password: password,
-        device: {id: getDeviceId(), deviceToken: 'fcmToken'},
+        device: { id: getDeviceId(), deviceToken: 'fcmToken' },
       };
 
       console.log('SignInAfterValidation:- ', bodyParams);
@@ -228,7 +228,7 @@ const SignIn = props => {
     const onSuccess = response => {
       setIsLoading(false);
       console.log('res while handleSociallogin====>', response);
-      showMessage({message: response?.message, type: 'success'});
+      showMessage({ message: response?.message, type: 'success' });
       dispatch(updateUser(response?.data));
       dispatch(
         setToken({
@@ -239,7 +239,7 @@ const SignIn = props => {
       dispatch(saveLoginRemember(true));
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, {screen: routes.home});
+        props.navigation.navigate(routes.tab, { screen: routes.home });
       } else if (response?.act === 'email-unverified') {
         props.navigation.navigate(routes.otp, {
           email: user?.email.toLowerCase(),
@@ -255,7 +255,7 @@ const SignIn = props => {
         } else {
           if (response?.act == 'admin-pending') {
             // props?.navigation?.navigate(routes.preferences);
-            props.navigation.navigate(routes.tab, {screen: routes.home});
+            props.navigation.navigate(routes.tab, { screen: routes.home });
             // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
           } else if (response?.act == 'incomplete-subscription') {
             props?.navigation?.navigate(routes.subscription);
@@ -267,18 +267,18 @@ const SignIn = props => {
         }
       } else if (response?.act == 'admin-pending') {
         // props?.navigation?.navigate(routes.preferences);
-        props.navigation.navigate(routes.tab, {screen: routes.home});
+        props.navigation.navigate(routes.tab, { screen: routes.home });
         // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
       } else if (response?.act == 'incomplete-subscription') {
         props?.navigation?.navigate(routes.subscription);
-        showMessage({message: 'You are not subscribed yet!', type: 'danger'});
+        showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
       }
     };
 
     const onError = error => {
       setIsLoading(false);
       console.log('error while handleSociallogin====>', error);
-      showMessage({message: error?.message, type: 'danger'});
+      showMessage({ message: error?.message, type: 'danger' });
 
       if (error?.errorType == 'email-not-verify') {
         props.navigation.navigate(routes.otp, {
@@ -292,7 +292,7 @@ const SignIn = props => {
     const method = Method.POST;
     const bodyParams = {
       email: user?.email.toLowerCase(),
-      device: {id: getDeviceId(), deviceToken: 'fcmToken'},
+      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
     };
 
     setIsLoading(true);
@@ -300,7 +300,7 @@ const SignIn = props => {
   };
 
   return (
-    <SafeAreaView style={[appStyles.safeContainer, {margin: wp(4)}]}>
+    <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
       <StatusBar barStyle={'dark-content'} backgroundColor="#fff" />
 
@@ -308,7 +308,7 @@ const SignIn = props => {
       <ScrollView
         keyboardShouldPersistTaps={'always'}
         bounces={false}
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}>
         <Text style={styles.mainTitle}>
           {LocalizedStrings['Welcome Back!']}
@@ -365,8 +365,8 @@ const SignIn = props => {
           </Input>
         </View>
 
-        <View style={[appStyles.rowBtw, {marginVertical: wp(5)}]}>
-          <View style={appStyles.row}>
+        <View style={[appStyles.rowBtw, { marginVertical: wp(5) }]}>
+          <View style={[appStyles.row, { paddingLeft: wp(1) }]}>
             <CheckBox
               disabled={false}
               onFillColor={colors.primaryColor}
@@ -376,7 +376,7 @@ const SignIn = props => {
               boxType="square"
               onTintColor={colors.primaryColor}
               style={styles.checbox}
-              hitSlop={{top: 10, bottom: 10, left: 0, right: 0}}
+              hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
               tintColors={{
                 true: colors.primaryColor,
                 false: colors.placeholderColor,
@@ -437,7 +437,7 @@ const SignIn = props => {
             isOn={language}
             onColor={colors.primaryColor}
             offColor={colors.borderColor}
-            labelStyle={{display: 'none'}}
+            labelStyle={{ display: 'none' }}
             size="small"
             onToggle={e => onChangeLng(e ? 'ar' : 'en')}
           />
@@ -458,7 +458,7 @@ const SignIn = props => {
         <View
           style={[
             appStyles.rowCenter,
-            {marginTop: wp(10), marginBottom: wp(5)},
+            { marginTop: wp(10), marginBottom: wp(5) },
           ]}>
           <View style={styles.line} />
           <Text style={styles.orTextStyle}>

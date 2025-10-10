@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -19,24 +19,24 @@ import {
   widthPixel,
   wp,
 } from '../../../services/constants';
-import {appIcons, appImages} from '../../../services/utilities/assets';
+import { appIcons, appImages } from '../../../services/utilities/assets';
 import Header from '../../../components/header';
 import appStyles from '../../../services/utilities/appStyles';
-import {colors, fontFamily} from '../../../services';
+import { colors, fontFamily } from '../../../services';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import LogoHeader from '../../../components/logoHeader/LogoHeader';
 import ToggleSwitch from 'toggle-switch-react-native';
-import {LocalizationContext} from '../../../language/LocalizationContext';
+import { LocalizationContext } from '../../../language/LocalizationContext';
 import RNRestart from 'react-native-restart'; // Import package from node modules
-import {logout, updateUser} from '../../../store/reducers/userDataSlice';
-import {useDispatch, useSelector} from 'react-redux';
+import { logout, updateUser } from '../../../store/reducers/userDataSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import routs from '../../../api/routs';
-import {callApi, Method} from '../../../api/apiCaller';
-import {getDeviceId} from 'react-native-device-info';
-import {Loader} from '../../../components/loader/Loader';
-import {useFocusEffect} from '@react-navigation/native';
-import {showMessage} from 'react-native-flash-message';
-import {saveFavourite} from '../../../store/reducers/FavoruiteOffersSlice';
+import { callApi, Method } from '../../../api/apiCaller';
+import { getDeviceId } from 'react-native-device-info';
+import { Loader } from '../../../components/loader/Loader';
+import { useFocusEffect } from '@react-navigation/native';
+import { showMessage } from 'react-native-flash-message';
+import { saveFavourite } from '../../../store/reducers/FavoruiteOffersSlice';
 import {
   saveCategoryMyOfferPageNo,
   saveCategoryOffers,
@@ -51,7 +51,7 @@ import {
 export default Setting = props => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.user.user.user);
-  const {appLanguage, LocalizedStrings, setAppLanguage} =
+  const { appLanguage, LocalizedStrings, setAppLanguage } =
     React.useContext(LocalizationContext);
   const [subscriptionObj, setSubscriptionObj] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -69,9 +69,9 @@ export default Setting = props => {
       id: 3,
       name: LocalizedStrings.my_preference,
       onpress: () =>
-        props.navigation.navigate(routes.preferences, {key: 'settings'}),
+        props.navigation.navigate(routes.preferences, { key: 'settings' }),
     },
-    {id: 4, name: LocalizedStrings.Notification},
+    { id: 4, name: LocalizedStrings.Notification },
     {
       id: 5,
       name: LocalizedStrings.change_language,
@@ -98,7 +98,7 @@ export default Setting = props => {
       name: LocalizedStrings.contact_us,
       onpress: () => props.navigation.navigate(routes.contactUs),
     },
-    {id: 11, name: LocalizedStrings.Logout, onpress: () => _logout()},
+    { id: 11, name: LocalizedStrings.Logout, onpress: () => _logout() },
     // { id: 12, name: LocalizedStrings.delete_account, onpress: () => props.navigation.navigate(routes.deletAccount) },
   ];
 
@@ -156,8 +156,8 @@ export default Setting = props => {
       dispatch(saveSearchOfferArray(null));
       dispatch(saveTotalCategoryMyOfferPagesCount(1));
       dispatch(saveCategoryMyOfferPageNo(1));
-      showMessage({message: 'LogOut', type: 'success'});
-      props.navigation.navigate(routes.auth, {screen: routes.login});
+      showMessage({ message: 'LogOut', type: 'success' });
+      props.navigation.navigate(routes.auth, { screen: routes.login });
     };
 
     const onError = error => {
@@ -167,7 +167,7 @@ export default Setting = props => {
     const endPoint = routs.logout;
     const method = Method.POST;
     const bodyParams = {
-      device: {id: getDeviceId(), deviceToken: 'fcmToken'},
+      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
     };
 
     setIsLoading(true);
@@ -204,7 +204,7 @@ export default Setting = props => {
     const onSuccess = response => {
       console.log('Success while UpdateProfile====>', response);
       setIsLoading(false);
-      dispatch(updateUser({user: response?.data?.data}));
+      dispatch(updateUser({ user: response?.data?.data }));
     };
 
     const onError = error => {
@@ -224,23 +224,23 @@ export default Setting = props => {
   };
 
   return (
-    <SafeAreaView style={[appStyles.safeContainer, {margin: wp(4)}]}>
+    <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
       <LogoHeader />
 
-      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <Image
           source={
             user && Object.values(user).length > 0 && user?.image
-              ? {uri: user?.image}
+              ? { uri: user?.image }
               : appImages.profile1
           }
           style={[
             styles.imageStyle,
-            {alignSelf: 'center', resizeMode: 'cover'},
+            { alignSelf: 'center', resizeMode: 'cover' },
           ]}
         />
-        <Text style={[styles.mainTitle, {marginVertical: wp(2)}]}>
+        <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>
           {user && Object.values(user).length > 0 && user?.name}
         </Text>
         <Text style={styles.mainDes}>
@@ -255,8 +255,8 @@ export default Setting = props => {
             user.subscriptionPlan == 'not-subscribed'
               ? props.navigation.navigate(routes.subscription)
               : props.navigation.navigate(routes.subscriptionPlan, {
-                  subscribeArr: subscriptionObj,
-                })
+                subscribeArr: subscriptionObj,
+              })
           }
           style={{
             borderColor: colors.borderColor,
@@ -269,11 +269,11 @@ export default Setting = props => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image source={appImages.crown} style={styles.CrownImage} />
             {subscriptionObj.length > 0 ? (
-              <View style={{marginLeft: wp(3), alignItems: 'flex-start'}}>
-                <Text style={[styles.packageText, {marginBottom: wp(2)}]}>
+              <View style={{ marginLeft: wp(3), alignItems: 'flex-start' }}>
+                <Text style={[styles.packageText, { marginBottom: wp(2) }]}>
                   {subscriptionObj.length > 0 ? subscriptionObj[0]?.id : ''}
                 </Text>
                 <Text style={styles.mainTitle}>
@@ -285,7 +285,7 @@ export default Setting = props => {
                 </Text>
               </View>
             ) : (
-              <View style={{marginLeft: wp(3), alignItems: 'flex-start'}}>
+              <View style={{ marginLeft: wp(3), alignItems: 'flex-start' }}>
                 <Text
                   style={[
                     {
@@ -313,7 +313,7 @@ export default Setting = props => {
           data={settingsArray}
           keyExtractor={(item, index) => index}
           showsVerticalScrollIndicator={false}
-          renderItem={({item, index}) => {
+          renderItem={({ item, index }) => {
             return (
               <TouchableOpacity
                 key={index}
@@ -321,16 +321,10 @@ export default Setting = props => {
                 onPress={item.onpress}
                 style={[
                   appStyles.rowBtw,
-                  {marginTop: index > 0 ? wp(6) : wp(3)},
+                  { marginTop: index > 0 ? wp(6) : wp(3) },
                 ]}>
                 <Text style={[styles.mainText]}>
-                  {`${item.name}${
-                    index > 0
-                      ? item.name == LocalizedStrings.change_language
-                        ? ' ('
-                        : ''
-                      : ' ('
-                  }`}
+                  {`${item.name}`}
                   {/* <Text style={{ fontFamily: fontFamily.UrbanistMedium, color: colors.descriptionColor }}>{index > 0 ? '' : `20% ${LocalizedStrings.Complete}`}</Text> */}
                   <Text
                     style={{
@@ -365,13 +359,12 @@ export default Setting = props => {
                     }}>
                     {item.name == LocalizedStrings.change_language ? 'Ar' : ''}
                   </Text>
-                  {`${
-                    index > 0
+                  {`${index > 0
                       ? item.name == LocalizedStrings.change_language
                         ? ')'
                         : ''
                       : ')'
-                  }`}
+                    }`}
                 </Text>
 
                 {item.name === LocalizedStrings.Notification ? (
@@ -379,7 +372,7 @@ export default Setting = props => {
                     isOn={toggle}
                     onColor={colors.primaryColor}
                     offColor={colors.borderColor}
-                    labelStyle={{display: 'none'}}
+                    labelStyle={{ display: 'none' }}
                     size="small"
                     onToggle={e => [setToggle(e), UpdateProfile(e)]}
                   />
@@ -388,7 +381,7 @@ export default Setting = props => {
                     isOn={language}
                     onColor={colors.primaryColor}
                     offColor={colors.borderColor}
-                    labelStyle={{display: 'none'}}
+                    labelStyle={{ display: 'none' }}
                     size="small"
                     onToggle={e => onChangeLng(e ? 'ar' : 'en')}
                   />
