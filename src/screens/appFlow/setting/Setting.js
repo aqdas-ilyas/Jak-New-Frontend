@@ -34,9 +34,10 @@ import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
 import { getDeviceId } from 'react-native-device-info';
 import { Loader } from '../../../components/loader/Loader';
-import { useFocusEffect } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
 import { saveFavourite } from '../../../store/reducers/FavoruiteOffersSlice';
+import CallModal from '../../../components/modal';
 import {
   saveCategoryMyOfferPageNo,
   saveCategoryOffers,
@@ -57,6 +58,7 @@ export default Setting = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [toggle, setToggle] = useState(user?.isNotification);
   const [language, setLanguage] = useState(appLanguage === 'ar' ? true : false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const settingsArray = [
     // { id: 1, name: LocalizedStrings.complete_your_profile, onpress: () => props.navigation.navigate(routes.editProfile) },
@@ -98,7 +100,7 @@ export default Setting = props => {
       name: LocalizedStrings.contact_us,
       onpress: () => props.navigation.navigate(routes.contactUs),
     },
-    { id: 11, name: LocalizedStrings.Logout, onpress: () => _logout() },
+    { id: 11, name: LocalizedStrings.Logout, onpress: () => setLogoutModalVisible(true) },
     // { id: 12, name: LocalizedStrings.delete_account, onpress: () => props.navigation.navigate(routes.deletAccount) },
   ];
 
@@ -142,27 +144,42 @@ export default Setting = props => {
     callApi(method, endPoint, bodyParams, onSuccess, onError);
   };
 
+  const handleLogoutConfirm = () => {
+    setLogoutModalVisible(false);
+    _logout();
+  };
+
   const _logout = () => {
     const onSuccess = response => {
-      console.log('response _logout===', response);
       setIsLoading(false);
-      dispatch(logout());
-      dispatch(saveFavourite(null));
-      dispatch(saveMyOffer(null));
-      dispatch(saveForAllOffers(null));
-      dispatch(saveMyOfferPageNo(1));
-      dispatch(saveTotalMyOfferPagesCount(1));
-      dispatch(saveCategoryOffers(null));
-      dispatch(saveSearchOfferArray(null));
-      dispatch(saveTotalCategoryMyOfferPagesCount(1));
-      dispatch(saveCategoryMyOfferPageNo(1));
-      showMessage({ message: 'LogOut', type: 'success' });
-      props.navigation.navigate(routes.auth, { screen: routes.login });
+      console.log('response _logout===', response);
+      showMessage({ message: 'Logged Out Successfully!', type: 'danger' });
+
+      props.navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: routes.auth, params: { screen: routes.login } }],
+        })
+      );
+
+      setTimeout(() => {
+        dispatch(logout());
+        dispatch(saveFavourite(null));
+        dispatch(saveMyOffer(null));
+        dispatch(saveForAllOffers(null));
+        dispatch(saveMyOfferPageNo(1));
+        dispatch(saveTotalMyOfferPagesCount(1));
+        dispatch(saveCategoryOffers(null));
+        dispatch(saveSearchOfferArray(null));
+        dispatch(saveTotalCategoryMyOfferPagesCount(1));
+        dispatch(saveCategoryMyOfferPageNo(1));
+      }, 1000);
     };
 
     const onError = error => {
       setIsLoading(false);
       console.log('Error _logout===', error);
+      showMessage({ message: error?.message || 'Logout failed', type: 'danger' });
     };
     const endPoint = routs.logout;
     const method = Method.POST;
@@ -337,7 +354,7 @@ export default Setting = props => {
                           ? colors.primaryColor
                           : colors.descriptionColor,
                     }}>
-                    {item.name == LocalizedStrings.change_language ? 'En' : ''}
+                    {item.name == LocalizedStrings.change_language ? '(En' : ''}
                   </Text>
                   <Text
                     style={{
@@ -357,14 +374,9 @@ export default Setting = props => {
                           ? colors.primaryColor
                           : colors.descriptionColor,
                     }}>
-                    {item.name == LocalizedStrings.change_language ? 'Ar' : ''}
+                    {item.name == LocalizedStrings.change_language ? 'Ar)' : ''}
                   </Text>
-                  {`${index > 0
-                      ? item.name == LocalizedStrings.change_language
-                        ? ')'
-                        : ''
-                      : ')'
-                    }`}
+
                 </Text>
 
                 {item.name === LocalizedStrings.Notification ? (
@@ -397,6 +409,19 @@ export default Setting = props => {
           }}
         />
       </ScrollView>
+
+      <CallModal
+        modalShow={logoutModalVisible}
+        setModalShow={() => setLogoutModalVisible(false)}
+        warningImage={appImages.warning}
+        title={LocalizedStrings.logout_confirmation || 'Logout Confirmation'}
+        subTitle={LocalizedStrings.logout_confirmation_message || 'Are you sure you want to logout?'}
+        showButtons={true}
+        confirmText={LocalizedStrings.yes || 'Yes'}
+        cancelText={LocalizedStrings.no || 'No'}
+        onConfirm={handleLogoutConfirm}
+        onCancel={() => setLogoutModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };

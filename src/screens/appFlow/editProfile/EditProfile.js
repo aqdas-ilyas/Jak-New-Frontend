@@ -103,11 +103,14 @@ export default EditProfile = (props) => {
     }
 
     // handle Google Places
-    const handlePlacePress = (data, details) => {
-        const latitude = details.geometry?.location?.lat;
-        const longitude = details.geometry?.location?.lng;
-        setLatLng({ latitude: latitude, longitude: longitude });
-        setCountry(details?.address_components[0]?.long_name)
+    const handlePlacePress = (data, details = null) => {
+        console.log('Place selected:', data, details);
+        if (details) {
+            const latitude = details.geometry?.location?.lat;
+            const longitude = details.geometry?.location?.lng;
+            setLatLng({ latitude: latitude, longitude: longitude });
+            setCountry(data?.description || details?.formatted_address || details?.address_components?.[0]?.long_name || '')
+        }
     };
 
     // BUtton Press to Update profile
@@ -196,7 +199,13 @@ export default EditProfile = (props) => {
     }
 
     useEffect(() => {
-        placesAutocompleteRef?.current?.setAddressText(country);
+        if (country && placesAutocompleteRef?.current) {
+            try {
+                placesAutocompleteRef.current.setAddressText(country);
+            } catch (error) {
+                console.log('Error setting address text:', error);
+            }
+        }
     }, [country]);
 
     return (
@@ -277,56 +286,11 @@ export default EditProfile = (props) => {
                             rightIcon
                             eyeValue={appIcons.location}
                             rightIconColor={colors.primaryColor}
-                            hideInput
+                            value={country}
+                            onChangeText={(value) => setCountry(value)}
                         >
                             {LocalizedStrings.Location}
                         </Input>
-
-                        <GooglePlacesAutocomplete
-                            ref={placesAutocompleteRef}
-                            styles={{
-                                textInput: {
-                                    flex: 2,
-                                    fontFamily: fontFamily.UrbanistMedium,
-                                    fontSize: hp(1.6),
-                                    color: colors.BlackSecondary,
-                                    backgroundColor: '#FAFAFA',
-                                },
-                                textInputContainer: {
-                                    width: '98%',
-                                    backgroundColor: '#FAFAFA',
-                                    borderRadius: 10,
-                                },
-                                description: {
-                                    fontFamily: fontFamily.UrbanistMedium,
-                                    color: colors.BlackSecondary,
-                                },
-                                predefinedPlacesDescription: {
-                                    color: colors.BlackSecondary,
-                                },
-                                row: {
-                                    color: colors.BlackSecondary,
-                                    backgroundColor: '#FAFAFA',
-                                },
-                            }}
-                            placeholder='Country'
-                            textInputProps={{
-                                // value: country,
-                                defaultValue: country,
-                                placeholderTextColor: colors.placeholderColor,
-                                returnKeyType: "search",
-                            }}
-                            returnKeyType={'search'}
-                            enablePoweredByContainer={false}
-                            autoFocus={false}
-                            listViewDisplayed="false"
-                            fetchDetails={true}
-                            onPress={handlePlacePress}
-                            query={{
-                                key: GOOGLE_API_KEY,
-                                language: 'en',
-                            }}
-                        />
                     </View>
                 </View>
 

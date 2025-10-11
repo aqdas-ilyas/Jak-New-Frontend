@@ -63,6 +63,8 @@ export default StoreDetailList = (props) => {
         longitudeDelta: 0.02,
     })
 
+    console.log(item)
+
     const openWhatsAppChat = (whatsApp) => {
         // Construct the deep link to open WhatsApp with the phone number
         const url = `whatsapp://send?phone=${whatsApp}`;
@@ -264,7 +266,7 @@ export default StoreDetailList = (props) => {
 
                     <View style={{ width: wp(35) }}>
                         <Text style={[styles.mainTitle]}>{LocalizedStrings["Expiry Date"]}</Text>
-                        <Text style={styles.shortDes}>{moment(item?.expireAt).format('DD/MM/YYYY')}</Text>
+                        <Text style={styles.shortDes}>{moment(item?.["expiry date"]).format('DD/MM/YYYY')}</Text>
                     </View>
 
                     <View style={{ width: wp(50) }}>

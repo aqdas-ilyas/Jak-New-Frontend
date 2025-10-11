@@ -22,12 +22,50 @@ const SubscriptionPlan = (props) => {
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
     const [isLoading, setIsLoading] = useState(false)
 
-    const SubscriptionArray = [
-        { id: 1, desc: LocalizedStrings['Lorem ipsum dolor set amet consectetur'] },
-        { id: 2, desc: LocalizedStrings['Lorem ipsum dolor set amet consectetur'] },
-        { id: 3, desc: LocalizedStrings['Lorem ipsum dolor set amet consectetur'] },
-        { id: 4, desc: LocalizedStrings['Lorem ipsum dolor set amet consectetur'] },
-    ]
+    // Get features based on subscription type
+    const getSubscriptionFeatures = () => {
+        const subscriptionType = subscribeArr[0]?.type;
+        
+        if (subscriptionType === 'Jak Mobile App Free') {
+            return [
+                { id: 1, desc: LocalizedStrings.free_feature_1 },
+                { id: 2, desc: LocalizedStrings.free_feature_2 },
+                { id: 3, desc: LocalizedStrings.free_feature_3 },
+                { id: 4, desc: LocalizedStrings.free_feature_4 },
+            ];
+        } else if (subscriptionType === 'Jak Mobile App Plus') {
+            return [
+                { id: 1, desc: LocalizedStrings.plus_feature_1 },
+                { id: 2, desc: LocalizedStrings.plus_feature_2 },
+                { id: 3, desc: LocalizedStrings.plus_feature_3 },
+                { id: 4, desc: LocalizedStrings.plus_feature_4 },
+                { id: 5, desc: LocalizedStrings.plus_feature_5 },
+                { id: 6, desc: LocalizedStrings.plus_feature_6 },
+            ];
+        } else if (subscriptionType === 'Jak Mobile App Premium') {
+            return [
+                { id: 1, desc: LocalizedStrings.premium_feature_1 },
+                { id: 2, desc: LocalizedStrings.premium_feature_2 },
+                { id: 3, desc: LocalizedStrings.premium_feature_3 },
+                { id: 4, desc: LocalizedStrings.premium_feature_4 },
+                { id: 5, desc: LocalizedStrings.premium_feature_5 },
+                { id: 6, desc: LocalizedStrings.premium_feature_6 },
+                { id: 7, desc: LocalizedStrings.premium_feature_7 },
+                { id: 8, desc: LocalizedStrings.premium_feature_8 },
+            ];
+        }
+        // Default to Plus features if type doesn't match
+        return [
+            { id: 1, desc: LocalizedStrings.plus_feature_1 },
+            { id: 2, desc: LocalizedStrings.plus_feature_2 },
+            { id: 3, desc: LocalizedStrings.plus_feature_3 },
+            { id: 4, desc: LocalizedStrings.plus_feature_4 },
+            { id: 5, desc: LocalizedStrings.plus_feature_5 },
+            { id: 6, desc: LocalizedStrings.plus_feature_6 },
+        ];
+    };
+
+    const SubscriptionArray = getSubscriptionFeatures();
 
     const CreateSubscriptions = () => {
         const onSuccess = response => {
@@ -65,7 +103,7 @@ const SubscriptionPlan = (props) => {
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.subscription_plan} rightTitle={LocalizedStrings.manage} onPressRightTitle={() => props.navigation.navigate(routes.subscription)} />
             <View style={{ flex: 1 }}>
-                <Text style={[styles.mainDes, { marginVertical: wp(5), color: colors.descriptionColor, textAlign: 'left' }]}>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed qu</Text>
+                <Text style={[styles.mainDes, { marginVertical: wp(5), color: colors.descriptionColor, textAlign: 'left' }]}>{LocalizedStrings.subscription_plan_description}</Text>
 
                 <View style={styles.Item}>
                     <Text style={[styles.mainDes, { marginTop: wp(5) }]}>{subscribeArr[0]?.type == 'Jak Mobile App Free' ? LocalizedStrings['Free Version'] : subscribeArr[0]?.type == 'Jak Mobile App Premium' ? LocalizedStrings['Plus Version'] : LocalizedStrings['Premium Version']}</Text>
@@ -76,11 +114,12 @@ const SubscriptionPlan = (props) => {
                         data={SubscriptionArray}
                         showsVerticalScrollIndicator={false}
                         keyExtractor={item => item.id}
+                        contentContainerStyle={{ paddingTop: wp(2) }}
                         renderItem={({ item, index }) => {
                             return (
-                                <View key={index} style={{ flexDirection: "row", marginTop: wp(5), alignItems: "center", justifyContent: "center" }}>
-                                    <AntDesign name='check' size={wp(5)} color={colors.BlackSecondary} />
-                                    <Text style={[styles.mainDes, { marginHorizontal: wp(5) }]}>{item.desc}</Text>
+                                <View key={index} style={{ flexDirection: "row", marginTop: wp(3), paddingHorizontal: wp(5), alignItems: "flex-start" }}>
+                                    <AntDesign name='check' size={wp(5)} color={colors.primaryColor} style={{ marginTop: wp(0.5) }} />
+                                    <Text style={[styles.featureDesc, { marginLeft: wp(3), flex: 1 }]}>{item.desc}</Text>
                                 </View>
                             )
                         }}
@@ -90,9 +129,14 @@ const SubscriptionPlan = (props) => {
                 </View>
                 <Text style={[styles.mainDes, { marginVertical: wp(5), color: colors.descriptionColor }]}>{LocalizedStrings.cancel_subscription_desc1} {moment(user?.subscriptionEndAt).format('MMM DD, YYYY')}. {LocalizedStrings['Renew your subscription']} <Text disabled={!moment(user?.subscriptionEndAt).isBefore(new Date())} onPress={() => CreateSubscriptions()} style={{ color: !moment(user?.subscriptionEndAt).isBefore(new Date()) ? colors.borderColor : colors.primaryColor, fontFamily: fontFamily.UrbanistSemiBold }}>{LocalizedStrings.here}.</Text></Text>
             </View>
-            <View style={[appStyles.ph20, appStyles.mb5]}>
-                <Button onPress={() => props.navigation.navigate(routes.cancelSubscription)}>{LocalizedStrings.cancel_subscription}</Button>
-            </View>
+
+            {
+                subscribeArr[0]?.type != 'Jak Mobile App Free' && (
+                    <View style={[appStyles.ph20, appStyles.mb5]}>
+                        <Button onPress={() => props.navigation.navigate(routes.cancelSubscription)}>{LocalizedStrings.cancel_subscription}</Button>
+                    </View>
+                )
+            }
         </SafeAreaView>
     )
 }
@@ -131,5 +175,12 @@ const styles = StyleSheet.create({
         fontSize: hp(1.2),
         fontFamily: fontFamily.UrbanistLight,
         color: colors.descriptionColor,
+    },
+    featureDesc: {
+        fontSize: hp(1.5),
+        fontFamily: fontFamily.UrbanistRegular,
+        color: colors.BlackSecondary,
+        textAlign: "left",
+        lineHeight: 22
     }
 })

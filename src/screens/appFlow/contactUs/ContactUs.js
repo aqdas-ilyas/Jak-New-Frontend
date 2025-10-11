@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Linking } from 'react-native'
+import { View, Text, Image, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Linking } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, appIcons } from '../../../services'
 import appStyles from '../../../services/utilities/appStyles'
 import Header from '../../../components/header'
@@ -46,45 +46,37 @@ const ContactUs = (props) => {
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.contact_us} />
             <View style={{ flex: 1 }}>
-                <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pulvinar bibendum magna Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pulvinar bibendum magna</Text>
-                <FlatList
-                    data={contactUsList}
-                    keyExtractor={(item, index) => index}
-                    ListFooterComponent={
-                        <TouchableOpacity activeOpacity={0.8} onPress={() => openWhatsAppChat('+966570578852')}>
-                            <Image source={appIcons.whatsapp} style={styles.whatsappIcon} />
-                        </TouchableOpacity>
-                    }
-                    renderItem={({ item, index }) => {
-                        return (
-                            <View key={index} style={{ flexDirection: "row", alignItems: "flex-start", margin: wp(2) }}>
-                                <Image source={item.img} style={styles.ImageStyle} />
-                                <View style={{ marginLeft: wp(3) }}>
-                                    <Text style={[styles.mainTitle]}>{item.mainTitle}</Text>
-                                    <Text style={[styles.mainDesc]}>{item.desc}</Text>
-                                    <Text onPress={() => handleEmailPress(item.email)} style={[styles.emailText]}>{item.email}</Text>
-                                </View>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollContent}
+                >
+                    <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>{LocalizedStrings.contact_us_description}</Text>
+                    
+                    {contactUsList.map((item, index) => (
+                        <View key={index} style={{ flexDirection: "row", alignItems: "flex-start", marginVertical: wp(2) }}>
+                            <Image source={item.img} style={styles.ImageStyle} />
+                            <View style={{ marginLeft: wp(3), flex: 1 }}>
+                                <Text style={[styles.mainTitle]}>{item.mainTitle}</Text>
+                                <Text style={[styles.mainDesc]}>{item.desc}</Text>
+                                <Text onPress={() => handleEmailPress(item.email)} style={[styles.emailText]}>{item.email}</Text>
                             </View>
-                        )
-                    }}
-                />
+                        </View>
+                    ))}
 
+                    <TouchableOpacity activeOpacity={0.8} onPress={() => openWhatsAppChat('+966570578852')}>
+                        <Image source={appIcons.whatsapp} style={styles.whatsappIcon} />
+                    </TouchableOpacity>
+                </ScrollView>
             </View>
 
-
-            <View style={[appStyles.ph20, { alignItems: "center", justifyContent: "center" }]}>
-                <FlatList
-                    horizontal
-                    data={socialButton}
-                    keyExtractor={(item, index) => index}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <View key={index} style={{ margin: wp(2) }}>
-                                <Image source={item.img} style={styles.ContactImageStyle} />
-                            </View>
-                        )
-                    }}
-                />
+            <View style={[appStyles.ph20, styles.socialContainer]}>
+                <View style={styles.socialButtonsRow}>
+                    {socialButton.map((item, index) => (
+                        <View key={index} style={{ margin: wp(2) }}>
+                            <Image source={item.img} style={styles.ContactImageStyle} />
+                        </View>
+                    ))}
+                </View>
             </View>
         </SafeAreaView>
     )
@@ -93,6 +85,9 @@ const ContactUs = (props) => {
 export default ContactUs
 
 const styles = StyleSheet.create({
+    scrollContent: {
+        paddingBottom: wp(5),
+    },
     mainTitle: {
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistSemiBold,
@@ -136,7 +131,15 @@ const styles = StyleSheet.create({
         height: heightPixel(50),
         resizeMode: 'contain',
         margin: wp(2)
-        // alignSelf: "flex-end",
-        // marginTop: -wp(7)
+    },
+    socialContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: wp(2),
+    },
+    socialButtonsRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 })

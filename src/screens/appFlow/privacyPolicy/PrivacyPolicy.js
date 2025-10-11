@@ -1,68 +1,62 @@
-
-
-
-import React, { useState, useRef } from 'react';
-import { View, Text, Image, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, FlatList, Dimensions } from 'react-native';
-import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, appIcons } from '../../../services';
+import React from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { colors, hp, fontFamily, wp } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
 import Header from '../../../components/header';
 import { LocalizationContext } from '../../../language/LocalizationContext';
 
 const PrivacyPolicy = (props) => {
     const { LocalizedStrings } = React.useContext(LocalizationContext);
-    const scrollViewRef = useRef(null);
-    const [scrollIndicatorHeight, setScrollIndicatorHeight] = useState(0);
-    const [scrollIndicatorPosition, setScrollIndicatorPosition] = useState(0);
 
     const PrivacyPolicyList = [
-        { id: 1, title: LocalizedStrings.acceptance_of_terms, desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a sapien eleifend, viverra est at, consequat mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum sed consectetur nisl. Curabitur efficitur enim at lacus faucibus porta.' },
-        { id: 2, title: LocalizedStrings.user_responsibility, desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a sapien eleifend, viverra est at, consequat mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum sed consectetur nisl. Curabitur efficitur enim at lacus faucibus porta.' },
-        { id: 3, title: LocalizedStrings.subscription_services, desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a sapien eleifend, viverra est at, consequat mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum sed consectetur nisl. Curabitur efficitur enim at lacus faucibus porta.' },
-        { id: 4, title: LocalizedStrings.intellectual_property, desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a sapien eleifend, viverra est at, consequat mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum sed consectetur nisl. Curabitur efficitur enim at lacus faucibus porta.' },
-        { id: 5, title: LocalizedStrings.limitation_of_loability, desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a sapien eleifend, viverra est at, consequat mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum sed consectetur nisl. Curabitur efficitur enim at lacus faucibus porta.' },
+        { 
+            id: 1, 
+            title: LocalizedStrings.privacy_introduction, 
+            desc: LocalizedStrings.privacy_introduction_desc 
+        },
+        { 
+            id: 2, 
+            title: LocalizedStrings.privacy_info_collection, 
+            desc: LocalizedStrings.privacy_info_collection_desc 
+        },
+        { 
+            id: 3, 
+            title: LocalizedStrings.privacy_how_we_use, 
+            desc: LocalizedStrings.privacy_how_we_use_desc 
+        },
+        { 
+            id: 4, 
+            title: LocalizedStrings.privacy_data_sharing, 
+            desc: LocalizedStrings.privacy_data_sharing_desc 
+        },
+        { 
+            id: 5, 
+            title: LocalizedStrings.privacy_data_security, 
+            desc: LocalizedStrings.privacy_data_security_desc 
+        },
+        { 
+            id: 6, 
+            title: LocalizedStrings.privacy_your_rights, 
+            desc: LocalizedStrings.privacy_your_rights_desc 
+        },
     ];
-
-    const handleScroll = (event) => {
-        const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
-        console.log(contentOffset, layoutMeasurement, contentSize)
-        const maxScroll = contentSize.height - layoutMeasurement.height;
-        const position = Math.max(0, Math.min(contentOffset.y / maxScroll, 1));
-        const visibleHeight = layoutMeasurement.height / contentSize.height * layoutMeasurement.height;
-        // const height = Math.max(visibleHeight, layoutMeasurement.height);
-        const height = layoutMeasurement.height * (layoutMeasurement.height / contentSize.height);
-        const top = Math.min(layoutMeasurement.height - visibleHeight, layoutMeasurement.height * position);
-        setScrollIndicatorPosition(top);
-        setScrollIndicatorHeight(height);
-    };
-
-    const handleContentSizeChange = (contentWidth, contentHeight) => {
-        setScrollIndicatorHeight(contentWidth);
-    };
 
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.privacy} />
             <View style={{ flex: 1, marginTop: wp(5) }}>
                 <ScrollView
-                    bounces={false}
                     style={styles.scrollView}
                     contentContainerStyle={styles.scrollViewContent}
-                    onScroll={handleScroll}
-                    scrollEventThrottle={16}
                     showsVerticalScrollIndicator={false}
-                    ref={scrollViewRef}
-                    onContentSizeChange={handleContentSizeChange}
                 >
                     {PrivacyPolicyList.map((item, index) => (
-                        <View key={index} style={{ marginTop: wp(2) }}>
-                            <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>{item.title}</Text>
-                            <Text style={[styles.mainDesc]}>{item.desc}</Text>
+                        <View key={index} style={styles.section}>
+                            <Text style={styles.mainTitle}>{item.title}</Text>
+                            <Text style={styles.mainDesc}>{item.desc}</Text>
                         </View>
                     ))}
                 </ScrollView>
-                <View style={[styles.scrollIndicator, { backgroundColor: colors.borderColor, height: Dimensions.get('screen').height / 1.18 }]}>
-                    <View style={[styles.scrollIndicator, { backgroundColor: colors.primaryColor, height: scrollIndicatorHeight, top: scrollIndicatorPosition }]} />
-                </View>
             </View>
         </SafeAreaView>
     );
@@ -76,25 +70,24 @@ const styles = StyleSheet.create({
     },
     scrollViewContent: {
         paddingVertical: wp(2),
+        paddingBottom: wp(5),
+    },
+    section: {
+        marginTop: wp(4),
     },
     mainTitle: {
-        fontSize: hp(1.6),
-        fontFamily: fontFamily.UrbanistSemiBold,
+        fontSize: hp(1.8),
+        fontFamily: fontFamily.UrbanistBold,
         color: colors.BlackSecondary,
-        lineHeight: 24,
-        textAlign: "left"
+        lineHeight: 26,
+        textAlign: 'left',
+        marginBottom: wp(2),
     },
     mainDesc: {
-        fontSize: hp(1.4),
+        fontSize: hp(1.5),
         fontFamily: fontFamily.UrbanistRegular,
-        color: 'rgba(102, 102, 102, 1)',
-        lineHeight: 22,
-        textAlign: "left"
-    },
-    scrollIndicator: {
-        position: 'absolute',
-        right: 0,
-        width: 4,
-        borderRadius: 2,
+        color: colors.descriptionColor,
+        lineHeight: 24,
+        textAlign: 'left',
     },
 });

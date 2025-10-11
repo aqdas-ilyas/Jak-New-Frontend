@@ -1,106 +1,23 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from '@react-navigation/native';
-import {
-  View,
-  StyleSheet,
-  Platform,
-  SafeAreaView,
-  Image,
-  ImageBackground,
-  TouchableOpacity,
-  StatusBar,
-  Text,
-  FlatList,
-  Pressable,
-  Dimensions,
-} from 'react-native';
-import MapView, {
-  Marker,
-  Polyline,
-  PROVIDER_DEFAULT,
-  PROVIDER_GOOGLE,
-} from 'react-native-maps';
-import {
-  heightPixel,
-  hp,
-  routes,
-  widthPixel,
-  wp,
-} from '../../../services/constants';
-import Geolocation from '@react-native-community/geolocation';
-import {getLocationPermission} from '../../../common/HelpingFunc';
-import {appIcons, appImages} from '../../../services/utilities/assets';
-import {Input} from '../../../components/input';
-import {colors, fontFamily} from '../../../services';
+import React, { useEffect, useRef, useState } from 'react';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, TouchableOpacity, StatusBar, Text, FlatList, Pressable, Dimensions } from 'react-native';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
+import { heightPixel, hp, routes, widthPixel, wp } from '../../../services/constants';
+import { appIcons, appImages } from '../../../services/utilities/assets';
+import { Input } from '../../../components/input';
+import { colors, fontFamily } from '../../../services';
 import FilterModal from '../../../components/filter';
-import {LocalizationContext} from '../../../language/LocalizationContext';
-import ActionSheet from 'react-native-actions-sheet';
-import CheckBox from '@react-native-community/checkbox';
-import {
-  saveCategoryMyOfferPageNo,
-  saveCategoryOffers,
-  saveMyOffer,
-  saveTotalCategoryMyOfferPagesCount,
-} from '../../../store/reducers/OfferSlice';
-import {useDispatch, useSelector} from 'react-redux';
+import { LocalizationContext } from '../../../language/LocalizationContext';
+import { saveCategoryMyOfferPageNo, saveCategoryOffers, saveTotalCategoryMyOfferPagesCount } from '../../../store/reducers/OfferSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import routs from '../../../api/routs';
-import {callApi, Method} from '../../../api/apiCaller';
-import {Loader} from '../../../components/loader/Loader';
-import {showMessage} from 'react-native-flash-message';
-
-const MarkerArray = [
-  {
-    id: 1,
-    data: {latitude: 31.4697, longitude: 74.2728},
-    imageSRC: appImages.ellipse1,
-  },
-  {
-    id: 2,
-    data: {latitude: 31.4511, longitude: 74.2925},
-    imageSRC: appImages.ellipse2,
-  },
-  {
-    id: 3,
-    data: {latitude: 31.4469, longitude: 74.2682},
-    imageSRC: appImages.ellipse3,
-  },
-  {
-    id: 4,
-    data: {latitude: 31.4496, longitude: 74.2804},
-    imageSRC: appImages.ellipse4,
-  },
-  {
-    id: 5,
-    data: {latitude: 31.4312, longitude: 74.2644},
-    imageSRC: appImages.ellipse5,
-  },
-  {
-    id: 6,
-    data: {latitude: 31.4433, longitude: 74.2597},
-    imageSRC: appImages.ellipse6,
-  },
-];
+import { callApi, Method } from '../../../api/apiCaller';
+import { Loader } from '../../../components/loader/Loader';
+import { showMessage } from 'react-native-flash-message';
 
 export default Home = props => {
-  const {appLanguage, LocalizedStrings, setAppLanguage} =
+  const { appLanguage, LocalizedStrings, setAppLanguage } =
     React.useContext(LocalizationContext);
-
-  const discountArray = [
-    {id: 1, name: 5},
-    {id: 2, name: 10},
-    {id: 3, name: 15},
-    {id: 4, name: 20},
-  ];
-
-  const locationArray = [
-    {id: 1, name: 5},
-    {id: 2, name: 10},
-    {id: 3, name: 15},
-  ];
 
   const mapRef = useRef();
   const refCategorySheet = useRef();
@@ -115,7 +32,7 @@ export default Home = props => {
     state => state.offer.categoryMyOfferPageNo,
   );
   const [checkboxes, setCheckboxes] = useState([]);
-  const [userLocation, setUserLocation] = useState({latitude: 0, longitude: 0});
+  const [userLocation, setUserLocation] = useState({ latitude: 0, longitude: 0 });
   const [markers, setMarkers] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [filterDiscounts, setFilterDiscounts] = useState('');
@@ -142,47 +59,8 @@ export default Home = props => {
   );
 
   useEffect(() => {
-    getMyLocation();
     getMyOfferCategory();
   }, [IsFocused]);
-
-  const getMyLocation = async () => {
-    let permission = await getLocationPermission();
-    if (permission) {
-      Geolocation.getCurrentPosition(
-        position => {
-          var coords = position?.coords;
-          if (coords.latitude != undefined || coords != '') {
-            var userLocation = {
-              latitude: coords.latitude,
-              longitude: coords.longitude,
-            };
-            setUserLocation(userLocation);
-            setRegion({
-              latitude: coords.latitude,
-              longitude: coords.longitude,
-              latitudeDelta: 0.1,
-              longitudeDelta: 0.1,
-            });
-
-            mapRef?.current?.animateToRegion(
-              {
-                latitude: coords.latitude,
-                longitude: coords.longitude,
-                latitudeDelta: 0.1,
-                longitudeDelta: 0.1,
-              },
-              500,
-            );
-          }
-        },
-        error => {
-          console.log(error);
-        },
-        {enableHighAccuracy: false, timeout: 20000, maximumAge: 3600000},
-      );
-    }
-  };
 
   const getCheckedLocalizedStrings = async () => {
     // Filter out checked items
@@ -220,7 +98,7 @@ export default Home = props => {
           category: formattedCheckedStrings,
         });
       } else {
-        showMessage({message: 'No Offers Found!', type: 'danger'});
+        showMessage({ message: 'No Offers Found!', type: 'danger' });
       }
     };
 
@@ -231,8 +109,7 @@ export default Home = props => {
 
     let endPoint =
       routs.getMyOffers +
-      `user/all?myoffers=yes&limit=10&page=1&language=${
-        appLanguage === 'ar' ? 'arabic' : 'english'
+      `user/all?myoffers=yes&limit=10&page=1&language=${appLanguage === 'ar' ? 'arabic' : 'english'
       }`;
 
     if (filterLocation != '') {
@@ -317,8 +194,8 @@ export default Home = props => {
     // ******************* Single Selection Code *******************
     const updatedCheckboxes = checkboxes.map(checkbox =>
       checkbox.id === checkboxId
-        ? {...checkbox, checked: true}
-        : {...checkbox, checked: false},
+        ? { ...checkbox, checked: true }
+        : { ...checkbox, checked: false },
     );
 
     setCheckboxes(updatedCheckboxes);
@@ -382,10 +259,10 @@ export default Home = props => {
               source={appIcons.currentMarker}
               style={styles.currentMarkerImageBackground}>
               <Image
-                source={{uri: user?.image}}
+                source={{ uri: user?.image }}
                 style={[
                   styles.markerImage,
-                  {resizeMode: 'cover', borderRadius: 50},
+                  { resizeMode: 'cover', borderRadius: 50 },
                 ]}
               />
             </ImageBackground>
@@ -442,7 +319,7 @@ export default Home = props => {
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item, index}) => {
+          renderItem={({ item, index }) => {
             return (
               item.title != null && (
                 <Pressable

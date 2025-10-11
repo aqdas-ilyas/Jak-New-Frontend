@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Platform } from 'react-native'
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Platform, ScrollView } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
@@ -23,56 +23,13 @@ const Preferences = (props) => {
     const user = useSelector(state => state.user.user.user)
     const { LocalizedStrings } = React.useContext(LocalizationContext);
 
-    // const [checkboxes, setCheckboxes] = useState([
-    //     { id: 1, title: LocalizedStrings.Alahli_Visa_Basic, checked: true },
-    //     { id: 2, title: LocalizedStrings.Alahli_Visa_Platinum, checked: true },
-    //     { id: 3, title: LocalizedStrings.Alahli_Visa_Signature, checked: false },
-    //     { id: 4, title: LocalizedStrings.Alahli_Visa_Infinte, checked: false },
-    //     { id: 5, title: LocalizedStrings.Alahli_Mada, checked: false },
-    // ]);
-    // const employeeArray = [
-    //     { id: 1, title: LocalizedStrings.Aramco },
-    //     { id: 2, title: LocalizedStrings.STC },
-    //     { id: 3, title: LocalizedStrings.SABIC },
-    // ]
-    // const LoyaltyArray = [
-    //     { id: 1, title: LocalizedStrings.Maziah },
-    //     // { id: 2, title: LocalizedStrings.Maziah },
-    //     // { id: 3, title: LocalizedStrings.Maziah },
-    //     // { id: 4, title: LocalizedStrings.Maziah },
-    //     { id: 5, title: LocalizedStrings['Silk Bank'] },
-    //     { id: 6, title: LocalizedStrings.Amazon },
-    // ]
-
-    console.log('user: ', JSON.stringify(user))
-
     const [employeeArray, setEmployeeArray] = useState([]);
-    const [employee, setEmployer] = useState(null);
-    const [emplyeeModel, setEmployeeModel] = useState(false);
-    const [toggleCheckBox, setToggleCheckBox] = useState(false)
     const [selectedItems, setSelectedItems] = useState([]);
-
-    const [checkboxes, setCheckboxes] = useState([]);
-    const [cuntryModel, setCountryModel] = useState(false);
-
-    const [LoyaltyArray, setLoyaltyArray] = useState([]);
-    const [loyalty, setLoyalty] = useState(null);
-    const [loyaltyModel, setLoyaltyModel] = useState(false);
-
     const [modalShow, setModalShow] = useState(false)
     const [pendingModalShow, setPendingModalShow] = useState(false)
     const [confimationModalShow, setConfimationModalShow] = useState(false)
 
     const [isLoading, setIsLoading] = useState(false);
-
-    const handleCheckboxChange = (checkboxId) => {
-        const updatedCheckboxes = checkboxes.map((checkbox) =>
-            checkbox._id === checkboxId ? { ...checkbox, checked: !checkbox.checked } : checkbox
-        );
-
-        console.log(updatedCheckboxes)
-        setCheckboxes(updatedCheckboxes);
-    };
 
     // Define the effect to be executed when the screen gains focus
     useFocusEffect(
@@ -108,7 +65,6 @@ const Preferences = (props) => {
             setIsLoading(false);
             console.log('res while getCompany====>', JSON.stringify(response, "", 2));
             setEmployeeArray(response?.data?.data)
-            setEmployer(response?.data?.data[0])
 
             if (user?.employer.length > 0) {
                 for (let index = 0; index < user?.employer.length; index++) {
@@ -123,8 +79,6 @@ const Preferences = (props) => {
                     });
                 }
             }
-            // getCard(response?.data?.data[0])
-            // getLoyaltyPrograms(response?.data?.data[0])
         };
 
         const onError = error => {
@@ -140,59 +94,8 @@ const Preferences = (props) => {
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     }
 
-    const getCard = (obj) => {
-        const onSuccess = response => {
-            setIsLoading(false);
-            console.log('res while getCard====>', response);
-            // Add a checked property with a value of false to each object
-            const dataArray = response?.data?.data
-            const dataArrayWithChecked = dataArray.length > 0 && dataArray.map((item, index) => ({ ...item, checked: index > 1 ? false : true }));
-
-            if (response?.data?.data.length > 0) {
-                setCheckboxes(dataArrayWithChecked)
-            }
-        };
-
-        const onError = error => {
-            setIsLoading(false);
-            console.log('error while getCard====>', error.message);
-        };
-
-        const method = Method.GET;
-        const endPoint = routs.getCards + `?employer=${obj?._id}`
-        const bodyParams = {}
-
-        setIsLoading(true);
-        callApi(method, endPoint, bodyParams, onSuccess, onError);
-    }
-
-    const getLoyaltyPrograms = (obj) => {
-        const onSuccess = response => {
-            setIsLoading(false);
-            console.log('res while getLoyaltyPrograms====>', response);
-            if (response?.data?.data.length > 0) {
-                setLoyaltyArray(response?.data?.data)
-                setLoyalty(response?.data?.data[0])
-            }
-        };
-
-        const onError = error => {
-            setIsLoading(false)
-            console.log('error while getLoyaltyPrograms====>', error.message);
-        };
-
-        const method = Method.GET;
-        const endPoint = routs.getLoyaltyProgram + `?employer=${obj?._id}`
-        const bodyParams = {}
-
-        setIsLoading(true);
-        callApi(method, endPoint, bodyParams, onSuccess, onError);
-    }
-
     // Create Preference API
     const createPreference = (skip) => {
-        const formattedArray = checkboxes.filter(item => item.checked).map(item => item._id);
-
         const onSuccess = response => {
             setIsLoading(false)
             console.log('res while createPreference====>', response);
@@ -241,8 +144,6 @@ const Preferences = (props) => {
         } else {
             bodyParams = {
                 "employer": selectedItems,
-                // "cards": formattedArray,
-                // "loyaltyProgram": loyalty?._id,
                 device: { id: getDeviceId(), deviceToken: "fcmToken" }
             }
         }
@@ -267,7 +168,7 @@ const Preferences = (props) => {
         const isSelected = selectedItems.includes(item._id);
         return (
             <View key={item._id}>
-                <TouchableOpacity onPress={() => handleToggle(item)} style={styles.Item}>
+                <TouchableOpacity activeOpacity={0.9} onPress={() => handleToggle(item)} style={styles.Item}>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Image source={{ uri: item.image }} style={styles.Icon} />
                         <Text style={[styles.mainDes]}>{item.name}</Text>
@@ -298,62 +199,20 @@ const Preferences = (props) => {
             // onPressRightTitle={() => createPreference('skip')}
             />
 
-            <View style={{ flex: 1 }}>
-                <View>
-                    <Text style={styles.mainTitle}>{LocalizedStrings.PreferenceDes}</Text>
-                    <FlatList
-                        data={employeeArray}
-                        keyExtractor={(item) => item.name}
-                        ListHeaderComponent={
-                            <Text style={[styles.titleStyle]}>{LocalizedStrings.select_your_bank}</Text>
-                        }
-                        showsVerticalScrollIndicator={false}
-                        renderItem={renderItem}
-                    />
-                </View>
-
-                {/* <Input
-                        editable={false}
-                        dropDownShow={emplyeeModel}
-                        dropdownArray={employeeArray}
-                        value={employee?.name}
-                        onPressValue={item => [setEmployeeModel(false), setEmployer(item)]}
-                        onPressIcon={() => setEmployeeModel(!emplyeeModel)}
-                        rightIcon={true}
-                        eyeValue={appIcons.arrowDown}
-                        touchable
-                    >
-                        {LocalizedStrings.select_your_bank}
-                    </Input> */}
-
-                {/* <Input
-                        editable={false}
-                        dropDownShow={cuntryModel}
-                        dropdownArray={checkboxes}
-                        onPressValue={item => [handleCheckboxChange(item)]}
-                        onPressIcon={() => setCountryModel(!cuntryModel)}
-                        rightIcon={true}
-                        eyeValue={appIcons.arrowDown}
-                        checkBoxes
-                        touchable
-                    >
-                        {LocalizedStrings.select_your_card}
-                    </Input> */}
-
-                {/* <Input
-                        editable={false}
-                        dropDownShow={loyaltyModel}
-                        dropdownArray={LoyaltyArray}
-                        value={loyalty?.name}
-                        onPressValue={item => [setLoyaltyModel(false), setLoyalty(item)]}
-                        onPressIcon={() => setLoyaltyModel(!loyaltyModel)}
-                        rightIcon={true}
-                        eyeValue={appIcons.arrowDown}
-                        touchable
-                    >
-                        {LocalizedStrings.select_loyalty_program}
-                    </Input> */}
-            </View>
+            <ScrollView style={{ flex: 1 }}>
+                <Text style={styles.mainTitle}>{LocalizedStrings.PreferenceDes}</Text>
+                <FlatList
+                    data={employeeArray}
+                    keyExtractor={(item) => item.name}
+                    ListHeaderComponent={
+                        <Text style={[styles.titleStyle, { marginBottom: wp(2) }]}>{LocalizedStrings.select_your_bank}</Text>
+                    }
+                    nestedScrollEnabled
+                    showsVerticalScrollIndicator={false}
+                    renderItem={renderItem}
+                    contentContainerStyle={{ paddingBottom: wp(5) }}
+                />
+            </ScrollView>
 
             <View style={[appStyles.ph20, appStyles.mb5]}>
                 <Button onPress={() => createPreference()}>{props?.route?.params?.key === 'settings' ? LocalizedStrings.save_changes : LocalizedStrings.continue}</Button>

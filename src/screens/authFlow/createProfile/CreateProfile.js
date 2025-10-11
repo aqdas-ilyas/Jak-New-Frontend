@@ -85,7 +85,7 @@ const CreateProfile = (props) => {
             await uploadImage()
         }
     }
-    
+
     const validate = () => {
         const emailValue = emailFormat.test(userEmail) || userEmail === ' ' ? true : false;
 
@@ -180,13 +180,10 @@ const CreateProfile = (props) => {
             "name": name,
             "dob": dob,
             "image": imageUri,
-            "gender": "Male", // Female,Other
+            "gender": gender,
             "location": {
                 "type": "Point",
-                coordinates: [
-                    latLng?.longitude,
-                    latLng?.latitude,
-                ],
+                coordinates: [0, 0],
                 address: country,
             },
             "device": {
@@ -210,7 +207,13 @@ const CreateProfile = (props) => {
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Loader loading={isLoading} />
-            <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings['Build Profile']} rightTitle={LocalizedStrings.skip} onPressRightTitle={() => props.navigation.navigate(routes.preferences)} />
+            <Header
+                leftIcon
+                onleftIconPress={() => props.navigation.goBack()}
+                title={LocalizedStrings['Build Profile']}
+            // rightTitle={LocalizedStrings.skip}
+            // onPressRightTitle={() => props.navigation.navigate(routes.preferences)}
+            />
             <ScrollView keyboardShouldPersistTaps={"always"} bounces={false} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
                 <View style={{ marginVertical: wp(5) }}>
                     <View style={styles.imageTopView}>
@@ -289,56 +292,13 @@ const CreateProfile = (props) => {
                             rightIcon
                             eyeValue={appIcons.location}
                             rightIconColor={colors.primaryColor}
-                            hideInput
+                            value={country}
+                            onChangeText={(text) => setCountry(text)}
                         >
                             {LocalizedStrings.Location}
                         </Input>
 
-                        <View>
-                            <GooglePlacesAutocomplete
-                                ref={placesAutocompleteRef}
-                                styles={{
-                                    textInput: {
-                                        flex: 2,
-                                        fontFamily: fontFamily.UrbanistMedium,
-                                        fontSize: hp(1.6),
-                                        color: colors.BlackSecondary,
-                                        backgroundColor: '#FAFAFA',
-                                    },
-                                    textInputContainer: {
-                                        width: '98%',
-                                        backgroundColor: '#FAFAFA',
-                                        borderRadius: 10,
-                                    },
-                                    description: {
-                                        fontFamily: fontFamily.UrbanistMedium,
-                                        color: colors.BlackSecondary,
-                                    },
-                                    predefinedPlacesDescription: {
-                                        color: colors.BlackSecondary,
-                                    },
-                                    row: {
-                                        color: colors.BlackSecondary,
-                                        backgroundColor: '#FAFAFA',
-                                    },
-                                }}
-                                placeholder='Country'
-                                textInputProps={{
-                                    placeholderTextColor: colors.placeholderColor,
-                                    returnKeyType: "search",
-                                }}
-                                returnKeyType={'search'}
-                                enablePoweredByContainer={false}
-                                autoFocus={false}
-                                listViewDisplayed="false"
-                                fetchDetails={true}
-                                onPress={handlePlacePress}
-                                query={{
-                                    key: GOOGLE_API_KEY,
-                                    language: 'en',
-                                }}
-                            />
-                        </View>
+
                     </View>
                 </View>
 

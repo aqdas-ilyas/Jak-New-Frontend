@@ -5,6 +5,7 @@ export default {
     arabic: 'Arabic',
     save_changes: 'Save Changes',
     change_password: 'Change Password',
+    change_password_description: 'Keep your account secure by updating your password regularly. Enter your current password and choose a new strong password to continue. Make sure your new password is at least 8 characters long for better security.',
     password: 'Password',
     old_password: 'Old Password',
     new_password: 'New Password',
@@ -12,12 +13,102 @@ export default {
     terms: 'Terms of Service',
     privacy: 'Privacy Policy',
     about_us: 'About Us',
-    acceptance_of_terms: "Acceptance of Terms",
-    user_responsibility: "user Responsibility",
-    intellectual_property: "Intellectual Property",
-    subscription_services: "Subscription Services",
-    limitation_of_loability: "Limitation of Loability",
+    
+    // About Us Sections
+    about_intro: "Welcome to Jak",
+    about_intro_desc: "Jak is your ultimate companion for discovering exclusive deals, offers, and loyalty programs from your favorite stores and merchants. We're committed to helping you save money while enjoying the best shopping experience across Saudi Arabia.",
+    
+    about_mission: "Our Mission",
+    about_mission_desc: "Our mission is to connect consumers with the best retail experiences by providing a seamless platform that brings together stores, offers, and loyalty programs in one convenient app. We believe shopping should be rewarding, and every purchase should bring you value beyond the product itself.",
+    
+    about_what_we_offer: "What We Offer",
+    about_what_we_offer_desc: "Jak provides a comprehensive platform where you can explore thousands of stores, discover exclusive offers and discounts, participate in loyalty programs from major retailers, customize your shopping experience based on your employer benefits, receive real-time notifications about new deals, and easily locate stores near you with our interactive map feature.",
+    
+    about_why_jak: "Why Choose Jak?",
+    about_why_jak_desc: "We partner with leading brands and retailers to bring you verified and exclusive offers. Our platform is designed with user experience in mind, making it easy to find exactly what you're looking for. Whether you're shopping for daily essentials or special occasions, Jak helps you make smart purchasing decisions and maximize your savings.",
+    
+    about_our_values: "Our Values",
+    about_our_values_desc: "We are committed to transparency in all our dealings with users and partners. Customer satisfaction is at the heart of everything we do. We continuously innovate to improve your shopping experience. We build trust through secure handling of your personal information and reliable service delivery.",
+    
+    about_contact: "Get in Touch",
+    about_contact_desc: "Have questions or feedback? We'd love to hear from you! Reach out to us through the Contact Us section, and our dedicated support team will be happy to assist you. Thank you for choosing Jak as your shopping companion!",
+    
+    // Logout Confirmation
+    logout_confirmation: 'Logout Confirmation',
+    logout_confirmation_message: 'Are you sure you want to logout from your account?',
+    yes: 'Yes',
+    no: 'No',
+    
+    // Subscription Plan
+    subscription_plan: 'Subscription Plan',
+    subscription_plan_description: 'Choose the plan that best fits your needs and unlock exclusive benefits. Upgrade anytime to access premium features and maximize your savings with Jak.',
+    
+    // Free Plan Features
+    free_feature_1: 'Basic access to partner stores',
+    free_feature_2: 'View available offers and deals',
+    free_feature_3: 'Standard customer support',
+    free_feature_4: 'Basic store search functionality',
+    
+    // Plus Plan Features
+    plus_feature_1: 'Full access to all partner stores and merchants',
+    plus_feature_2: 'Exclusive deals and special offers',
+    plus_feature_3: 'Priority customer support',
+    plus_feature_4: 'Personalized recommendations',
+    plus_feature_5: 'Save favorite stores and offers',
+    plus_feature_6: 'Basic loyalty program benefits',
+    
+    // Premium Plan Features
+    premium_feature_1: 'Unlimited access to all partner stores',
+    premium_feature_2: 'Premium exclusive deals and VIP offers',
+    premium_feature_3: 'Dedicated 24/7 customer support',
+    premium_feature_4: 'AI-powered personalized recommendations',
+    premium_feature_5: 'Early access to new features and promotions',
+    premium_feature_6: 'Enhanced loyalty program with bonus points',
+    premium_feature_7: 'Custom notifications for preferred brands',
+    premium_feature_8: 'Advanced store filtering and search',
+    
+    // Privacy Policy Sections
+    privacy_introduction: "Introduction",
+    privacy_introduction_desc: "Welcome to Jak. We are committed to protecting your privacy and personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application. Please read this policy carefully to understand our practices regarding your personal data.",
+    
+    privacy_info_collection: "Information We Collect",
+    privacy_info_collection_desc: "We collect information that you provide directly to us, including your name, email address, phone number, employer information, and bank details for loyalty programs. We also automatically collect device information, location data, usage patterns, and preferences to enhance your experience with stores and offers in the Jak app.",
+    
+    privacy_how_we_use: "How We Use Your Information",
+    privacy_how_we_use_desc: "We use the information we collect to provide, maintain, and improve our services, including personalizing your experience with relevant stores and offers, processing your loyalty program enrollments, sending you notifications about deals and promotions, analyzing usage patterns to enhance app functionality, and ensuring the security of your account.",
+    
+    privacy_data_sharing: "Information Sharing and Disclosure",
+    privacy_data_sharing_desc: "We do not sell your personal information to third parties. We may share your information with partner stores and merchants for loyalty programs you've enrolled in, service providers who help us operate the app, and as required by law or to protect our rights. All third-party service providers are contractually obligated to keep your information secure and confidential.",
+    
+    privacy_data_security: "Data Security",
+    privacy_data_security_desc: "We implement industry-standard security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. This includes encryption, secure servers, and regular security assessments. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.",
+    
+    privacy_your_rights: "Your Rights and Choices",
+    privacy_your_rights_desc: "You have the right to access, update, or delete your personal information at any time through your account settings. You can also opt out of promotional communications, manage your location sharing preferences, and request a copy of your data. If you wish to delete your account permanently, you can do so from the app settings.",
+    
+    // Terms of Service Sections
+    terms_acceptance: "Acceptance of Terms",
+    terms_acceptance_desc: "By accessing and using the Jak mobile application, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our app. We reserve the right to modify these terms at any time, and continued use of the app constitutes acceptance of the modified terms.",
+    
+    terms_user_account: "User Account and Responsibilities",
+    terms_user_account_desc: "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You agree to provide accurate and complete information when creating your account and to update it as necessary. You must be at least 18 years old to use this app.",
+    
+    terms_app_usage: "Permitted Use of the App",
+    terms_app_usage_desc: "You may use the Jak app to discover stores, view offers, participate in loyalty programs, and access deals from our partner merchants. You agree not to use the app for any unlawful purpose, to transmit any harmful code or content, to attempt to gain unauthorized access to our systems, or to interfere with the proper functioning of the app.",
+    
+    terms_loyalty_programs: "Loyalty Programs and Offers",
+    terms_loyalty_programs_desc: "Participation in loyalty programs and access to offers are subject to the terms and conditions of each participating merchant. Jak is not responsible for the fulfillment of offers or the management of loyalty program benefits. Points, rewards, and offers may expire or be modified at the discretion of the merchant.",
+    
+    terms_intellectual_property: "Intellectual Property Rights",
+    terms_intellectual_property_desc: "All content, features, and functionality of the Jak app, including but not limited to text, graphics, logos, and software, are the exclusive property of Jak and are protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, or create derivative works without our express written permission.",
+    
+    terms_limitation: "Limitation of Liability",
+    terms_limitation_desc: "Jak is provided on an 'as is' and 'as available' basis. We make no warranties, express or implied, regarding the app's operation or the information, content, or materials included. To the fullest extent permitted by law, Jak shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the app.",
+    
+    terms_termination: "Termination",
+    terms_termination_desc: "We reserve the right to terminate or suspend your account and access to the app at any time, without prior notice, for conduct that we believe violates these Terms of Service or is harmful to other users, us, or third parties, or for any other reason at our sole discretion.",
     contact_us: 'Contact Us',
+    contact_us_description: "We're here to help! Whether you have questions about stores, offers, loyalty programs, or need assistance with your account, our support team is ready to assist you. Reach out to us through any of the channels below.",
     chat_to_us: 'Chat to us',
     phone: 'Phone',
     our_friendly_team_is_here_to_help: 'Our friendly team is here to help.',

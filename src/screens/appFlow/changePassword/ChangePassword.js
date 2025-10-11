@@ -79,7 +79,7 @@ const ChangePassword = (props) => {
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.change_password} />
             <View style={{ flex: 1 }}>
-                <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pulvinar bibendum magna Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pulvinar bibendum magna. consectetur adipiscing elit. Maecenas pulvinar bibendum magna</Text>
+                <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>{LocalizedStrings.change_password_description}</Text>
                 <View>
                     <Input
                         placeholder={LocalizedStrings.old_password}
