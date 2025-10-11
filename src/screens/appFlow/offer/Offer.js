@@ -3,7 +3,6 @@ import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text,
 import { heightPixel, hp, routes, widthPixel, wp } from "../../../services/constants";
 import appStyles from "../../../services/utilities/appStyles";
 import { appIcons, colors, fontFamily } from "../../../services";
-import LogoHeader from "../../../components/logoHeader/LogoHeader";
 import ListItem from "../../../components/ListItem";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { LocalizationContext } from "../../../language/LocalizationContext";
@@ -12,12 +11,8 @@ import { callApi, Method } from "../../../api/apiCaller";
 import { Loader } from "../../../components/loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { saveCategoryMyOfferPageNo, saveCategoryOffers, saveForAllOffers, saveMyOffer, saveMyOfferPageNo, saveTotalCategoryMyOfferPagesCount, saveTotalMyOfferPagesCount } from "../../../store/reducers/OfferSlice";
-import { getLocationPermission } from "../../../common/HelpingFunc";
-import Geolocation from "@react-native-community/geolocation";
-import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import { showMessage } from "react-native-flash-message";
 import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
-import ActionSheet from "react-native-actions-sheet";
 import { Input } from "../../../components/input";
 
 const Tab = createMaterialTopTabNavigator();

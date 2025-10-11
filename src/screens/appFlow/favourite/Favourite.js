@@ -14,9 +14,6 @@ import { Loader } from "../../../components/loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
 import { showMessage } from "react-native-flash-message";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import Geolocation from '@react-native-community/geolocation';
-import { getLocationPermission } from "../../../common/HelpingFunc";
 import { LocalizationContext } from "../../../language/LocalizationContext";
 import { saveCategoryOffers, saveForAllOffers, saveMyOffer } from "../../../store/reducers/OfferSlice";
 

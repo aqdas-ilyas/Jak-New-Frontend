@@ -2,8 +2,6 @@ import { PermissionsAndroid, Platform } from 'react-native'
 import ImagePicker from "react-native-image-crop-picker";
 import S3 from 'aws-sdk/clients/s3';
 import { decode } from 'base64-arraybuffer'
-import { launchImageLibrary } from 'react-native-image-picker';
-import { showMessage } from "react-native-flash-message";
 import Geocoder from 'react-native-geocoding';
 import Geolocation from '@react-native-community/geolocation';
 var fs = require('react-native-fs');

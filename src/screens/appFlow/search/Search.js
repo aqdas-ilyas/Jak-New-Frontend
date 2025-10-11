@@ -8,7 +8,6 @@ import { Input } from "../../../components/input";
 import ListItem from "../../../components/ListItem";
 import FilterModal from "../../../components/filter";
 import { LocalizationContext } from "../../../language/LocalizationContext";
-import { getLocationPermission } from "../../../common/HelpingFunc";
 import routs from "../../../api/routs";
 import { callApi, Method } from "../../../api/apiCaller";
 import { debounce } from "lodash";

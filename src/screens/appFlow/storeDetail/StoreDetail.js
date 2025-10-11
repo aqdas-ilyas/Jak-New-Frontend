@@ -63,8 +63,6 @@ export default StoreDetailList = (props) => {
         longitudeDelta: 0.02,
     })
 
-    console.log(item)
-
     const openWhatsAppChat = (whatsApp) => {
         // Construct the deep link to open WhatsApp with the phone number
         const url = `whatsapp://send?phone=${whatsApp}`;

@@ -3,8 +3,6 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, TouchableOpacity, Dimensions, Animated, ActivityIndicator } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
 import { heightPixel, hp, routes, wp } from "../../../services/constants";
-import Geolocation from '@react-native-community/geolocation';
-import { getLocationPermission } from "../../../common/HelpingFunc";
 import { appIcons, appImages } from "../../../services/utilities/assets";
 import { Input } from '../../../components/input'
 import Header from "../../../components/header";
@@ -43,45 +41,6 @@ export default StoreDetailList = (props) => {
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
     })
-
-    useEffect(() => {
-        getMyLocation()
-    }, [IsFocused]);
-
-    const getMyLocation = async () => {
-        let permission = await getLocationPermission();
-        if (permission) {
-            Geolocation.getCurrentPosition(
-                position => {
-                    var coords = position?.coords;
-                    if (coords.latitude != undefined || coords != '') {
-                        var userLocation = {
-                            latitude: coords.latitude,
-                            longitude: coords.longitude,
-                        };
-                        setUserLocation(userLocation)
-                        setRegion({
-                            latitude: coords.latitude,
-                            longitude: coords.longitude,
-                            latitudeDelta: 0.1,
-                            longitudeDelta: 0.1,
-                        })
-
-                        mapRef?.current?.animateToRegion({
-                            latitude: coords.latitude,
-                            longitude: coords.longitude,
-                            latitudeDelta: 0.1,
-                            longitudeDelta: 0.1,
-                        }, 500);
-                    }
-                },
-                error => {
-                    console.log(error)
-                },
-                { enableHighAccuracy: false, timeout: 20000, maximumAge: 3600000 },
-            );
-        }
-    }
 
     const getMoreOffers = async (str) => {
         const onSuccess = async (response) => {
