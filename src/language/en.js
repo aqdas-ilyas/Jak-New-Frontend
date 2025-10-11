@@ -10,9 +10,11 @@ export default {
     old_password: 'Old Password',
     new_password: 'New Password',
     confirm_new_password: 'Confirm New Password',
-    terms: 'Terms of Service',
+    terms: 'Terms & Conditions',
+    terms_of_service: 'Terms of Service',
     privacy: 'Privacy Policy',
     about_us: 'About Us',
+    terms_and_privacy: 'Terms & Privacy',
     
     // About Us Sections
     about_intro: "Welcome to Jak",
@@ -66,6 +68,51 @@ export default {
     premium_feature_6: 'Enhanced loyalty program with bonus points',
     premium_feature_7: 'Custom notifications for preferred brands',
     premium_feature_8: 'Advanced store filtering and search',
+    
+    // Terms & Conditions Content
+    terms_title: "Terms and Conditions",
+    terms_welcome: "Welcome to Jak App!",
+    terms_intro: "These terms and conditions outline the rules and regulations for the use of Jak digital marketing's Website, located at https://jak.sa.\n\nBy accessing this website, we assume you accept these terms and conditions. Do not continue to use Jak App if you do not agree to take all of the terms and conditions stated on this page.",
+    
+    terms_cookies_title: "Cookies",
+    terms_cookies_content: "The website uses cookies to help personalize your online experience. By accessing Jak App, you agreed to use the required cookies.\n\nA cookie is a text file that is placed on your hard disk by a web page server. Cookies cannot be used to run programs or deliver viruses to your computer. Cookies are uniquely assigned to you and can only be read by a web server in the domain that issued the cookie to you.\n\nWe may use cookies to collect, store, and track information for statistical or marketing purposes to operate our website. You have the ability to accept or decline optional Cookies. There are some required Cookies that are necessary for the operation of our website. These cookies do not require your consent as they always work. Please keep in mind that by accepting required Cookies, you also accept third-party Cookies, which might be used via third-party provided services if you use such services on our website, for example, a video display window provided by third parties and integrated into our website.",
+    
+    terms_license_title: "License",
+    terms_license_content: "Unless otherwise stated, Jak digital marketing and/or its licensors own the intellectual property rights for all material on Jak App. All intellectual property rights are reserved. You may access this from Jak App for your own personal use subjected to restrictions set in these terms and conditions.\n\nYou must not:\n• Copy or republish material from Jak App\n• Sell, rent, or sub-license material from Jak App\n• Reproduce, duplicate or copy material from Jak App\n• Redistribute content from Jak App\n\nThis Agreement shall begin on the date hereof.",
+    
+    terms_content_liability_title: "Content Liability",
+    terms_content_liability_content: "We shall not be held responsible for any content that appears on your Website. You agree to protect and defend us against all claims that are raised on your Website. No link(s) should appear on any Website that may be interpreted as libelous, obscene, or criminal, or which infringes, otherwise violates, or advocates the infringement or other violation of, any third party rights.",
+    
+    terms_reservation_title: "Reservation of Rights",
+    terms_reservation_content: "We reserve the right to request that you remove all links or any particular link to our Website. You approve to immediately remove all links to our Website upon request. We also reserve the right to amend these terms and conditions and its linking policy at any time. By continuously linking to our Website, you agree to be bound to and follow these linking terms and conditions.",
+    
+    terms_disclaimer_title: "Disclaimer",
+    terms_disclaimer_content: "To the maximum extent permitted by applicable law, we exclude all representations, warranties, and conditions relating to our website and the use of this website. Nothing in this disclaimer will:\n\n• Limit or exclude our or your liability for death or personal injury\n• Limit or exclude our or your liability for fraud or fraudulent misrepresentation\n• Limit any of our or your liabilities in any way that is not permitted under applicable law\n• Exclude any of our or your liabilities that may not be excluded under applicable law\n\nThe limitations and prohibitions of liability set in this Section and elsewhere in this disclaimer: (a) are subject to the preceding paragraph; and (b) govern all liabilities arising under the disclaimer, including liabilities arising in contract, in tort, and for breach of statutory duty.\n\nAs long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.",
+    
+    // Privacy Policy Content
+    privacy_title: "Privacy Policy",
+    privacy_intro: "Jak App & website is owned by Jak digital marketing (a sole proprietorship), which is a data controller of your personal data.\n\nWe have adopted this Privacy Policy, which determines how we are processing the information collected by Jak App, which also provides the reasons why we must collect certain personal data about you. Therefore, you must read this Privacy Policy before using Jak App website.\n\nWe take care of your personal data and undertake to guarantee its confidentiality and security.",
+    
+    privacy_personal_info_title: "Personal Information We Collect",
+    privacy_personal_info_content: "When you visit the Jak App, we automatically collect certain information about your device, including information about your web browser, IP address, time zone, and some of the installed cookies on your device. Additionally, as you browse the Site, we collect information about the individual web pages or products you view, what websites or search terms referred you to the Site, and how you interact with the Site. We refer to this automatically-collected information as \"Device Information.\" Moreover, we might collect the personal data you provide to us (including but not limited to Name, Surname, Address, payment information, etc.) during registration to be able to fulfill the agreement.",
+    
+    privacy_why_process_title: "Why Do We Process Your Data?",
+    privacy_why_process_content: "Our top priority is customer data security, and, as such, we may process only minimal user data, only as much as it is absolutely necessary to maintain the website. Information collected automatically is used only to identify potential cases of abuse and establish statistical information regarding website usage. This statistical information is not otherwise aggregated in such a way that it would identify any particular user of the system.\n\nYou can visit the website without telling us who you are or revealing any information, by which someone could identify you as a specific, identifiable individual. If, however, you wish to use some of the website's features, or you wish to receive our newsletter or provide other details by filling a form, you may provide personal data to us, such as your email, first name, last name, city of residence, organization, telephone number. You can choose not to provide us with your personal data, but then you may not be able to take advantage of some of the website's features. Users who are uncertain about what information is mandatory are welcome to contact us via admin@jak-app.com.",
+    
+    privacy_your_rights_title: "Your Rights",
+    privacy_your_rights_content: "If you are a European resident, you have the following rights related to your personal data:\n\n• The right to be informed\n• The right of access\n• The right to rectification\n• The right to erasure\n• The right to restrict processing\n• The right to data portability\n• The right to object\n• Rights in relation to automated decision-making and profiling\n\nIf you would like to exercise this right, please contact us through the contact information below.\n\nAdditionally, if you are a European resident, we note that we are processing your information in order to fulfill contracts we might have with you (for example, if you make an order through the Site), or otherwise to pursue our legitimate business interests listed above. Additionally, please note that your information might be transferred outside of Europe, including Canada and the United States.",
+    
+    privacy_links_title: "Links to Other Websites",
+    privacy_links_content: "Our website may contain links to other websites that are not owned or controlled by us. Please be aware that we are not responsible for such other websites or third parties' privacy practices. We encourage you to be aware when you leave our website and read the privacy statements of each website that may collect personal information.",
+    
+    privacy_security_title: "Information Security",
+    privacy_security_content: "We secure information you provide on computer servers in a controlled, secure environment, protected from unauthorized access, use, or disclosure. We keep reasonable administrative, technical, and physical safeguards to protect against unauthorized access, use, modification, and personal data disclosure in its control and custody. However, no data transmission over the Internet or wireless network can be guaranteed.",
+    
+    privacy_legal_title: "Legal Disclosure",
+    privacy_legal_content: "We will disclose any information we collect, use or receive if required or permitted by law, such as to comply with a subpoena or similar legal process, and when we believe in good faith that disclosure is necessary to protect our rights, protect your safety or the safety of others, investigate fraud, or respond to a government request.",
+    
+    privacy_contact_title: "Contact Information",
+    privacy_contact_content: "If you would like to contact us to understand more about this Policy or wish to contact us concerning any matter relating to individual rights and your Personal Information, you may send an email to admin@jak-app.com.",
     
     // Privacy Policy Sections
     privacy_introduction: "Introduction",

@@ -86,7 +86,7 @@ export default Setting = props => {
     },
     {
       id: 7,
-      name: `${LocalizedStrings.terms} & ${LocalizedStrings.privacy}`,
+      name: LocalizedStrings.terms_and_privacy,
       onpress: () => props.navigation.navigate(routes.terms),
     },
     {

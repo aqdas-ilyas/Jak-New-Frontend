@@ -6,7 +6,6 @@ import Button from '../button'
 import { LocalizationContext } from '../../language/LocalizationContext'
 
 const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
-const GEOCODING_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 const getCoordinates = async (address) => {
     try {

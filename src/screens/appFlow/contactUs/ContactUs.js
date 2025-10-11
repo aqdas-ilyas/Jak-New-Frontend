@@ -6,10 +6,10 @@ import Header from '../../../components/header'
 import { LocalizationContext } from '../../../language/LocalizationContext'
 
 const socialButton = [
-    // { id: 1, img: appIcons.facebookContact },
-    { id: 2, img: appIcons.twitterContact },
-    // { id: 3, img: appIcons.linkedinContact },
-    { id: 4, img: appIcons.webContact },
+    // { id: 1, img: appIcons.facebookContact, url: 'https://facebook.com' },
+    { id: 2, img: appIcons.twitterContact, url: 'https://twitter.com' },
+    // { id: 3, img: appIcons.linkedinContact, url: 'https://linkedin.com' },
+    { id: 4, img: appIcons.webContact, url: 'https://jak.sa' },
 ]
 
 const ContactUs = (props) => {
@@ -42,6 +42,16 @@ const ContactUs = (props) => {
         Linking.openURL(mailtoURL).catch((err) => console.error('Error opening email app', err));
     };
 
+    const handleSocialPress = (url) => {
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                console.log("Cannot open URL:", url);
+            }
+        }).catch(err => console.error('Error opening URL', err));
+    };
+
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.contact_us} />
@@ -72,9 +82,14 @@ const ContactUs = (props) => {
             <View style={[appStyles.ph20, styles.socialContainer]}>
                 <View style={styles.socialButtonsRow}>
                     {socialButton.map((item, index) => (
-                        <View key={index} style={{ margin: wp(2) }}>
+                        <TouchableOpacity 
+                            key={index} 
+                            style={{ margin: wp(2) }}
+                            activeOpacity={0.7}
+                            onPress={() => handleSocialPress(item.url)}
+                        >
                             <Image source={item.img} style={styles.ContactImageStyle} />
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </View>
             </View>
