@@ -35,7 +35,6 @@
 		1C5EE71158924D4BB7C991F1 /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 099EC63D0F69424A874003E8 /* Montserrat-SemiBold.ttf */; };
 		1F7C44F675414F85A08200B7 /* Montserrat-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C8EF528CA6874E2DBDFF8DB2 /* Montserrat-ExtraBold.ttf */; };
 		2CE133379CA543A48BB926F4 /* Urbanist-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 62BB163B3AA74A07901D8918 /* Urbanist-Light.ttf */; };
-		2F1DB0872C72930800312BE4 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F1DB0862C72930800312BE4 /* StoreKit.framework */; };
 		3565BD1B95AB417E848C267D /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BD226E1C947949568560F5BC /* Montserrat-Thin.ttf */; };
 		428FA8268DD94F2DA6A9DBA1 /* Urbanist-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 345AE4CB395E4F73B7178174 /* Urbanist-ExtraLightItalic.ttf */; };
 		46FC93683D9D423EA3D872F1 /* Urbanist-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D2643408855D424A9F1AAAA8 /* Urbanist-ExtraLight.ttf */; };
@@ -106,7 +105,6 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = jak/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-jak-jakTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jak-jakTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D92529E48FC44AAAFF694B5 /* Urbanist-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-ExtraBold.ttf"; path = "../src/assets/fonts/Urbanist-ExtraBold.ttf"; sourceTree = "<group>"; };
-		2F1DB0862C72930800312BE4 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		31E924E336BA467B80459615 /* Montserrat-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-ExtraLightItalic.ttf"; path = "../src/assets/fonts/Montserrat-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		3346C186A1B14E0B83C7CFEC /* Montserrat-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Light.ttf"; path = "../src/assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; };
 		33E20B84C0A647EEBB04CEB0 /* Urbanist-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-BlackItalic.ttf"; path = "../src/assets/fonts/Urbanist-BlackItalic.ttf"; sourceTree = "<group>"; };
@@ -162,7 +160,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-jak.a in Frameworks */,
-				2F1DB0872C72930800312BE4 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +264,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2F1DB0862C72930800312BE4 /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-jak.a */,
 				19F6CBCC0A4E27FBF8BF4A61 /* libPods-jak-jakTests.a */,
@@ -821,10 +817,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -892,10 +885,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

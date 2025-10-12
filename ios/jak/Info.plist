@@ -47,11 +47,11 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>Enabling Face ID allows you quick and secure access to your account.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string></string>
+	<string>$(PRODUCT_NAME) needs access to your location to show Offers</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string></string>
+	<string>$(PRODUCT_NAME) needs access to your location to show Offers</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>$(PRODUCT_NAME) wants to access your device location to track your live location updates, even when the app is closed or not in use</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Jak requests to access photos as user can change his profile pic in the app.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
