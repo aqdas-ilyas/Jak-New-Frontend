@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, emailFormat } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
@@ -16,7 +16,7 @@ import CountryInput from '../../../components/countryPicker/CountryPicker'
 import { isPossibleNumber } from 'libphonenumber-js'
 
 const ForgetPassword = (props) => {
-    const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const { appLanguage, LocalizedStrings } = useContext(LocalizationContext);
     const [email, setEmail] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -61,6 +61,7 @@ const ForgetPassword = (props) => {
             const method = Method.POST;
             const endPoint = routs.forgetPassword
             const bodyParams = {
+                language: appLanguage == 'en' ? 'english' : 'arabic',
                 number: `${countryCode + phoneNumber}`,
             }
 

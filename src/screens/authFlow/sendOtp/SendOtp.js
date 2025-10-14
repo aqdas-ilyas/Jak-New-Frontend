@@ -18,10 +18,8 @@ import { updateUser, setToken } from '../../../store/reducers/userDataSlice'
 
 const SendOtp = (props) => {
     const { number, email, key } = props?.route?.params ?? {}
-
     const dispatch = useDispatch()
-    const { LocalizedStrings } = React.useContext(LocalizationContext);
-
+    const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
     const [otpValue, setOtpValue] = useState('')
     const [seconds, setCountDown] = useState(60);
     const [isLoading, setIsLoading] = useState(false)
@@ -114,7 +112,7 @@ const SendOtp = (props) => {
         }
 
         if (number) {
-            bodyParams = { ...bodyParams, number: number };
+            bodyParams = { ...bodyParams, number: number, language: appLanguage == 'en' ? 'english' : 'arabic', };
         }
 
         setIsLoading(true)

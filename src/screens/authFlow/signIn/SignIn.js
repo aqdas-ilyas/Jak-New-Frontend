@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -53,8 +53,7 @@ import { isPossibleNumber } from 'libphonenumber-js';
 
 const SignIn = props => {
   const dispatch = useDispatch();
-  const { appLanguage, LocalizedStrings, setAppLanguage } =
-    React.useContext(LocalizationContext);
+  const { appLanguage, LocalizedStrings, setAppLanguage } = useContext(LocalizationContext);
 
   const [email, setEmail] = useState('');
   const [Phone, setPhone] = useState('');
@@ -196,6 +195,7 @@ const SignIn = props => {
       const bodyParams = {
         number: `${countryCode + phoneNumber}`,
         password: password,
+        language: appLanguage == 'en' ? 'english' : 'arabic',
         device: { id: getDeviceId(), deviceToken: 'fcmToken' },
       };
 

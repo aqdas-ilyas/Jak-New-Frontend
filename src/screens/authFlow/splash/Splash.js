@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Image, ImageBackground, StyleSheet, Text, View, ActivityIndicator } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
@@ -8,28 +8,34 @@ import { fontFamily } from '../../../services'
 import { hp, routes, wp } from '../../../services/constants'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import { colors } from '../../../services/utilities/colors'
-import { saveLoginRemember, updateUser } from '../../../store/reducers/userDataSlice'
+import { logout, saveLoginRemember, updateUser } from '../../../store/reducers/userDataSlice'
 import { saveMyOffer, saveMyOfferPageNo, saveTotalMyOfferPagesCount } from '../../../store/reducers/OfferSlice'
 
 export default function Splash(props) {
     const dispatch = useDispatch()
     const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const [isLoading, setIsLoading] = useState(true);
+    const [apiCompleted, setApiCompleted] = useState(false);
+    
     const islogin = useSelector(state => state?.user?.isRemember)
     const numberLogin = useSelector(state => state?.user?.numberLogin)
     const splash = useSelector(state => state?.user?.splash)
     const user = useSelector(state => state?.user?.user?.user)
 
-    console.log("*********** Remeber Me *************", islogin)
+    console.log("*********** Remember Me *************", islogin)
     console.log("*********** Checking User *************", user)
 
     const getUserProfile = () => {
         const onSuccess = response => {
             console.log('res while getUserProfile====>', response);
             dispatch(updateUser(response))
+            setApiCompleted(true);
         };
 
         const onError = error => {
             console.log('error while getUserProfile====>', error);
+            dispatch(logout())
+            setApiCompleted(true);
         };
 
         const method = Method.GET;
@@ -39,64 +45,106 @@ export default function Splash(props) {
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     }
 
+    const navigateBasedOnUserState = (currentUser) => {
+        console.log("*********** Navigating based on user state *************", currentUser);
+        
+        if (islogin) {
+            if (currentUser) {
+                if (!currentUser.isBlocked) {
+                    if (!currentUser.isComplete) {
+                        // User profile not complete
+                        if (numberLogin) {
+                            props?.navigation?.replace(routes.createProfile, { number: 'number' });
+                        } else {
+                            props?.navigation?.replace(routes.createProfile, { email: 'email' });
+                        }
+                    } else if (!currentUser.isPreferencesSet) {
+                        // User preferences not set
+                        if (!currentUser.isPreferencesSkipped) {
+                            props?.navigation?.replace(routes.preferences);
+                        } else if (!currentUser.isAdminApproved) {
+                            props?.navigation?.replace(routes.preferences);
+                        } else if (currentUser.subscriptionPlan == "not-subscribed") {
+                            props?.navigation?.replace(routes.subscription);
+                        } else {
+                            props.navigation.replace(routes.tab, { screen: routes.home })
+                        }
+                    } else if (!currentUser.isAdminApproved) {
+                        // User not approved by admin
+                        props?.navigation?.replace(routes.preferences);
+                    } else if (currentUser.subscriptionPlan == "not-subscribed") {
+                        // User not subscribed
+                        props?.navigation?.replace(routes.subscription);
+                    } else {
+                        // User is complete and approved - go to home
+                        props.navigation.replace(routes.tab, { screen: routes.home })
+                    }
+                } else {
+                    // User is blocked
+                    props?.navigation?.replace(routes.login);
+                }
+            } else {
+                // No user data - go to login
+                props?.navigation?.replace(routes.login);
+            }
+        } else {
+            // Not logged in
+            if (splash) {
+                props.navigation.replace(routes.welcome)
+            } else {
+                props.navigation.replace(routes.onboard)
+            }
+        }
+    }
+
     useEffect(() => {
         dispatch(saveMyOffer(null));
         dispatch(saveTotalMyOfferPagesCount(1));
         dispatch(saveMyOfferPageNo(1));
 
-        // dispatch(saveLoginRemember(false))
-        // dispatch(updateUser({}))
+        // If user is logged in, get fresh profile data
+        if (islogin && user) {
+            console.log("*********** Getting fresh user profile *************");
+            getUserProfile();
+        } else {
+            setApiCompleted(true);
+        }
 
-        user && getUserProfile()
+        // Minimum splash time
+        const minSplashTime = setTimeout(() => {
+            setIsLoading(false);
+        }, 1500);
 
-        setTimeout(() => {
-            if (islogin) {
-                if (user) {
-                    if (!user.isBlocked) {
-                        if (!user.isComplete) {
-                            if (numberLogin) {
-                                props?.navigation?.replace(routes.createProfile, { number: 'number' });
-                            } else {
-                                props?.navigation?.replace(routes.createProfile, { email: 'email' });
-                            }
-                        } else if (!user.isPreferencesSet) {
-                            if (!user.isPreferencesSkipped) {
-                                props?.navigation?.replace(routes.preferences);
-                            } else if (!user.isAdminApproved) {
-                                props?.navigation?.replace(routes.preferences);
-                            } else if (user.subscriptionPlan == "not-subscribed") {
-                                props?.navigation?.replace(routes.subscription);
-                            } else {
-                                props.navigation.replace(routes.tab, { screen: routes.home })
-                            }
-                        }
-                        //  else if (!user.isAdminApproved) {
-                        //     props?.navigation?.navigate(routes.preferences);
-                        // } 
-                        else if (user.subscriptionPlan == "not-subscribed") {
-                            props?.navigation?.replace(routes.subscription);
-                        } else {
-                            props.navigation.replace(routes.tab, { screen: routes.home })
-                        }
-                    } else {
-                        props?.navigation?.replace(routes.login);
-                    }
-                } else {
-                    props?.navigation?.replace(routes.login);
-                }
-            } else {
-                if (splash) {
-                    props.navigation.replace(routes.welcome)
-                } else {
-                    props.navigation.replace(routes.onboard)
-                }
-            }
-        }, 2000);
+        return () => clearTimeout(minSplashTime);
     }, [])
+
+    // Handle navigation after API completion and minimum splash time
+    useEffect(() => {
+        if (!isLoading && apiCompleted) {
+            console.log("*********** Starting navigation *************");
+            
+            // Small delay to ensure smooth transition and Redux state update
+            setTimeout(() => {
+                // Get fresh user data from Redux after API call
+                const currentUser = user;
+                console.log("*********** Current user for navigation *************", currentUser);
+                navigateBasedOnUserState(currentUser);
+            }, 500);
+        }
+    }, [isLoading, apiCompleted, user])
 
     return (
         <ImageBackground source={appImages.splashBackground} style={styles.backgroundImage}>
             <Image source={appIcons.appLogo} style={styles.imageLogo} />
+            
+            {/* Loading indicator */}
+            {/* {(isLoading || !apiCompleted) && (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={colors.primaryColor} />
+                    <Text style={styles.loadingText}>{LocalizedStrings.loading || 'Loading...'}</Text>
+                </View>
+            )} */}
+            
             <View style={styles.bottomContainer}>
                 <Text style={styles.welcomeText}>{LocalizedStrings['Welcome to']}</Text>
                 <Text style={styles.logoText}>{LocalizedStrings['Jak App']}</Text>
@@ -115,6 +163,19 @@ const styles = StyleSheet.create({
     imageLogo: {
         width: wp(60),
         height: hp(20)
+    },
+    loadingContainer: {
+        position: "absolute",
+        top: hp(45),
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    loadingText: {
+        fontSize: hp(1.8),
+        fontFamily: fontFamily.UrbanistMedium,
+        color: colors.fullWhite,
+        marginTop: wp(3),
+        textAlign: "center"
     },
     bottomContainer: {
         padding: wp(5),

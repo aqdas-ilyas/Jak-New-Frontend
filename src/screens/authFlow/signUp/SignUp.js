@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -19,36 +19,37 @@ import {
   emailFormat,
   passwordFormat,
 } from '../../../services';
-import {appIcons, appImages} from '../../../services/utilities/assets';
+import { appIcons, appImages } from '../../../services/utilities/assets';
 import appStyles from '../../../services/utilities/appStyles';
 import Button from '../../../components/button';
 import Header from '../../../components/header';
-import {Input} from '../../../components/input';
+import { Input } from '../../../components/input';
 import CheckBox from '@react-native-community/checkbox';
-import {LocalizationContext} from '../../../language/LocalizationContext';
-import {showMessage} from 'react-native-flash-message';
+import { LocalizationContext } from '../../../language/LocalizationContext';
+import { showMessage } from 'react-native-flash-message';
 import routs from '../../../api/routs';
-import {callApi, Method} from '../../../api/apiCaller';
-import {getDeviceId} from 'react-native-device-info';
-import {Loader} from '../../../components/loader/Loader';
-import {useDispatch} from 'react-redux';
+import { callApi, Method } from '../../../api/apiCaller';
+import { getDeviceId } from 'react-native-device-info';
+import { Loader } from '../../../components/loader/Loader';
+import { useDispatch } from 'react-redux';
 import {
   saveLoginRemember,
   saveNumberLogin,
   setToken,
   updateUser,
 } from '../../../store/reducers/userDataSlice';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import {
   googleLoginData,
   _fetchCountryAbbrevicationCode,
 } from '../../../services/helpingMethods';
 import CountryInput from '../../../components/countryPicker/CountryPicker';
-import {isPossibleNumber} from 'libphonenumber-js';
+import { isPossibleNumber } from 'libphonenumber-js';
 
 const SignUp = props => {
   const dispatch = useDispatch();
-  const {LocalizedStrings} = React.useContext(LocalizationContext);
+  const { appLanguage, LocalizedStrings } = useContext(LocalizationContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
@@ -86,12 +87,12 @@ const SignUp = props => {
 
     // if (!emailValue) {
     if (!isPossibleNumber(`+${countryCode}` + phoneNumber)) {
-      showMessage({message: 'Invalid Phone Number', type: 'danger'});
+      showMessage({ message: 'Invalid Phone Number', type: 'danger' });
       return false;
     }
 
     if (password.length < 4) {
-      showMessage({message: 'Please enter a strong password', type: 'danger'});
+      showMessage({ message: 'Please enter a strong password', type: 'danger' });
       return false;
     }
     // if (!passValue) {
@@ -100,7 +101,7 @@ const SignUp = props => {
     // }
 
     if (password !== confirmPassword) {
-      showMessage({message: 'Your Password is not Matched!', type: 'danger'});
+      showMessage({ message: 'Your Password is not Matched!', type: 'danger' });
       return false;
     }
     return true;
@@ -110,7 +111,7 @@ const SignUp = props => {
       const onSuccess = response => {
         setIsLoading(false);
         console.log('res while signup====>', response);
-        showMessage({message: response?.message, type: 'success'});
+        showMessage({ message: response?.message, type: 'success' });
 
         dispatch(saveNumberLogin(true));
 
@@ -126,7 +127,7 @@ const SignUp = props => {
       const onError = error => {
         setIsLoading(false);
         console.log('error while signup====>', error);
-        showMessage({message: error?.message, type: 'danger'});
+        showMessage({ message: error?.message, type: 'danger' });
       };
 
       const endPoint = routs.signUp;
@@ -134,7 +135,8 @@ const SignUp = props => {
       const bodyParams = {
         number: `${countryCode + phoneNumber}`,
         password: password,
-        device: {id: getDeviceId(), deviceToken: 'fcmToken'},
+        language: appLanguage == 'en' ? 'english' : 'arabic',
+        device: { id: getDeviceId(), deviceToken: 'fcmToken' },
       };
 
       console.log('SignUpAfterValidation:- ', bodyParams);
@@ -166,7 +168,7 @@ const SignUp = props => {
     const onSuccess = response => {
       setIsLoading(false);
       console.log('res while handleSociallogin====>', response);
-      showMessage({message: response?.message, type: 'success'});
+      showMessage({ message: response?.message, type: 'success' });
       dispatch(updateUser(response?.data));
       dispatch(
         setToken({
@@ -177,7 +179,7 @@ const SignUp = props => {
       dispatch(saveLoginRemember(true));
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, {screen: routes.home});
+        props.navigation.navigate(routes.tab, { screen: routes.home });
       } else if (response?.act === 'email-unverified') {
         props.navigation.navigate(routes.otp, {
           email: user?.email.toLowerCase(),
@@ -192,7 +194,7 @@ const SignUp = props => {
           props?.navigation?.navigate(routes.preferences);
         } else {
           if (response?.act == 'admin-pending') {
-            props.navigation.navigate(routes.tab, {screen: routes.home});
+            props.navigation.navigate(routes.tab, { screen: routes.home });
 
             // props?.navigation?.navigate(routes.preferences);
             // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
@@ -205,19 +207,19 @@ const SignUp = props => {
           }
         }
       } else if (response?.act == 'admin-pending') {
-        props.navigation.navigate(routes.tab, {screen: routes.home});
+        props.navigation.navigate(routes.tab, { screen: routes.home });
         // props?.navigation?.navigate(routes.preferences);
         // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
       } else if (response?.act == 'incomplete-subscription') {
         props?.navigation?.navigate(routes.subscription);
-        showMessage({message: 'You are not subscribed yet!', type: 'danger'});
+        showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
       }
     };
 
     const onError = error => {
       setIsLoading(false);
       console.log('error while handleSociallogin====>', error);
-      showMessage({message: error?.message, type: 'danger'});
+      showMessage({ message: error?.message, type: 'danger' });
 
       if (error?.errorType == 'email-not-verify') {
         props.navigation.navigate(routes.otp, {
@@ -231,7 +233,7 @@ const SignUp = props => {
     const method = Method.POST;
     const bodyParams = {
       email: user?.email.toLowerCase(),
-      device: {id: getDeviceId(), deviceToken: 'fcmToken'},
+      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
     };
 
     setIsLoading(true);
@@ -239,13 +241,13 @@ const SignUp = props => {
   };
 
   return (
-    <SafeAreaView style={[appStyles.safeContainer, {margin: wp(4)}]}>
+    <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
       <Header leftIcon onleftIconPress={() => props.navigation.goBack()} />
       <ScrollView
         keyboardShouldPersistTaps={'always'}
         bounces={false}
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}>
         <Text style={styles.mainTitle}>
           {LocalizedStrings['Create Your Account']}
@@ -310,7 +312,7 @@ const SignUp = props => {
         <View
           style={[
             appStyles.rowCenter,
-            {marginTop: wp(10), marginBottom: wp(5)},
+            { marginTop: wp(10), marginBottom: wp(5) },
           ]}>
           <View style={styles.line} />
           <Text style={styles.orTextStyle}>
