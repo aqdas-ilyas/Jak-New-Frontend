@@ -16,7 +16,7 @@ const ContactUs = (props) => {
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const contactUsList = [
         { id: 1, mainTitle: LocalizedStrings.chat_to_us, desc: LocalizedStrings.our_friendly_team_is_here_to_help, email: 'Admin@jak-app.com', img: appIcons.chatToUs },
-        // { id: 2, mainTitle: LocalizedStrings.phone, desc: LocalizedStrings.lorem_ipsum_dolor_sit_amet, email: '+966570578852', img: appIcons.phoneToUs },
+        { id: 2, mainTitle: LocalizedStrings.phone, desc: LocalizedStrings.lorem_ipsum_dolor_sit_amet, email: '+966570578852', img: appIcons.phoneToUs },
     ]
 
     const openWhatsAppChat = (whatsApp) => {

@@ -159,7 +159,7 @@ export default {
   chat_to_us: 'الدردشة معنا',
   phone: 'هاتف',
   our_friendly_team_is_here_to_help: 'فريقنا الودود هنا للمساعدة.',
-  lorem_ipsum_dolor_sit_amet: 'أبجد هوز دولور الجلوس امات.',
+  lorem_ipsum_dolor_sit_amet: 'فريق دعم العملاء متاح على مدار الساعة لمساعدتك.',
   delete_account: 'حذف الحساب',
   delete_your_account_will: 'سيؤدي حذف حسابك إلى',
   deleteDes1:
@@ -227,7 +227,7 @@ export default {
   manage: 'يدير',
   cancel_subscription: 'إلغاء الاشتراك',
   'Jak Mobile App Premium': 'تطبيق جاك موبايل مجاني',
-  'Lorem ipsum dolor set amet consectetur': 'سيتم متابعة فريق خدمة العملاء',
+  'Lorem ipsum dolor set amet consectetur': 'سيتم متابعة فريق خدمة العملاء معك',
   '/ month': 'دولارًا شهريًا',
   cancel_subscription_desc1: 'سينتهي اشتراكك في',
   'Renew your subscription': 'جدد اشتراكك',
@@ -252,15 +252,20 @@ export default {
   'Expiry Date': 'تاريخ الانتهاء',
   'Subscription Purchased Successfully!': 'تم شراء الاشتراك بنجاح!',
   'Cancel Subscription Successfully!': 'تم إلغاء الاشتراك بنجاح!',
-  modalDes:
-    'من المهم جدًا أن يكون العميل على دراية باحتياجات العميل، لكن هذا النوع من الأشياء يحدث في نفس الوقت.',
-  'Integer non placerat justo.': 'إنتيجر نون بلاثيرات جوستو.',
-  'Fusce sollicitudin venenatis ex, sed':
-    'فوسكي سوليسيتودين فينيناتيس إكس، سيد',
-  'lorem ipsum dolor set amet': 'لوريم إيبسوم دولور سيت آميت',
-  'Aenean cursus sapien nec mauris': 'أنيان كورسوس سابين نيك موريس',
+  modalDes: 'تم إنشاء حسابك بنجاح. يمكنك الآن استكشاف المتاجر وعرض العروض والاستمتاع بالمزايا الحصرية من خلال تطبيقنا.',
+  'Integer non placerat justo.': 'سنقوم بمعالجة طلب الإلغاء خلال 24 ساعة.',
+  'Fusce sollicitudin venenatis ex, sed': 'ستتلقى بريدًا إلكترونيًا للتأكيد بمجرد اكتمال الإلغاء.',
+  'lorem ipsum dolor set amet': 'ستبقى مزايا اشتراكك نشطة حتى نهاية فترة الفوترة الحالية.',
+  'Aenean cursus sapien nec mauris': 'يمكنك إعادة الاشتراك في أي وقت لاستعادة الوصول إلى الميزات المميزة.',
   select_reson: 'حدد السبب',
   'The Emporium Mall': 'إمبوريوم مول',
+  
+  // Change Language Screen
+  change_language_description: 'اختر لغتك المفضلة للحصول على أفضل تجربة مع جك. يمكنك التبديل بين الإنجليزية والعربية في أي وقت.',
+  
+  // Cancel Subscription Screen
+  cancel_subscription_description: 'نحن آسفون لرؤيتك تغادر! إذا كنت متأكدًا من إلغاء اشتراكك، يرجى تحديد سبب أدناه. ستبقى مزايا اشتراكك نشطة حتى نهاية فترة الفوترة الحالية.',
+  cancel_subscription_success_message: 'تم إلغاء اشتراكك بنجاح. ستتلقى بريدًا إلكترونيًا للتأكيد قريبًا. ستظل ميزاتك المميزة متاحة حتى نهاية فترة الفوترة الحالية.',
   'Discount Offer': 'عرض الخصم',
   'km away': 'على بعد كم',
   Navigate: 'التنقل',

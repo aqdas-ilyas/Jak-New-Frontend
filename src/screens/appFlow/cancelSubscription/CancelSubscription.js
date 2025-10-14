@@ -114,8 +114,7 @@ const CancelSubscription = props => {
               textAlign: 'left',
             },
           ]}>
-          Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,
-          consectetur, adipisci velit, sed qu
+          {LocalizedStrings.cancel_subscription_description}
         </Text>
 
         <View>
@@ -163,7 +162,7 @@ const CancelSubscription = props => {
         modalShow={modalShow}
         setModalShow={() => setModalShow(!modalShow)}
         title={LocalizedStrings['Cancel Subscription Successfully!']}
-        subTitle="Lorem ipsum dolor sit amet, consect adipiscing elit, sed do eiusmod tempor incididunt."
+        subTitle={LocalizedStrings.cancel_subscription_success_message}
       />
     </SafeAreaView>
   );

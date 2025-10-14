@@ -224,7 +224,7 @@ const Preferences = (props) => {
                 // setModalShow={() => [setModalShow(!modalShow), setPendingModalShow(!pendingModalShow), setConfimationModalShow(!confimationModalShow)]}
                 setModalShow={() => console.log('On Back Press')}
                 title={pendingModalShow ? LocalizedStrings['Pending Approval From Admin!'] : modalShow ? LocalizedStrings.profile_created_successfully : LocalizedStrings['Congratulation Your Account has Approved!']}
-                subTitle='Lorem ipsum dolor sit amet, consect adipiscing elit, sed do eiusmod tempor incididunt.'
+                subTitle={LocalizedStrings.modalDes}
             />
         </SafeAreaView>
     )

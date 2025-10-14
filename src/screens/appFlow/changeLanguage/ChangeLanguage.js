@@ -38,7 +38,7 @@ const ChangeLanguage = (props) => {
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.change_language} />
             <View style={{ flex: 1 }}>
-                <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pulvinar bibendum magna Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pulvinar bibendum magna. consectetur adipiscing elit. Maecenas pulvinar bibendum magna</Text>
+                <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>{LocalizedStrings.change_language_description}</Text>
 
                 <View>
                     <FlatList
