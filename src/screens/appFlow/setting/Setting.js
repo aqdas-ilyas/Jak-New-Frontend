@@ -73,7 +73,7 @@ export default Setting = props => {
       onpress: () =>
         props.navigation.navigate(routes.preferences, { key: 'settings' }),
     },
-    { id: 4, name: LocalizedStrings.Notification },
+    // { id: 4, name: LocalizedStrings.Notification },
     {
       id: 5,
       name: LocalizedStrings.change_language,

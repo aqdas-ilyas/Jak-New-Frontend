@@ -408,14 +408,14 @@ export default Offer = (props) => {
                             }}
                             WholeContainer={{
                                 borderRadius: 5,
-                                width: wp(78)
+                                width: wp(92)
                             }}
                             touchable
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => props.navigation.navigate(routes.notification)}>
+                    {/* <TouchableOpacity onPress={() => props.navigation.navigate(routes.notification)}>
                         <Image source={appIcons.notification} style={styles.rightIcon} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 <View>

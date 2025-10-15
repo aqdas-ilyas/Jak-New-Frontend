@@ -8,9 +8,9 @@ export default function LogoHeader() {
     return (
         <View style={{ paddingTop: Platform.OS == 'android' ? wp(10) : 0, marginTop: -wp(2), flexDirection: "row", justifyContent: 'space-between', alignItems: "center" }}>
             <Image source={appIcons.appLogo} style={styles.logo} />
-            <TouchableOpacity onPress={() => navigation.navigate(routes.notification)}>
+            {/* <TouchableOpacity onPress={() => navigation.navigate(routes.notification)}>
                 <Image source={appIcons.notification} style={styles.right} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }
