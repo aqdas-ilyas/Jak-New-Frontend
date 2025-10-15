@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert } from "react-native";
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY } from '../../../services'
 import { appIcons, appImages } from "../../../services/utilities/assets";
 import Header from "../../../components/header";
 import appStyles from "../../../services/utilities/appStyles";
-import { ImageProfileSelectandUpload } from "../../../common/HelpingFunc";
+import { ImageProfileSelectandUpload, ImageProfileCameraUpload } from "../../../common/HelpingFunc";
 import CountryInput from "../../../components/countryPicker/CountryPicker";
 import { Input } from "../../../components/input";
 import Button from "../../../components/button";
@@ -91,9 +91,32 @@ export default EditProfile = (props) => {
         }
     }, [])
 
-    // Open gallery
-    const openGallary = () => {
-        ImageProfileSelectandUpload((data) => {
+    // Show image picker options (Camera or Gallery)
+    const showImagePickerOptions = () => {
+        Alert.alert(
+            LocalizedStrings.select_image_source || 'Select Image Source',
+            LocalizedStrings.choose_image_source || 'Choose how you want to select your profile picture',
+            [
+                {
+                    text: LocalizedStrings.camera || 'Camera',
+                    onPress: () => openCamera(),
+                },
+                {
+                    text: LocalizedStrings.gallery || 'Gallery',
+                    onPress: () => openGallery(),
+                },
+                {
+                    text: LocalizedStrings.cancel || 'Cancel',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: true }
+        );
+    }
+
+    // Open Camera to Capture Image
+    const openCamera = () => {
+        ImageProfileCameraUpload((data) => {
             console.log(data)
             if (data) {
                 setImage(data)
@@ -102,16 +125,16 @@ export default EditProfile = (props) => {
         })
     }
 
-    // handle Google Places
-    const handlePlacePress = (data, details = null) => {
-        console.log('Place selected:', data, details);
-        if (details) {
-            const latitude = details.geometry?.location?.lat;
-            const longitude = details.geometry?.location?.lng;
-            setLatLng({ latitude: latitude, longitude: longitude });
-            setCountry(data?.description || details?.formatted_address || details?.address_components?.[0]?.long_name || '')
-        }
-    };
+    // Open Gallery to Pick Image
+    const openGallery = () => {
+        ImageProfileSelectandUpload((data) => {
+            console.log(data)
+            if (data) {
+                setImage(data)
+                setImageUploaded(true)
+            }
+        })
+    }
 
     // BUtton Press to Update profile
     const updateUserProfile = async () => {
@@ -129,14 +152,12 @@ export default EditProfile = (props) => {
     // Send Picture to AWS Server
     const uploadImage = async () => {
         const onSuccess = response => {
-            setIsLoading(false);
             console.log('response uploadImage============', response);
             UpdateProfile(response.url)
         };
         const onError = error => {
             setIsLoading(false);
             console.log('Error uploadImage============', error);
-            UpdateProfile(error.url)
         };
         const endPoint = routs.uploadFile;
         const method = Method.POST;
@@ -170,7 +191,6 @@ export default EditProfile = (props) => {
 
         let body = {
             "name": name,
-            // "number": JSON.stringify(`+${countryCode}` + phoneNumber),
             "dob": dob,
             "image": imageUri,
             "gender": gender == 1 ? 'Male' : 'Female', // Female,Other
@@ -218,7 +238,7 @@ export default EditProfile = (props) => {
                         <View style={styles.imageView}>
                             <Image source={Object.keys(image).length !== 0 ? { uri: image?.uri } : appImages.profile1} style={[styles.imageStyle, { resizeMode: 'cover' }]} />
                         </View>
-                        <TouchableOpacity style={styles.editIconView} onPress={() => openGallary()}>
+                        <TouchableOpacity style={styles.editIconView} onPress={() => showImagePickerOptions()}>
                             <Image source={appIcons.edit} style={styles.editIcon} />
                         </TouchableOpacity>
                     </View>

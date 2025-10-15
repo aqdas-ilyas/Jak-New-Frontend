@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert } from "react-native";
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY, emailFormat } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
 import Button from '../../../components/button';
 import Header from '../../../components/header'
 import { Input } from '../../../components/input'
-import { ImageProfileSelectandUpload } from '../../../common/HelpingFunc';
+import { ImageProfileSelectandUpload, ImageProfileCameraUpload } from '../../../common/HelpingFunc';
 import CountryInput from '../../../components/countryPicker/CountryPicker'
 import { LocalizationContext } from '../../../language/LocalizationContext'
 import DatePicker from 'react-native-date-picker'
@@ -63,22 +63,47 @@ const CreateProfile = (props) => {
         }
     }, [countryCode])
 
-    // Open Gellery to Pick Image
-    const openGallary = async () => {
+    // Show image picker options (Camera or Gallery)
+    const showImagePickerOptions = () => {
+        Alert.alert(
+            LocalizedStrings.select_image_source || 'Select Image Source',
+            LocalizedStrings.choose_image_source || 'Choose how you want to select your profile picture',
+            [
+                {
+                    text: LocalizedStrings.camera || 'Camera',
+                    onPress: () => openCamera(),
+                },
+                {
+                    text: LocalizedStrings.gallery || 'Gallery',
+                    onPress: () => openGallery(),
+                },
+                {
+                    text: LocalizedStrings.cancel || 'Cancel',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: true }
+        );
+    }
+
+    // Open Camera to Capture Image
+    const openCamera = async () => {
+        ImageProfileCameraUpload((data, val) => {
+            if (data) {
+                setImage(data)
+            }
+        })
+    }
+
+    // Open Gallery to Pick Image
+    const openGallery = async () => {
         ImageProfileSelectandUpload((data, val) => {
             if (data) {
                 setImage(data)
             }
         })
     }
-    // handle Places
-    const handlePlacePress = (data, details) => {
-        const latitude = details.geometry?.location?.lat;
-        const longitude = details.geometry?.location?.lng;
-        setLatLng({ latitude: latitude, longitude: longitude });
-        setCountry(details?.address_components[0]?.long_name)
-    };
-
+   
     // BUtton Press to Create profile
     const createUserProfile = async () => {
         if (validate()) {
@@ -102,6 +127,27 @@ const CreateProfile = (props) => {
         if (dob.length < 2) {
             showMessage({ message: "Please select your Date of Birth", type: "danger" });
             return false;
+        }
+
+        // Validate age - must be 15 years or older
+        if (dob) {
+            const today = new Date();
+            const birthDate = moment(dob, 'DD/MM/YYYY').toDate();
+            const age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            // Check if birthday hasn't occurred this year
+            const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate()) 
+                ? age - 1 
+                : age;
+
+            if (actualAge < 15) {
+                showMessage({ 
+                    message: LocalizedStrings.age_validation_error || "You must be at least 15 years old to create a profile", 
+                    type: "danger" 
+                });
+                return false;
+            }
         }
 
         if (email) {
@@ -131,13 +177,12 @@ const CreateProfile = (props) => {
     // Send Picture to AWS Server
     const uploadImage = async () => {
         const onSuccess = response => {
-            console.log('response uploadImage============', response.url);
+            console.log('response uploadImage============', response);
             UpdateProfile(response.url)
         };
         const onError = error => {
-            // setIsLoading(false);
-            console.log('Error uploadImage============', error.url);
-            UpdateProfile(error.url)
+            setIsLoading(false);
+            console.log('Error uploadImage============', error);
         };
         const endPoint = routs.uploadFile;
         const method = Method.POST;
@@ -220,7 +265,7 @@ const CreateProfile = (props) => {
                         <View style={styles.imageView}>
                             <Image source={Object.keys(image).length !== 0 ? { uri: image?.uri } : appImages.profile1} style={[styles.imageStyle, { resizeMode: 'cover' }]} />
                         </View>
-                        <TouchableOpacity style={styles.editIconView} onPress={() => openGallary()}>
+                        <TouchableOpacity style={styles.editIconView} onPress={() => showImagePickerOptions()}>
                             <Image source={appIcons.edit} style={styles.editIcon} />
                         </TouchableOpacity>
                     </View>
@@ -312,7 +357,27 @@ const CreateProfile = (props) => {
                 open={showDatePicker}
                 date={new Date()}
                 mode='date'
+                maximumDate={new Date()}
+                minimumDate={new Date(new Date().getFullYear() - 100, 0, 1)} // 100 years ago
                 onConfirm={(date) => {
+                    const today = new Date();
+                    const age = today.getFullYear() - date.getFullYear();
+                    const monthDiff = today.getMonth() - date.getMonth();
+                    
+                    // Check if birthday hasn't occurred this year
+                    const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate()) 
+                        ? age - 1 
+                        : age;
+
+                    if (actualAge < 15) {
+                        showMessage({ 
+                            message: LocalizedStrings.age_validation_error || "You must be at least 15 years old to create a profile", 
+                            type: "danger" 
+                        });
+                        setShowDatePicker(false);
+                        return;
+                    }
+
                     const formattedDate = moment(date).format('DD/MM/YYYY');
                     console.log("formattedDate: ", formattedDate);
                     setDOB(formattedDate)

@@ -31,29 +31,29 @@ const Preferences = (props) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
-    // Define the effect to be executed when the screen gains focus
-    useFocusEffect(
-        React.useCallback(() => {
-            // Your side effect code goes here
-            console.log('Screen is focused, do something here', user.isPreferencesSet, user.isAdminApproved);
-            // if (user.isPreferencesSet || user.isPreferencesSkipped) {
-            //     if (!user.isAdminApproved) {
-            //         setModalShow(true)
-            //         setPendingModalShow(true)
-            //     }
-            // }
+    // // Define the effect to be executed when the screen gains focus
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         // Your side effect code goes here
+    //         console.log('Screen is focused, do something here', user.isPreferencesSet, user.isAdminApproved);
+    //         // if (user.isPreferencesSet || user.isPreferencesSkipped) {
+    //         //     if (!user.isAdminApproved) {
+    //         //         setModalShow(true)
+    //         //         setPendingModalShow(true)
+    //         //     }
+    //         // }
 
-            // Return a cleanup function if necessary
-            return () => {
-                setModalShow(false)
-                setPendingModalShow(false)
-                // Cleanup code goes here (optional)
-                props?.route?.params?.key === 'settings'
-                    ? () => props.navigation.navigate(routes.settings)
-                    : console.log('Screen is unfocused, clean up here if needed');
-            };
-        }, []) // Dependency array is empty to run the effect only once when the component mounts
-    );
+    //         // Return a cleanup function if necessary
+    //         return () => {
+    //             setModalShow(false)
+    //             setPendingModalShow(false)
+    //             // Cleanup code goes here (optional)
+    //             props?.route?.params?.key === 'settings'
+    //                 ? () => props.navigation.navigate(routes.settings)
+    //                 : console.log('Screen is unfocused, clean up here if needed');
+    //         };
+    //     }, []) // Dependency array is empty to run the effect only once when the component mounts
+    // );
 
     // Get API
     useEffect(() => {
@@ -105,15 +105,17 @@ const Preferences = (props) => {
             dispatch(updateUser(response?.data))
 
             setTimeout(() => {
-                if (!user.isAdminApproved) {
-                    if (props?.route?.params?.key === 'settings') {
-                        setPendingModalShow(false); // Show a pending modal
-                    } else {
-                        setPendingModalShow(true); // Show a pending modal
-                    }
-                } else {
-                    setModalShow(false)
-                }
+                // if (!user.isAdminApproved) {
+                //     if (props?.route?.params?.key === 'settings') {
+                //         setPendingModalShow(false); // Show a pending modal
+                //     } else {
+                //         setPendingModalShow(true); // Show a pending modal
+                //     }
+                // } else {
+                //     setModalShow(false)
+                // }
+
+                setModalShow(false)
 
                 setTimeout(() => {
                     // if (response?.act == 'admin-pending') {

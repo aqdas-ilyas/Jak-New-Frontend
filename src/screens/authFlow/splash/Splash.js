@@ -69,10 +69,12 @@ export default function Splash(props) {
                         } else {
                             props.navigation.replace(routes.tab, { screen: routes.home })
                         }
-                    } else if (!currentUser.isAdminApproved) {
-                        // User not approved by admin
-                        props?.navigation?.replace(routes.preferences);
-                    } else if (currentUser.subscriptionPlan == "not-subscribed") {
+                    } 
+                    // else if (!currentUser.isAdminApproved) {
+                    //     // User not approved by admin
+                    //     props?.navigation?.replace(routes.preferences);
+                    // } 
+                    else if (currentUser.subscriptionPlan == "not-subscribed") {
                         // User not subscribed
                         props?.navigation?.replace(routes.subscription);
                     } else {

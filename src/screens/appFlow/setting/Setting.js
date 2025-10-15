@@ -295,10 +295,11 @@ export default Setting = props => {
                 </Text>
                 <Text style={styles.mainTitle}>
                   {subscriptionObj.length > 0 ? subscriptionObj[0]?.price : ''}{' '}
-                  {appLanguage === 'ar' ? 'ريال' : 'SAR'} /{' '}
+                  {appLanguage === 'ar' ? 'ريال' : 'SAR'}
+                  {/* /{' '}
                   {subscriptionObj.length > 0
                     ? subscriptionObj[0]?.duration
-                    : ''}
+                    : ''} */}
                 </Text>
               </View>
             ) : (

@@ -359,7 +359,7 @@ export default Offer = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+        <SafeAreaView style={[appStyles.safeContainer, {paddingTop: Platform.OS == 'android' ? wp(10) : 0, margin: wp(4) }]}>
             <Loader loading={isLoading} />
             {/* <LogoHeader /> */}
 

@@ -25,7 +25,7 @@ const SubscriptionPlan = (props) => {
     // Get features based on subscription type
     const getSubscriptionFeatures = () => {
         const subscriptionType = subscribeArr[0]?.type;
-        
+
         if (subscriptionType === 'Jak Mobile App Free') {
             return [
                 { id: 1, desc: LocalizedStrings.free_feature_1 },
@@ -101,13 +101,19 @@ const SubscriptionPlan = (props) => {
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Loader loading={isLoading} />
-            <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.subscription_plan} rightTitle={LocalizedStrings.manage} onPressRightTitle={() => props.navigation.navigate(routes.subscription)} />
+            <Header
+                leftIcon
+                onleftIconPress={() => props.navigation.goBack()}
+                title={LocalizedStrings.subscription_plan}
+            //  rightTitle={LocalizedStrings.manage} 
+            //  onPressRightTitle={() => props.navigation.navigate(routes.subscription)} 
+            />
             <View style={{ flex: 1 }}>
                 <Text style={[styles.mainDes, { marginVertical: wp(5), color: colors.descriptionColor, textAlign: 'left' }]}>{LocalizedStrings.subscription_plan_description}</Text>
 
                 <View style={styles.Item}>
-                    <Text style={[styles.mainDes, { marginTop: wp(5) }]}>{subscribeArr[0]?.type == 'Jak Mobile App Free' ? LocalizedStrings['Free Version'] : subscribeArr[0]?.type == 'Jak Mobile App Premium' ? LocalizedStrings['Plus Version'] : LocalizedStrings['Premium Version']}</Text>
-                    <Text style={styles.mainTitle}>{subscribeArr[0]?.price} {appLanguage === 'ar' ? 'ريال' : 'SAR'}<Text style={styles.Duration}> / {subscribeArr[0]?.duration}</Text></Text>
+                    <Text style={[styles.mainTitle, { marginTop: wp(5) }]}>{subscribeArr[0]?.type == 'Jak Mobile App Free' ? LocalizedStrings['Free Version'] : subscribeArr[0]?.type == 'Jak Mobile App Premium' ? LocalizedStrings['Plus Version'] : LocalizedStrings['Premium Version']}</Text>
+                    {/* <Text style={styles.mainTitle}>{subscribeArr[0]?.price} {appLanguage === 'ar' ? 'ريال' : 'SAR'}<Text style={styles.Duration}> / {subscribeArr[0]?.duration}</Text></Text> */}
                     <View style={styles.line} />
                     <FlatList
                         bounces={false}
@@ -127,7 +133,7 @@ const SubscriptionPlan = (props) => {
                     <View style={styles.line} />
                     <Text style={[styles.mainDes, { marginTop: wp(5), marginBottom: wp(3) }]}>{LocalizedStrings.Your_Current_Plan}</Text>
                 </View>
-                <Text style={[styles.mainDes, { marginVertical: wp(5), color: colors.descriptionColor }]}>{LocalizedStrings.cancel_subscription_desc1} {moment(user?.subscriptionEndAt).format('MMM DD, YYYY')}. {LocalizedStrings['Renew your subscription']} <Text disabled={!moment(user?.subscriptionEndAt).isBefore(new Date())} onPress={() => CreateSubscriptions()} style={{ color: !moment(user?.subscriptionEndAt).isBefore(new Date()) ? colors.borderColor : colors.primaryColor, fontFamily: fontFamily.UrbanistSemiBold }}>{LocalizedStrings.here}.</Text></Text>
+                {/* <Text style={[styles.mainDes, { marginVertical: wp(5), color: colors.descriptionColor }]}>{LocalizedStrings.cancel_subscription_desc1} {moment(user?.subscriptionEndAt).format('MMM DD, YYYY')}. {LocalizedStrings['Renew your subscription']} <Text disabled={!moment(user?.subscriptionEndAt).isBefore(new Date())} onPress={() => CreateSubscriptions()} style={{ color: !moment(user?.subscriptionEndAt).isBefore(new Date()) ? colors.borderColor : colors.primaryColor, fontFamily: fontFamily.UrbanistSemiBold }}>{LocalizedStrings.here}.</Text></Text> */}
             </View>
 
             {
@@ -148,7 +154,15 @@ const styles = StyleSheet.create({
         backgroundColor: colors.offWhite,
         borderRadius: 10,
         marginTop: wp(5),
-        paddingBottom: wp(5)
+        paddingBottom: wp(5),
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     mainDes: {
         fontSize: hp(1.6),

@@ -14,7 +14,7 @@ import { setToken, updateUser } from '../../../store/reducers/userDataSlice'
 import CallModal from '../../../components/modal'
 
 const Subscription = (props) => {
-    const {appLanguage, LocalizedStrings } = React.useContext(LocalizationContext);
+    const { appLanguage, LocalizedStrings } = React.useContext(LocalizationContext);
     const dispatch = useDispatch()
     const user = useSelector(state => state.user.user.user)
 
@@ -46,7 +46,8 @@ const Subscription = (props) => {
         const onSuccess = response => {
             setIsLoading(false);
             console.log('res while getSubscriptions====>', response?.data);
-            setSubscriptionArray(response?.data?.premium)
+            const getFreeSubscriptionOnly = response?.data?.premium.filter(item => item.price == 0)
+            setSubscriptionArray(getFreeSubscriptionOnly)
         };
 
         const onError = error => {
@@ -109,7 +110,7 @@ const Subscription = (props) => {
                     renderItem={({ item, index }) => {
                         return (
                             <View key={index}>
-                                <TouchableOpacity onPress={() => CreateSubscriptions(item)} style={styles.Item}>
+                                <TouchableOpacity activeOpacity={0.9} onPress={() => CreateSubscriptions(item)} style={styles.Item}>
                                     <Text style={[styles.mainDes, { marginTop: wp(5) }]}>{item.type == 'Jak Mobile App Free' ? LocalizedStrings['Free Version'] : item.type == 'Jak Mobile App Premium' ? LocalizedStrings['Plus Version'] : LocalizedStrings['Premium Version']}</Text>
                                     <Text style={styles.mainTitle}>{item.price == 0 ? LocalizedStrings['Free'] : `$${item?.price}`} {appLanguage === 'ar' ? 'ريال' : 'SAR'} {item.price > 0 && <Text style={styles.Duration}> / {item.duration}</Text>} </Text>
                                     <View style={styles.line} />

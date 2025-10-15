@@ -15,7 +15,7 @@ export default function CallModal({
     onCancel
 }) {
     return (
-        <Modal style={{ flex: 1 }} animationType="slide" transparent={true} visible={modalShow} onRequestClose={() => setModalShow(false)}>
+        <Modal style={{ flex: 1 }} statusBarTranslucent animationType="slide" transparent={true} visible={modalShow} onRequestClose={() => setModalShow(false)}>
             <Pressable style={styles.container} onPress={showButtons ? null : () => setModalShow(false)}>
                 <View style={[styles.doneWrapper]}>
                     <Image source={warningImage ? warningImage : appImages.tick} style={{ resizeMode: "contain", alignSelf: "center", width: widthPixel(80), height: heightPixel(80) }} />

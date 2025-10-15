@@ -267,6 +267,16 @@ export default {
     Navigate: 'Navigate',
     store_detail: 'Store Details',
     'Go to Website': 'Go to Website',
+    
+    // Image Picker
+    select_image_source: 'Select Image Source',
+    choose_image_source: 'Choose how you want to select your profile picture',
+    camera: 'Camera',
+    gallery: 'Gallery',
+    cancel: 'Cancel',
+    
+    // Age Validation
+    age_validation_error: 'You must be at least 15 years old to create a profile. Please select a valid date of birth.',
     'Start Navigate': 'Start Navigate',
     search: 'Search',
     'Emporium Mall': 'Emporium Mall',

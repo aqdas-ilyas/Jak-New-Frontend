@@ -11,9 +11,9 @@ export const ImageProfileSelectandUpload = (result) => {
         width: 300,
         height: 400,
         compressImageQuality: 1,
-        cropping: true,
+        cropping: false,
         writeTempFile: true,
-        cropperCircleOverlay: true,
+        cropperCircleOverlay: false,
     }).then((image) => {
         let splittedName = image.path.split("/");
         const uriParts = image.path.split(".");
@@ -36,9 +36,9 @@ export const ImageProfileCameraUpload = (result) => {
         width: 300,
         height: 400,
         compressImageQuality: 1,
-        cropping: true,
+        cropping: false,
         writeTempFile: true,
-        cropperCircleOverlay: true,
+        cropperCircleOverlay: false,
     }).then((image) => {
         let splittedName = image.path.split("/");
         const uriParts = image.path.split(".");
@@ -98,23 +98,9 @@ export async function getLocationPermission() {
         response = true;
     } else {
         try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    title: 'The Designated app',
-                    message:
-                        'The Designated app wants to access your device location to track your current location upadtes.',
-                },
-            );
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                const grantedBackground = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-                    {
-                        title: 'The Designated app',
-                        message:
-                            'The Designated app wants to access your device location to track your live location updates, even when the app is closed or not in use,',
-                    },
-                );
+                const grantedBackground = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION);
                 response = true;
             } else {
                 console.log(
