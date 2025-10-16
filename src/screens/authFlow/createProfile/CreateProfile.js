@@ -26,7 +26,6 @@ const CreateProfile = (props) => {
     const { number, email } = props?.route?.params ?? {}
     const dispatch = useDispatch()
     const { LocalizedStrings } = React.useContext(LocalizationContext);
-    const placesAutocompleteRef = useRef(null);
 
     const genderArray = [
         { id: 1, title: LocalizedStrings.Male },
@@ -37,7 +36,7 @@ const CreateProfile = (props) => {
     const [userEmail, setEmail] = useState('')
     const [image, setImage] = useState({});
     const [dob, setDOB] = useState('');
-    const [gender, setGender] = useState(genderArray[0].title);
+    const [gender, setGender] = useState(genderArray[0].id);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [countryCode, setCountryCode] = useState('966');
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -103,7 +102,7 @@ const CreateProfile = (props) => {
             }
         })
     }
-   
+
     // BUtton Press to Create profile
     const createUserProfile = async () => {
         if (validate()) {
@@ -135,16 +134,16 @@ const CreateProfile = (props) => {
             const birthDate = moment(dob, 'DD/MM/YYYY').toDate();
             const age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
-            
+
             // Check if birthday hasn't occurred this year
-            const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate()) 
-                ? age - 1 
+            const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+                ? age - 1
                 : age;
 
             if (actualAge < 15) {
-                showMessage({ 
-                    message: LocalizedStrings.age_validation_error || "You must be at least 15 years old to create a profile", 
-                    type: "danger" 
+                showMessage({
+                    message: LocalizedStrings.age_validation_error || "You must be at least 15 years old to create a profile",
+                    type: "danger"
                 });
                 return false;
             }
@@ -225,7 +224,7 @@ const CreateProfile = (props) => {
             "name": name,
             "dob": dob,
             "image": imageUri,
-            "gender": gender,
+            "gender": gender == 1 ? 'Male' : 'Female', // Female,Other
             "location": {
                 "type": "Point",
                 coordinates: [0, 0],
@@ -316,15 +315,15 @@ const CreateProfile = (props) => {
 
                         <FlatList
                             data={genderArray}
-                            keyExtractor={(item, index) => index.toString()}
+                            keyExtractor={(_, index) => index.toString()}
                             ListHeaderComponent={
                                 <Text style={[styles.headerText]}>{LocalizedStrings.gender}</Text>
                             }
                             renderItem={({ item, index }) => {
                                 return (
-                                    <Pressable key={index} onPress={() => setGender(item.title)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: wp(3) }}>
+                                    <Pressable key={index} onPress={() => setGender(item.id)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: wp(3) }}>
                                         <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginRight: wp(3) }]}>
-                                            <View style={[styles.dotComponentStyle, { backgroundColor: gender == item.title ? colors.primaryColor : 'transparent' }]} />
+                                            <View style={[styles.dotComponentStyle, { backgroundColor: gender == item.id ? colors.primaryColor : 'transparent' }]} />
                                         </View>
                                         <Text style={styles.mainDes}>{item.title}</Text>
                                     </Pressable>
@@ -363,16 +362,16 @@ const CreateProfile = (props) => {
                     const today = new Date();
                     const age = today.getFullYear() - date.getFullYear();
                     const monthDiff = today.getMonth() - date.getMonth();
-                    
+
                     // Check if birthday hasn't occurred this year
-                    const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate()) 
-                        ? age - 1 
+                    const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())
+                        ? age - 1
                         : age;
 
                     if (actualAge < 15) {
-                        showMessage({ 
-                            message: LocalizedStrings.age_validation_error || "You must be at least 15 years old to create a profile", 
-                            type: "danger" 
+                        showMessage({
+                            message: LocalizedStrings.age_validation_error || "You must be at least 15 years old to create a profile",
+                            type: "danger"
                         });
                         setShowDatePicker(false);
                         return;

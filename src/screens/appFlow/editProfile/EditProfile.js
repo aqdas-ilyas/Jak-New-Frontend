@@ -12,7 +12,6 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 import { LocalizationContext } from "../../../language/LocalizationContext";
 import { useDispatch, useSelector } from "react-redux";
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js'
 import { _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
 import routs from '../../../api/routs';
@@ -285,7 +284,7 @@ export default EditProfile = (props) => {
 
                         <FlatList
                             data={genderArray}
-                            keyExtractor={(item, index) => index.toString()}
+                            keyExtractor={(_, index) => index.toString()}
                             ListHeaderComponent={
                                 <Text style={[styles.headerText]}>{LocalizedStrings.gender}</Text>
                             }
