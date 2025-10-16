@@ -263,8 +263,9 @@ export default StoreDetailList = (props) => {
                     </View>
 
                     <View style={{ width: wp(35) }}>
-                        <Text style={[styles.mainTitle]}>{LocalizedStrings["Expiry Date"]}</Text>
-                        <Text style={styles.shortDes}>{moment(item?.["expiry date"]).format('DD/MM/YYYY')}</Text>
+                        <Text style={styles.mainTitle}>{LocalizedStrings["Expiry Date"]}</Text>
+                        <Text style={styles.shortDes}>{item?.["expiry date"]}</Text>
+                        {/* <Text style={styles.shortDes}>{moment(item?.["expiry date"]).format('DD/MM/YYYY')}</Text> */}
                     </View>
 
                     <View style={{ width: wp(50) }}>

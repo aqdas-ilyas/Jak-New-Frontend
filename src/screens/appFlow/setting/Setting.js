@@ -11,6 +11,7 @@ import {
   ScrollView,
   TouchableOpacity,
   I18nManager,
+  ActivityIndicator,
 } from 'react-native';
 import {
   heightPixel,
@@ -56,6 +57,7 @@ export default Setting = props => {
     React.useContext(LocalizationContext);
   const [subscriptionObj, setSubscriptionObj] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
   const [toggle, setToggle] = useState(user?.isNotification);
   const [language, setLanguage] = useState(appLanguage === 'ar' ? true : false);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
@@ -246,17 +248,30 @@ export default Setting = props => {
       <LogoHeader />
 
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        <Image
-          source={
-            user && Object.values(user).length > 0 && user?.image
-              ? { uri: user?.image }
-              : appImages.profile1
-          }
-          style={[
-            styles.imageStyle,
-            { alignSelf: 'center', resizeMode: 'cover' },
-          ]}
-        />
+        <View style={styles.imageContainer}>
+          <Image
+            source={
+              user && Object.values(user).length > 0 && user?.image
+                ? { uri: user?.image }
+                : appImages.profile1
+            }
+            style={[
+              styles.imageStyle,
+              { alignSelf: 'center', resizeMode: 'cover' },
+            ]}
+            onLoadStart={() => setImageLoading(true)}
+            onLoadEnd={() => setImageLoading(false)}
+            onError={() => setImageLoading(false)}
+          />
+          {imageLoading && (
+            <View style={styles.imageLoaderContainer}>
+              <ActivityIndicator 
+                size="small" 
+                color={colors.primaryColor} 
+              />
+            </View>
+          )}
+        </View>
         <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>
           {user && Object.values(user).length > 0 && user?.name}
         </Text>
@@ -452,6 +467,10 @@ const styles = StyleSheet.create({
     color: colors.descriptionColor,
     textAlign: 'left',
   },
+  imageContainer: {
+    alignSelf: 'center',
+    position: 'relative',
+  },
   imageStyle: {
     width: wp(25),
     height: wp(25),
@@ -459,6 +478,17 @@ const styles = StyleSheet.create({
     borderRadius: widthPixel(100),
     borderColor: '#cccccc',
     borderWidth: 2,
+  },
+  imageLoaderContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: widthPixel(100),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   CrownImage: {
     width: wp(15),

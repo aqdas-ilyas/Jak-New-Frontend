@@ -58,10 +58,10 @@ export const ImageProfileCameraUpload = (result) => {
 
 export const uploadProfileImageOnS3 = async (file, result) => {
     const s3bucket = new S3({
-        region: 'ap-southeast-2',
-        accessKeyId: 'AKIASFBTPUQ4SDJJCWBR',
-        secretAccessKey: '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',
-        Bucket: 'paisero',
+        region: 'eu-north-1',
+        accessKeyId: 'AKIAZQ3DQBKXRCV2ITQP',
+        secretAccessKey: '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',
+        Bucket: 'jakappbucket',
         signatureVersion: 'v4',
     });
     let contentType = file.type;

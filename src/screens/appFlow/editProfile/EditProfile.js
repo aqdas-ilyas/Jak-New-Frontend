@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator } from "react-native";
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY } from '../../../services'
 import { appIcons, appImages } from "../../../services/utilities/assets";
 import Header from "../../../components/header";
 import appStyles from "../../../services/utilities/appStyles";
-import { ImageProfileSelectandUpload, ImageProfileCameraUpload } from "../../../common/HelpingFunc";
+import { ImageProfileSelectandUpload, ImageProfileCameraUpload, uploadProfileImageOnS3 } from "../../../common/HelpingFunc";
 import CountryInput from "../../../components/countryPicker/CountryPicker";
 import { Input } from "../../../components/input";
 import Button from "../../../components/button";
@@ -34,7 +34,6 @@ export default EditProfile = (props) => {
     const [name, setName] = useState('')
     const [userEmail, setEmail] = useState('')
     const [image, setImage] = useState({});
-    const [imageUploaded, setImageUploaded] = useState(false);
     const [dob, setDOB] = useState('');
     const [gender, setGender] = useState(1);
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -42,6 +41,7 @@ export default EditProfile = (props) => {
     const [countryAbbreviationCode, setCountryAbbrivaitionCode] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
+    const [imageLoading, setImageLoading] = useState(false)
     const [country, setCountry] = useState('');
     const [latLng, setLatLng] = useState({});
 
@@ -78,7 +78,7 @@ export default EditProfile = (props) => {
                 }
 
                 setName(user?.name)
-                setImage({ uri: user?.image })
+                setImage({ uri: user?.image ? user?.image : 'https://wheelzconnect.s3.amazonaws.com/dummyUser.png' })
                 setDOB(user?.dob)
                 setGender(user?.gender == 'Male' ? 1 : 2)
                 setCountry(user?.location?.address)
@@ -116,10 +116,10 @@ export default EditProfile = (props) => {
     // Open Camera to Capture Image
     const openCamera = () => {
         ImageProfileCameraUpload((data) => {
-            console.log(data)
+            console.log("openGallery: ", data)
+
             if (data) {
-                setImage(data)
-                setImageUploaded(true)
+                uploadImage(data)
             }
         })
     }
@@ -127,10 +127,10 @@ export default EditProfile = (props) => {
     // Open Gallery to Pick Image
     const openGallery = () => {
         ImageProfileSelectandUpload((data) => {
-            console.log(data)
+            console.log("openGallery: ", data)
+
             if (data) {
-                setImage(data)
-                setImageUploaded(true)
+                uploadImage(data)
             }
         })
     }
@@ -138,41 +138,42 @@ export default EditProfile = (props) => {
     // BUtton Press to Update profile
     const updateUserProfile = async () => {
         if (user?.isSocial ? isPossiblePhoneNumber(`+${countryCode}` + phoneNumber) : true) {
-            if (imageUploaded) {
-                await uploadImage()
-            } else {
-                UpdateProfile(image.uri)
-            }
+            UpdateProfile()
         } else {
             showMessage({ message: "Please add Valid Phone Number", type: "danger" });
         }
     }
 
-    // Send Picture to AWS Server
-    const uploadImage = async () => {
-        const onSuccess = response => {
-            console.log('response uploadImage============', response);
-            UpdateProfile(response.url)
-        };
-        const onError = error => {
+    const uploadImage = async (photo) => {
+        try {
+            setIsLoading(true);
+            const uri = `file://${photo.uri}`;
+            const fileName = photo.uri.substring(photo.uri.lastIndexOf('/') + 1);
+            const fileType = fileName.split('.').pop();
+
+            const data = {
+                uri,
+                type: `image/${fileType}`,
+                name: fileName,
+            };
+
+            await uploadProfileImageOnS3(data, (res) => {
+                setIsLoading(false);
+
+                if (res) {
+                    setImage({ uri: res });
+                    showMessage({ message: 'Image uploaded successfully', type: 'success' });
+                } else {
+                    throw new Error('Image upload failed');
+                }
+            });
+        } catch (error) {
             setIsLoading(false);
-            console.log('Error uploadImage============', error);
-        };
-        const endPoint = routs.uploadFile;
-        const method = Method.POST;
-        const formData = new FormData();
+            handleImageError(error, 'Failed to upload image');
+        }
+    };
 
-        formData.append('file', {
-            uri: image.uri,
-            name: image.name,
-            type: `image/${image.type}`,
-        });
-
-        setIsLoading(true);
-        callApi(method, endPoint, formData, onSuccess, onError, null, true);
-    }
-
-    const UpdateProfile = (imageUri) => {
+    const UpdateProfile = () => {
         const onSuccess = response => {
             console.log('Success while UpdateProfile====>', response);
             setIsLoading(false);
@@ -191,7 +192,7 @@ export default EditProfile = (props) => {
         let body = {
             "name": name,
             "dob": dob,
-            "image": imageUri,
+            "image": image?.uri,
             "gender": gender == 1 ? 'Male' : 'Female', // Female,Other
             "location": {
                 "type": "Point",
@@ -235,7 +236,21 @@ export default EditProfile = (props) => {
                 <View style={{ marginVertical: wp(5) }}>
                     <View style={styles.imageTopView}>
                         <View style={styles.imageView}>
-                            <Image source={Object.keys(image).length !== 0 ? { uri: image?.uri } : appImages.profile1} style={[styles.imageStyle, { resizeMode: 'cover' }]} />
+                            <Image 
+                                source={Object.keys(image).length !== 0 ? image : appImages.profile1} 
+                                style={[styles.imageStyle, { resizeMode: 'cover' }]} 
+                                onLoadStart={() => setImageLoading(true)}
+                                onLoadEnd={() => setImageLoading(false)}
+                                onError={() => setImageLoading(false)}
+                            />
+                            {imageLoading && (
+                                <View style={styles.imageLoaderContainer}>
+                                    <ActivityIndicator 
+                                        size="small" 
+                                        color={colors.primaryColor} 
+                                    />
+                                </View>
+                            )}
                         </View>
                         <TouchableOpacity style={styles.editIconView} onPress={() => showImagePickerOptions()}>
                             <Image source={appIcons.edit} style={styles.editIcon} />
@@ -354,6 +369,18 @@ const styles = StyleSheet.create({
         width: wp(25),
         height: wp(25),
         borderRadius: widthPixel(100),
+        position: 'relative',
+    },
+    imageLoaderContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderRadius: widthPixel(100),
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     imageStyle: {
         width: '100%',
