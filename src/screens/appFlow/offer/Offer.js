@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, ActivityIndicator, Pressable } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, ActivityIndicator, Pressable, RefreshControl } from "react-native";
 import { heightPixel, hp, routes, widthPixel, wp } from "../../../services/constants";
 import appStyles from "../../../services/utilities/appStyles";
 import { appIcons, colors, fontFamily } from "../../../services";
@@ -30,6 +30,7 @@ export default Offer = (props) => {
     const categoryMyOfferPageNo = useSelector(state => state.offer.categoryMyOfferPageNo)
     const [isLoading, setIsLoading] = useState(false)
     const [isBottomLoading, setIsBottomLoading] = useState(false)
+    const [refreshing, setRefreshing] = useState(false)
     const flatListRef = useRef(null);
     const [categoryFilter, setCategoryFilter] = useState('')
     const [categoryFilterArray, setCategoryFilterArray] = useState('')
@@ -45,6 +46,18 @@ export default Offer = (props) => {
         fetchData();
     }, []);
 
+    // Reset to "All" filter when checkboxes are loaded
+    useEffect(() => {
+        if (checkboxes.length > 0) {
+            const updatedCheckboxes = checkboxes.map((checkbox) =>
+                checkbox.title === LocalizedStrings.All
+                    ? { ...checkbox, checked: true }
+                    : { ...checkbox, checked: false }
+            );
+            setCheckboxes(updatedCheckboxes);
+        }
+    }, [checkboxes.length]);
+
     const getMoreOffer = () => {
         if (myOffer && myOffer.length > 0) {
             if (totalMyOfferPagesCount > myOfferPageNo) {
@@ -53,6 +66,27 @@ export default Offer = (props) => {
                 console.log('No Data!')
             }
         }
+    }
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        setIsLoading(true);
+        
+        // Reset page number and clear existing data
+        dispatch(saveMyOfferPageNo(1));
+        dispatch(saveMyOffer(null));
+        dispatch(saveCategoryOffers(null));
+        dispatch(saveForAllOffers(null));
+        setMyOfferFilterArray('');
+        setCategoryFilter('');
+        
+        // Fetch fresh data first
+        await getMyOfferCategory();
+        await getMyOffers();
+        await getForAll();
+        
+        setRefreshing(false);
+        setIsLoading(false);
     }
 
     const getMyOfferCategory = () => {
@@ -80,6 +114,14 @@ export default Offer = (props) => {
             formattedCategories.unshift(allItem);
             // Update the state with the new array
             setCheckboxes(formattedCategories);
+            
+            // Ensure "All" is selected by default
+            const updatedCheckboxes = formattedCategories.map((checkbox) =>
+                checkbox.title === LocalizedStrings.All
+                    ? { ...checkbox, checked: true }
+                    : { ...checkbox, checked: false }
+            );
+            setCheckboxes(updatedCheckboxes);
         };
 
         const onError = error => {
@@ -105,14 +147,17 @@ export default Offer = (props) => {
 
             if (response?.data?.totalPages == 0) {
                 dispatch(saveMyOffer(null));
+                return;
             }
 
             if (response?.data?.data.length > 0 && response?.data?.totalPages >= myOfferPageNo) {
                 dispatch(saveMyOfferPageNo(myOfferPageNo + 1));
 
                 let myOfferArray
-                if (myOffer && myOffer.length > 0) {
-                    myOfferArray = [...myOffer]
+                // Get current state from Redux store instead of local state
+                const currentMyOffer = myOffer || [];
+                if (currentMyOffer && currentMyOffer.length > 0) {
+                    myOfferArray = [...currentMyOffer]
                     myOfferArray.push(...response?.data?.data);
                 } else {
                     myOfferArray = []
@@ -133,6 +178,9 @@ export default Offer = (props) => {
                 cleanedCategories.unshift(LocalizedStrings["All"]);
 
                 setCategoryFilterArray(uniqueOffer);
+            } else {
+                // If no data, ensure we still have empty array
+                dispatch(saveMyOffer([]));
             }
         };
 
@@ -155,7 +203,7 @@ export default Offer = (props) => {
             console.log('response getForAll===', response?.data);
             setIsLoading(false);
 
-            dispatch(saveForAllOffers(response?.data?.data))
+            dispatch(saveForAllOffers(response?.data?.data || []))
         };
 
         const onError = error => {
@@ -167,7 +215,6 @@ export default Offer = (props) => {
         const method = Method.GET;
         const bodyParams = {};
 
-        // setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     };
 
@@ -447,8 +494,18 @@ export default Offer = (props) => {
                         paddingBottom: wp(5)
                     }}
                     onEndReached={() => getMoreOffer()}
+                    // refreshControl={
+                    //     <RefreshControl
+                    //         refreshing={refreshing}
+                    //         onRefresh={onRefresh}
+                    //         colors={[colors.primaryColor]}
+                    //         tintColor={colors.primaryColor}
+                    //     />
+                    // }
                     ListEmptyComponent={
-                        <Text style={styles.emptytext}>{LocalizedStrings['No Offers yet!']}</Text>
+                        !isLoading && !refreshing ? (
+                            <Text style={styles.emptytext}>{LocalizedStrings['No Offers yet!']}</Text>
+                        ) : null
                     }
                     ListFooterComponent={
                         isBottomLoading && (

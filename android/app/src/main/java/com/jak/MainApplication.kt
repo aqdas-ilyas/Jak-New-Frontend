@@ -1,4 +1,4 @@
-package com.jak
+package com.jakkkkkkkkkkk
 
 import android.app.Application
 import com.facebook.react.PackageList

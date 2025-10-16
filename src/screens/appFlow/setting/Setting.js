@@ -49,6 +49,7 @@ import {
   saveTotalCategoryMyOfferPagesCount,
   saveTotalMyOfferPagesCount,
 } from '../../../store/reducers/OfferSlice';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 export default Setting = props => {
   const dispatch = useDispatch();
@@ -164,8 +165,10 @@ export default Setting = props => {
         })
       );
 
-      setTimeout(() => {
+      setTimeout(async () => {
         dispatch(logout());
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
         dispatch(saveFavourite(null));
         dispatch(saveMyOffer(null));
         dispatch(saveForAllOffers(null));
@@ -265,9 +268,9 @@ export default Setting = props => {
           />
           {imageLoading && (
             <View style={styles.imageLoaderContainer}>
-              <ActivityIndicator 
-                size="small" 
-                color={colors.primaryColor} 
+              <ActivityIndicator
+                size="small"
+                color={colors.primaryColor}
               />
             </View>
           )}

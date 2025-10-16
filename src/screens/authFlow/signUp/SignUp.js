@@ -149,7 +149,7 @@ const SignUp = props => {
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
-        '1087826839433-i6m9ek0e4lqapqfqq347pkngutmjtnu7.apps.googleusercontent.com',
+        '773361963603-cv2gjtb7ni4or5i5vpudlmao8b90k1do.apps.googleusercontent.com',
       offlineAccess: true,
     });
   }, []);

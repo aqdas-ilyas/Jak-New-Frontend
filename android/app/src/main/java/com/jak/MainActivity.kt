@@ -1,4 +1,4 @@
-package com.jak
+package com.jakkkkkkkkkkk
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity

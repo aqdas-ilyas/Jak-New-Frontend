@@ -176,6 +176,7 @@ export default {
     preferences: 'Preferences',
     preferences_title: 'My Preferences',
     "No_Favorite's_Found!": "No Favorite's Found!",
+    "no_favorites_message": "You haven't added any favorites yet. Start exploring offers and add them to your favorites!",
     select_your_company: 'Select Your Company',
     select_your_bank: 'Select Your Bank',
     select_your_card: 'Select Your Cards',

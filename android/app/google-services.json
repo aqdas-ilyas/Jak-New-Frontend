@@ -1,49 +1,41 @@
 {
   "project_info": {
-    "project_number": "1087826839433",
-    "project_id": "jak-app-420617",
-    "storage_bucket": "jak-app-420617.appspot.com"
+    "project_number": "773361963603",
+    "project_id": "jak-app-1f25a",
+    "storage_bucket": "jak-app-1f25a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1087826839433:android:58b8075ed0ddc007694358",
+        "mobilesdk_app_id": "1:773361963603:android:18d1b5b74abdeb24fa6ca6",
         "android_client_info": {
-          "package_name": "com.jak"
+          "package_name": "com.jakkkkkkkkkkk"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1087826839433-d9dhveqvalj6amgneobj22ugf1rurhfq.apps.googleusercontent.com",
+          "client_id": "773361963603-kguevkdlc6knkjevfn4901qkkaig20gr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.jak",
+            "package_name": "com.jakkkkkkkkkkk",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {
-          "client_id": "1087826839433-oo9v379hrnmrbs7qigajs90ik77jkg0g.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.jak",
-            "certificate_hash": "31cbf708c822012400c831f4eea41c0403db9256"
-          }
-        },
-        {
-          "client_id": "1087826839433-i6m9ek0e4lqapqfqq347pkngutmjtnu7.apps.googleusercontent.com",
+          "client_id": "773361963603-cv2gjtb7ni4or5i5vpudlmao8b90k1do.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBOogH5OH0x-hPGFOfjccsCl6qSPXVL0ho"
+          "current_key": "AIzaSyDY6rRKBckDeI7TP5h4ja0urdWle0ubWPo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1087826839433-i6m9ek0e4lqapqfqq347pkngutmjtnu7.apps.googleusercontent.com",
+              "client_id": "773361963603-cv2gjtb7ni4or5i5vpudlmao8b90k1do.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

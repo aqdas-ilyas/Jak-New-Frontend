@@ -39,7 +39,16 @@ export default Favourite = (props) => {
             console.log('response favourite===', response?.data);
             setIsLoading(false);
 
-            dispatch(saveFavourite(response?.data?.data))
+            // Handle null data properly
+            const favoriteData = response?.data?.data;
+            if (favoriteData && favoriteData.length > 0 && favoriteData[0] !== null) {
+                // Filter out null values
+                const validFavorites = favoriteData.filter(item => item !== null);
+                dispatch(saveFavourite(validFavorites));
+            } else {
+                // If no valid data, set empty array
+                dispatch(saveFavourite([]));
+            }
         };
 
         const onError = error => {
@@ -127,23 +136,29 @@ export default Favourite = (props) => {
             <LogoHeader />
 
             <FlatList
-                data={favorite && favorite.length > 0 && favorite}
+                data={favorite && favorite.length > 0 ? favorite.filter(item => item !== null) : []}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
+                        colors={[colors.primaryColor]}
+                        tintColor={colors.primaryColor}
                     />
                 }
                 ListEmptyComponent={
-                    <Text style={styles.emptytext}>{LocalizedStrings["No_Favorite's_Found!"]}</Text>
+                    <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyTitle}>{LocalizedStrings["No_Favorite's_Found!"]}</Text>
+                        <Text style={styles.emptyMessage}>{LocalizedStrings["no_favorites_message"]}</Text>
+                    </View>
                 }
                 renderItem={({ item, index }) => {
                     return (
-                        item != null && (
+                        item && item !== null ? (
                             <ListItem buttonEnable item={item} IsFavourites={(fav) => IsFavourites(fav?._id)} />
-                        ))
+                        ) : null
+                    )
                 }}
             />
         </SafeAreaView>
@@ -151,6 +166,28 @@ export default Favourite = (props) => {
 };
 
 const styles = StyleSheet.create({
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: wp(15),
+        paddingHorizontal: wp(5),
+    },
+    emptyTitle: {
+        fontSize: hp(2.2),
+        fontFamily: fontFamily.UrbanistBold,
+        color: colors.BlackSecondary,
+        textAlign: "center",
+        marginBottom: wp(3),
+    },
+    emptyMessage: {
+        fontSize: hp(1.6),
+        lineHeight: 24,
+        fontFamily: fontFamily.UrbanistRegular,
+        color: colors.descriptionColor,
+        textAlign: "center",
+        marginTop: wp(2),
+    },
     emptytext: {
         fontSize: hp(1.6),
         lineHeight: 24,

@@ -181,6 +181,7 @@ export default {
   preferences: 'التفضيلات',
   preferences_title: 'أضف معلومات صاحب العمل',
   "No_Favorite's_Found!": 'لم يتم العثور على المفضلة!',
+  "no_favorites_message": 'لم تقم بإضافة أي مفضلات بعد. ابدأ في استكشاف العروض وأضفها إلى مفضلاتك!',
   select_your_company: 'اختر شركتك',
   select_your_bank: 'اختر البنك الذي تتعامل معه',
   select_your_card: 'حدد البطاقات الخاصة بك',
