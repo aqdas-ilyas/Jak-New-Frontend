@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native'
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Keyboard } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
@@ -130,7 +130,13 @@ const SendOtp = (props) => {
                 <View style={{ width: '100%', justifyContent: 'center', alignSelf: 'center', marginTop: hp(5) }}>
                     <CodeField
                         value={otpValue}
-                        onChangeText={(txt) => setOtpValue(txt)}
+                        onChangeText={(txt) => {
+                            if (txt.length == 4) {
+                                Keyboard.dismiss()
+                            }
+
+                            setOtpValue(txt)
+                        }}
                         cellCount={4}
                         keyboardType="number-pad"
                         textContentType="oneTimeCode"

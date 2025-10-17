@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     },
     imageStyle: {
         width: wp(92),
-        height: wp(45),
+        height: wp(55),
         borderRadius: 15,
     },
     IconStyle: {
