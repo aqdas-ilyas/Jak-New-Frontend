@@ -22,26 +22,26 @@ import { callApi, Method } from "../../../api/apiCaller";
 import { Loader } from "../../../components/loader/Loader";
 import { saveCategoryOffers, saveForAllOffers, saveMyOffer, saveSearchOfferArray } from "../../../store/reducers/OfferSlice";
 
-const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
-const GEOCODING_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
+// const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
+// const GEOCODING_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
 
-const getCoordinates = async (address) => {
-    try {
-        const addressValid = address.replace(/\s+/g, '');
-        // const response = await fetch(`${GEOCODING_API_URL}?address=${addressValid}&key=${GEOCODING_API_KEY}`);
-        const response = await fetch(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(addressValid)}&inputtype=textquery&fields=geometry&locationbias=country:SA&&key=${GEOCODING_API_KEY}`)
-        const data = await response.json();
-        if (data.status === 'OK') {
-            const location = data.candidates[0].geometry.location;
-            return location; // { lat: ..., lng: ... }
-        } else {
-            console.log('Geocoding API error: ' + data.status);
-        }
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-};
+// const getCoordinates = async (address) => {
+//     try {
+//         const addressValid = address.replace(/\s+/g, '');
+//         // const response = await fetch(`${GEOCODING_API_URL}?address=${addressValid}&key=${GEOCODING_API_KEY}`);
+//         const response = await fetch(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(addressValid)}&inputtype=textquery&fields=geometry&locationbias=country:SA&&key=${GEOCODING_API_KEY}`)
+//         const data = await response.json();
+//         if (data.status === 'OK') {
+//             const location = data.candidates[0].geometry.location;
+//             return location; // { lat: ..., lng: ... }
+//         } else {
+//             console.log('Geocoding API error: ' + data.status);
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         throw error;
+//     }
+// };
 
 export default StoreDetailList = (props) => {
     const { item } = props?.route?.params
@@ -52,10 +52,10 @@ export default StoreDetailList = (props) => {
     const CategoriesOffers = useSelector(state => state.offer.CategoriesOffers)
     const searchOfferArray = useSelector(state => state.offer.searchOfferArray)
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
-    const [coordinates, setCoordinates] = useState(null);
-    const [distance, setDistance] = useState(null);
     const [isLoading, setIsLoading] = useState(false)
     const [isLiked, setIsLiked] = useState(item?.isLiked)
+    const [coordinates, setCoordinates] = useState(null);
+    const [distance, setDistance] = useState(null);
     const [region, setRegion] = useState({
         latitude: 25.1523005,
         longitude: 55.2343772,
@@ -63,39 +63,39 @@ export default StoreDetailList = (props) => {
         longitudeDelta: 0.02,
     })
 
-    const openWhatsAppChat = (whatsApp) => {
-        // Construct the deep link to open WhatsApp with the phone number
-        const url = `whatsapp://send?phone=${whatsApp}`;
+    // const openWhatsAppChat = (whatsApp) => {
+    //     // Construct the deep link to open WhatsApp with the phone number
+    //     const url = `whatsapp://send?phone=${whatsApp}`;
 
-        // Check if the WhatsApp app is installed and open the chat
-        Linking.canOpenURL(url).then(supported => {
-            if (supported) {
-                return Linking.openURL(url);
-            } else {
-                console.log("WhatsApp is not installed on this device.");
-            }
-        }).catch(error => {
-            console.error("An error occurred while opening WhatsApp:", error);
-        });
-    };
+    //     // Check if the WhatsApp app is installed and open the chat
+    //     Linking.canOpenURL(url).then(supported => {
+    //         if (supported) {
+    //             return Linking.openURL(url);
+    //         } else {
+    //             console.log("WhatsApp is not installed on this device.");
+    //         }
+    //     }).catch(error => {
+    //         console.error("An error occurred while opening WhatsApp:", error);
+    //     });
+    // };
 
-    const OpenMap = () => {
-        const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' });
-        const latLng = `${coordinates.lat},${coordinates.lng}`;
-        const label = item?.['store name'];
-        const url = Platform.select({
-            ios: `${scheme}${label}@${latLng}`,
-            android: `${scheme}${latLng}(${label})`,
-        });
+    // const OpenMap = () => {
+    //     const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' });
+    //     const latLng = `${coordinates.lat},${coordinates.lng}`;
+    //     const label = item?.['store name'];
+    //     const url = Platform.select({
+    //         ios: `${scheme}${label}@${latLng}`,
+    //         android: `${scheme}${latLng}(${label})`,
+    //     });
 
-        Linking.canOpenURL(url).then(supported => {
-            if (supported) {
-                return Linking.openURL(url);
-            } else {
-                return Linking.openURL(url);
-            }
-        });
-    };
+    //     Linking.canOpenURL(url).then(supported => {
+    //         if (supported) {
+    //             return Linking.openURL(url);
+    //         } else {
+    //             return Linking.openURL(url);
+    //         }
+    //     });
+    // };
 
     const IsFavourites = (id) => {
         const onSuccess = async (response) => {
@@ -173,66 +173,66 @@ export default StoreDetailList = (props) => {
     };
 
     useEffect(() => {
-        getMyLocation()
+        // getMyLocation()
     }, [])
 
     // Function to calculate distance between two coordinates
-    const calculateDistance = (coord1, coord2) => {
-        const toRadians = (degrees) => degrees * (Math.PI / 180);
-        const R = 6371; // Radius of the Earth in KM
+    // const calculateDistance = (coord1, coord2) => {
+    //     const toRadians = (degrees) => degrees * (Math.PI / 180);
+    //     const R = 6371; // Radius of the Earth in KM
 
-        const dLat = toRadians(coord2.lat - coord1.lat);
-        const dLng = toRadians(coord2.lng - coord1.lng);
+    //     const dLat = toRadians(coord2.lat - coord1.lat);
+    //     const dLng = toRadians(coord2.lng - coord1.lng);
 
-        const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(toRadians(coord1.lat)) * Math.cos(toRadians(coord2.lat)) *
-            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    //     const a =
+    //         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    //         Math.cos(toRadians(coord1.lat)) * Math.cos(toRadians(coord2.lat)) *
+    //         Math.sin(dLng / 2) * Math.sin(dLng / 2);
 
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    //     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        const distance = R * c; // Distance in KM
-        return distance;
-    };
+    //     const distance = R * c; // Distance in KM
+    //     return distance;
+    // };
 
-    const getMyLocation = async () => {
-        let permission = await getLocationPermission();
-        if (permission) {
-            Geolocation.getCurrentPosition(
-                async (position) => {
-                    var coords = position?.coords;
-                    if (coords.latitude != undefined || coords != '') {
-                        var userLocation = {
-                            lat: coords.latitude,
-                            lng: coords.longitude,
-                        };
-                    }
+    // const getMyLocation = async () => {
+    //     let permission = await getLocationPermission();
+    //     if (permission) {
+    //         Geolocation.getCurrentPosition(
+    //             async (position) => {
+    //                 var coords = position?.coords;
+    //                 if (coords.latitude != undefined || coords != '') {
+    //                     var userLocation = {
+    //                         lat: coords.latitude,
+    //                         lng: coords.longitude,
+    //                     };
+    //                 }
 
-                    const endCoordinates = await getCoordinates(item?.['store name']);
-                    setCoordinates(endCoordinates);
-                    setRegion({
-                        latitude: endCoordinates?.lat,
-                        longitude: endCoordinates?.lng,
-                        latitudeDelta: 0.02,
-                        longitudeDelta: 0.02,
-                    })
+    //                 const endCoordinates = await getCoordinates(item?.['store name']);
+    //                 setCoordinates(endCoordinates);
+    //                 setRegion({
+    //                     latitude: endCoordinates?.lat,
+    //                     longitude: endCoordinates?.lng,
+    //                     latitudeDelta: 0.02,
+    //                     longitudeDelta: 0.02,
+    //                 })
 
-                    if (userLocation && endCoordinates) {
-                        const distance = calculateDistance(userLocation, endCoordinates);
-                        console.log(`Distance: ${distance.toFixed(2)} KM`);
+    //                 if (userLocation && endCoordinates) {
+    //                     const distance = calculateDistance(userLocation, endCoordinates);
+    //                     console.log(`Distance: ${distance.toFixed(2)} KM`);
 
-                        setDistance(distance.toFixed(2))
-                    } else {
-                        console.log('Could not retrieve coordinates for one or both addresses.');
-                    }
-                },
-                error => {
-                    console.log(error)
-                },
-                { enableHighAccuracy: false, timeout: 20000, maximumAge: 3600000 },
-            );
-        }
-    }
+    //                     setDistance(distance.toFixed(2))
+    //                 } else {
+    //                     console.log('Could not retrieve coordinates for one or both addresses.');
+    //                 }
+    //             },
+    //             error => {
+    //                 console.log(error)
+    //             },
+    //             { enableHighAccuracy: false, timeout: 20000, maximumAge: 3600000 },
+    //         );
+    //     }
+    // }
 
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
@@ -247,11 +247,11 @@ export default StoreDetailList = (props) => {
                         {/* {LocalizedStrings["The Emporium Mall"]} */}
                         {item?.['store name']}
                     </Text>
-                    {
+                    {/* {
                         distance && (
                             <Text style={styles.mainDes}>{distance} {LocalizedStrings["km away"]}</Text>
                         )
-                    }
+                    } */}
                 </View>
                 <Text style={styles.shortDes}>{item?.['offer text']}</Text>
                 <View style={styles.line} />
@@ -281,7 +281,7 @@ export default StoreDetailList = (props) => {
                     </Text>
                 </View>
 
-                {
+                {/* {
                     coordinates && (
                         <View style={styles.container}>
                             <View style={styles.mapContainer}>
@@ -301,14 +301,14 @@ export default StoreDetailList = (props) => {
                             </View>
                         </View>
                     )
-                }
+                } */}
 
                 {/* <TouchableOpacity activeOpacity={0.8} onPress={() => openWhatsAppChat(item?.whatsApp)}>
                     <Image source={appIcons.whatsapp} style={styles.whatsappIcon} />
                 </TouchableOpacity> */}
             </ScrollView>
 
-            {
+            {/* {
                 coordinates ? (
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: wp(5) }}>
                         <Button
@@ -335,7 +335,13 @@ export default StoreDetailList = (props) => {
                         {LocalizedStrings["Go to Website"]}
                     </Button>
                 )
-            }
+            } */}
+            <Button
+                onPress={() => Linking.openURL(item?.['offer link'])}
+                skip
+            >
+                {LocalizedStrings["Go to Website"]}
+            </Button>
         </SafeAreaView>
     )
 };

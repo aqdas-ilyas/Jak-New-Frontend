@@ -20,8 +20,6 @@ const Tab = createMaterialTopTabNavigator();
 export default Offer = (props) => {
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
     const dispatch = useDispatch()
-    const refFilterCategorySheet = useRef();
-    const forAllOffers = useSelector(state => state.offer.forAllOffers)
     const favorite = useSelector(state => state.favorite.favorite)
     const myOffer = useSelector(state => state.offer.myOffer)
     const CategoriesOffers = useSelector(state => state.offer.CategoriesOffers)
@@ -31,8 +29,6 @@ export default Offer = (props) => {
     const [isLoading, setIsLoading] = useState(false)
     const [isBottomLoading, setIsBottomLoading] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
-    const flatListRef = useRef(null);
-    const [categoryFilter, setCategoryFilter] = useState('')
     const [categoryFilterArray, setCategoryFilterArray] = useState('')
     const [myOfferFilterArray, setMyOfferFilterArray] = useState('')
     const [checkboxes, setCheckboxes] = useState([]);
@@ -66,27 +62,6 @@ export default Offer = (props) => {
                 console.log('No Data!')
             }
         }
-    }
-
-    const onRefresh = async () => {
-        setRefreshing(true);
-        setIsLoading(true);
-        
-        // Reset page number and clear existing data
-        dispatch(saveMyOfferPageNo(1));
-        dispatch(saveMyOffer(null));
-        dispatch(saveCategoryOffers(null));
-        dispatch(saveForAllOffers(null));
-        setMyOfferFilterArray('');
-        setCategoryFilter('');
-        
-        // Fetch fresh data first
-        await getMyOfferCategory();
-        await getMyOffers();
-        await getForAll();
-        
-        setRefreshing(false);
-        setIsLoading(false);
     }
 
     const getMyOfferCategory = () => {
@@ -190,31 +165,11 @@ export default Offer = (props) => {
             console.log('Error getMyOffers===', error);
         };
 
-        const endPoint = routs.getMyOffers + `user/all?myoffers=yes&limit=10&page=${myOfferPageNo}&language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        const endPoint = routs.getMyOffers + `user/all?myoffers=yes&page=${myOfferPageNo}&language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
         const method = Method.GET;
         const bodyParams = {};
 
         str == 'bottom' ? setIsBottomLoading(true) : setIsLoading(true)
-        callApi(method, endPoint, bodyParams, onSuccess, onError);
-    };
-
-    const getForAll = () => {
-        const onSuccess = response => {
-            console.log('response getForAll===', response?.data);
-            setIsLoading(false);
-
-            dispatch(saveForAllOffers(response?.data?.data || []))
-        };
-
-        const onError = error => {
-            setIsLoading(false);
-            console.log('Error getForAll===', error);
-        };
-
-        const endPoint = routs.getMyOffers + `user/all?myoffers=no&language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
-        const method = Method.GET;
-        const bodyParams = {};
-
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     };
 
@@ -278,60 +233,6 @@ export default Offer = (props) => {
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     };
 
-    const My_Offer = () => {
-        return (
-            <FlatList
-                data={myOffer}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={(item, index) => index.toString()}
-                onEndReached={() => getMoreOffer()}
-                ListEmptyComponent={
-                    <Text style={styles.emptytext}>{LocalizedStrings['No Offers yet!']}</Text>
-                }
-                ListFooterComponent={
-                    isBottomLoading && (
-                        <ActivityIndicator size={'small'} color={colors.primaryColor} />
-                    )
-                }
-                renderItem={({ item, index }) => {
-                    return (
-                        <ListItem key={index} buttonEnable item={item} IsFavourites={(fav) => IsFavourites(fav?._id)} />
-                    )
-                }}
-            />
-        );
-    };
-
-    const For_All = () => {
-        return (
-            <FlatList
-                data={forAllOffers}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={(i) => i._id}
-                ListEmptyComponent={
-                    <Text style={styles.emptytext}>{LocalizedStrings['No Offers yet!']}</Text>
-                }
-                renderItem={({ item, index }) => {
-                    return (
-                        <ListItem buttonEnable item={item} IsFavourites={(fav) => IsFavourites(fav?._id)} />
-                    )
-                }}
-            />
-        );
-    };
-
-    const handleListCategory = async (item) => {
-        setCategoryFilter(item)
-
-        const cleanedCategories = await myOffer.filter(i => i?.category === item);
-
-        if (item == LocalizedStrings['All']) {
-            setMyOfferFilterArray([])
-        } else {
-            setMyOfferFilterArray(cleanedCategories)
-        }
-    }
-
     const getCheckedLocalizedStrings = async () => {
         // Filter out checked items
         const checkedItems = await checkboxes.filter(item => item.checked);
@@ -365,7 +266,8 @@ export default Offer = (props) => {
             setIsLoading(false);
         };
 
-        let endPoint = routs.getMyOffers + `user/all?myoffers=yes&limit=10&page=1&language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        // let endPoint = routs.getMyOffers + `user/all?myoffers=yes&limit=10&page=1&language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        let endPoint = routs.getMyOffers + `user/all?myoffers=yes&language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
 
         if (formattedCheckedStrings != '') {
             endPoint += `&category=${formattedCheckedStrings}`;
@@ -486,7 +388,6 @@ export default Offer = (props) => {
                 </View>
 
                 <FlatList
-                    ref={flatListRef}
                     data={myOfferFilterArray?.length > 0 ? myOfferFilterArray : myOffer}
                     showsVerticalScrollIndicator={false}
                     keyExtractor={(item, index) => index.toString()}

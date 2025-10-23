@@ -5,73 +5,73 @@ import { useNavigation } from '@react-navigation/native'
 import Button from '../button'
 import { LocalizationContext } from '../../language/LocalizationContext'
 
-const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
+// const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
 
-const getCoordinates = async (address) => {
-    try {
-        const addressValid = address.replace(/\s+/g, '');
-        const response = await fetch(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(addressValid)}&inputtype=textquery&fields=geometry&locationbias=country:KSA&&key=${GEOCODING_API_KEY}`)
-        const data = await response.json();
-        if (data.status === 'OK') {
-            const location = data.candidates[0].geometry.location;
-            return location; // { lat: ..., lng: ... }
-        } else {
-            console.log('Geocoding API error: ' + JSON.stringify(data));
-            return false;
-        }
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
-};
+// const getCoordinates = async (address) => {
+//     try {
+//         const addressValid = address.replace(/\s+/g, '');
+//         const response = await fetch(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(addressValid)}&inputtype=textquery&fields=geometry&locationbias=country:KSA&&key=${GEOCODING_API_KEY}`)
+//         const data = await response.json();
+//         if (data.status === 'OK') {
+//             const location = data.candidates[0].geometry.location;
+//             return location; // { lat: ..., lng: ... }
+//         } else {
+//             console.log('Geocoding API error: ' + JSON.stringify(data));
+//             return false;
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         return false;
+//     }
+// };
 
 export default function ListItem({ buttonEnable, search, item, isLiked, IsFavourites }) {
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const navigation = useNavigation()
-    const [hasCoordinates, setHasCoordinates] = useState(false);
-    const [coordinates, setCoordinates] = useState(null);
-    const [region, setRegion] = useState({
-        latitude: 25.1523005,
-        longitude: 55.2343772,
-        latitudeDelta: 0.02,
-        longitudeDelta: 0.02,
-    })
+    // const [hasCoordinates, setHasCoordinates] = useState(false);
+    // const [coordinates, setCoordinates] = useState(null);
+    // const [region, setRegion] = useState({
+    //     latitude: 25.1523005,
+    //     longitude: 55.2343772,
+    //     latitudeDelta: 0.02,
+    //     longitudeDelta: 0.02,
+    // })
 
-    useEffect(() => {
-        const fetchCoordinates = async () => {
-            const result = await getCoordinates(item?.['store name']);
-            if (result) {
-                setHasCoordinates(true);
-                setCoordinates(result)
-                setRegion({
-                    latitude: result?.lat,
-                    longitude: result?.lng,
-                    latitudeDelta: 0.02,
-                    longitudeDelta: 0.02,
-                })
-            }
-        };
+    // useEffect(() => {
+    //     const fetchCoordinates = async () => {
+    //         const result = await getCoordinates(item?.['store name']);
+    //         if (result) {
+    //             setHasCoordinates(true);
+    //             setCoordinates(result)
+    //             setRegion({
+    //                 latitude: result?.lat,
+    //                 longitude: result?.lng,
+    //                 latitudeDelta: 0.02,
+    //                 longitudeDelta: 0.02,
+    //             })
+    //         }
+    //     };
 
-        fetchCoordinates();
-    }, [item?.['store name']]);
+    //     fetchCoordinates();
+    // }, [item?.['store name']]);
 
-    const OpenMap = () => {
-        const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' });
-        const latLng = `${coordinates.lat},${coordinates.lng}`;
-        const label = item?.['store name'];
-        const url = Platform.select({
-            ios: `${scheme}${label}@${latLng}`,
-            android: `${scheme}${latLng}(${label})`,
-        });
+    // const OpenMap = () => {
+    //     const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' });
+    //     const latLng = `${coordinates.lat},${coordinates.lng}`;
+    //     const label = item?.['store name'];
+    //     const url = Platform.select({
+    //         ios: `${scheme}${label}@${latLng}`,
+    //         android: `${scheme}${latLng}(${label})`,
+    //     });
 
-        Linking.canOpenURL(url).then(supported => {
-            if (supported) {
-                return Linking.openURL(url);
-            } else {
-                return Linking.openURL(url);
-            }
-        });
-    };
+    //     Linking.canOpenURL(url).then(supported => {
+    //         if (supported) {
+    //             return Linking.openURL(url);
+    //         } else {
+    //             return Linking.openURL(url);
+    //         }
+    //     });
+    // };
 
     return (
         <View key={item?._id}>
@@ -87,6 +87,9 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                             <Text style={styles.mainTitle}>
                                 {item?.['store name'].length > 20 ? item?.['store name'].slice(0, 12) + '...' : item?.['store name']}
+                            </Text>
+                            <Text style={styles.mainTitle}>
+                                {item?.["expiry date"]}
                             </Text>
                             <TouchableOpacity style={{ padding: wp(2) }} activeOpacity={0.8} onPress={() => IsFavourites(item)}>
                                 <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
@@ -109,7 +112,7 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </Text>
                         </View>
 
-                        {
+                        {/* {
                             hasCoordinates && (
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                                     <Text style={[styles.discount]}>{LocalizedStrings['Discount Offer']}: <Text style={{ fontFamily: fontFamily.MontserratSemiBold, color: colors.primaryColor }}>{item?.['discount %'] ? item?.['discount %'] : 0}%</Text></Text>
@@ -118,7 +121,7 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                                     </TouchableOpacity>
                                 </View>
                             )
-                        }
+                        } */}
                     </View>
                 </View>
             </TouchableOpacity>
