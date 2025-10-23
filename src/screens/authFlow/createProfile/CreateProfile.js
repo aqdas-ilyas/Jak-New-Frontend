@@ -246,7 +246,7 @@ const CreateProfile = (props) => {
         }
 
         if (email) {
-            body = { ...body, "number": JSON.stringify(`+${countryCode}` + phoneNumber) }
+            body = { ...body, "number": countryCode + phoneNumber }
         }
 
         setIsLoading(true);
@@ -267,18 +267,18 @@ const CreateProfile = (props) => {
                 <View style={{ marginVertical: wp(5) }}>
                     <View style={styles.imageTopView}>
                         <View style={styles.imageView}>
-                            <Image 
-                                source={Object.keys(image).length !== 0 ? image : appImages.profile1} 
-                                style={[styles.imageStyle, { resizeMode: 'cover' }]} 
+                            <Image
+                                source={Object.keys(image).length !== 0 ? image : appImages.profile1}
+                                style={[styles.imageStyle, { resizeMode: 'cover' }]}
                                 onLoadStart={() => setImageLoading(true)}
                                 onLoadEnd={() => setImageLoading(false)}
                                 onError={() => setImageLoading(false)}
                             />
                             {imageLoading && (
                                 <View style={styles.imageLoaderContainer}>
-                                    <ActivityIndicator 
-                                        size="small" 
-                                        color={colors.primaryColor} 
+                                    <ActivityIndicator
+                                        size="small"
+                                        color={colors.primaryColor}
                                     />
                                 </View>
                             )}

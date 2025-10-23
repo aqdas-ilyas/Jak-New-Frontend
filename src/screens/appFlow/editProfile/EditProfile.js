@@ -63,10 +63,9 @@ export default EditProfile = (props) => {
 
     useEffect(() => {
         if (Object.values(user).length > 0) {
-            console.log(JSON.stringify(user))
             if (user) {
                 if (user?.isSocial) {
-                    const nummber = parsePhoneNumber(user.number);
+                    const nummber = parsePhoneNumber(`+${user.number}`);
                     const countryCode = nummber?.countryCallingCode;
                     const nationalNumber = nummber?.nationalNumber;
                     setPhoneNumber(`${nationalNumber}`)
@@ -209,7 +208,7 @@ export default EditProfile = (props) => {
         }
 
         if (user?.isSocial) {
-            body = { ...body, "number": JSON.stringify(`+${countryCode}` + phoneNumber) }
+            body = { ...body, "number": countryCode + phoneNumber }
         } else {
             body = { ...body, "email": userEmail }
         }
@@ -236,18 +235,18 @@ export default EditProfile = (props) => {
                 <View style={{ marginVertical: wp(5) }}>
                     <View style={styles.imageTopView}>
                         <View style={styles.imageView}>
-                            <Image 
-                                source={Object.keys(image).length !== 0 ? image : appImages.profile1} 
-                                style={[styles.imageStyle, { resizeMode: 'cover' }]} 
+                            <Image
+                                source={Object.keys(image).length !== 0 ? image : appImages.profile1}
+                                style={[styles.imageStyle, { resizeMode: 'cover' }]}
                                 onLoadStart={() => setImageLoading(true)}
                                 onLoadEnd={() => setImageLoading(false)}
                                 onError={() => setImageLoading(false)}
                             />
                             {imageLoading && (
                                 <View style={styles.imageLoaderContainer}>
-                                    <ActivityIndicator 
-                                        size="small" 
-                                        color={colors.primaryColor} 
+                                    <ActivityIndicator
+                                        size="small"
+                                        color={colors.primaryColor}
                                     />
                                 </View>
                             )}
