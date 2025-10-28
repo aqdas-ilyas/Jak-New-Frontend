@@ -8,22 +8,91 @@ import { fontFamily } from '../../../services'
 import { hp, routes, wp } from '../../../services/constants'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import { colors } from '../../../services/utilities/colors'
-import { logout, saveLoginRemember, updateUser } from '../../../store/reducers/userDataSlice'
+import { logout, saveLoginRemember, updateUser, migrateState } from '../../../store/reducers/userDataSlice'
 import { saveMyOffer, saveMyOfferPageNo, saveTotalMyOfferPagesCount } from '../../../store/reducers/OfferSlice'
+import ReactNativeBiometrics from 'react-native-biometrics'
+import { showMessage } from 'react-native-flash-message'
 
 export default function Splash(props) {
     const dispatch = useDispatch()
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const [isLoading, setIsLoading] = useState(true);
     const [apiCompleted, setApiCompleted] = useState(false);
+    const [biometricChecked, setBiometricChecked] = useState(false);
+    const [biometricInProgress, setBiometricInProgress] = useState(false);
     
     const islogin = useSelector(state => state?.user?.isRemember)
     const numberLogin = useSelector(state => state?.user?.numberLogin)
     const splash = useSelector(state => state?.user?.splash)
     const user = useSelector(state => state?.user?.user?.user)
+    const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false)
 
     console.log("*********** Remember Me *************", islogin)
     console.log("*********** Checking User *************", user)
+
+    // Check biometric authentication - MANDATORY for logged in users
+    const checkBiometricAuth = async () => {
+        // Prevent multiple simultaneous biometric checks
+        if (biometricInProgress) {
+            console.log('Biometric check already in progress, skipping...');
+            return;
+        }
+
+        try {
+            setBiometricInProgress(true);
+            const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
+            const { available } = await rnBiometrics.isSensorAvailable();
+            
+            if (available && biometricEnabled) {
+                console.log('Starting MANDATORY biometric authentication...');
+                
+                // Keep prompting until success - NO CANCEL OPTION
+                let biometricSuccess = false;
+                while (!biometricSuccess) {
+                    try {
+                        const { success, error } = await rnBiometrics.simplePrompt({
+                            promptMessage: LocalizedStrings.biometric_app_open_prompt || 'Authenticate to open the app',
+                            cancelButtonText: LocalizedStrings.cancel || 'Cancel',
+                        });
+
+                        console.log('Biometric result - Success:', success, 'Error:', error);
+
+                        if (success) {
+                            console.log('Biometric authentication successful - allowing navigation');
+                            biometricSuccess = true;
+                            setBiometricChecked(true);
+                        } else {
+                            console.log('Biometric authentication failed - retrying...');
+                            // Continue the loop to retry biometric authentication
+                            // Don't break the loop - keep prompting until success
+                        }
+                    } catch (promptError) {
+                        console.log('Biometric prompt error:', promptError);
+                        // Continue the loop to retry biometric authentication
+                    }
+                }
+            } else {
+                console.log('Biometric not available or not enabled - allowing navigation');
+                setBiometricChecked(true);
+            }
+        } catch (error) {
+            console.log('Biometric check error:', error);
+            
+            if (islogin) {
+                // If biometric check fails for logged in user, logout
+                console.log('Biometric check error for logged in user - logging out');
+                dispatch(logout());
+                setBiometricChecked(false);
+                props.navigation.replace(routes.login);
+            } else {
+                // If biometric check fails for non-logged in user, allow navigation
+                console.log('Biometric check error for non-logged in user - allowing navigation');
+                setBiometricChecked(true);
+            }
+        } finally {
+            setBiometricInProgress(false);
+        }
+    };
 
     const getUserProfile = () => {
         const onSuccess = response => {
@@ -100,6 +169,9 @@ export default function Splash(props) {
     }
 
     useEffect(() => {
+        // Migrate state to ensure new properties exist
+        dispatch(migrateState());
+        
         dispatch(saveMyOffer(null));
         dispatch(saveTotalMyOfferPagesCount(1));
         dispatch(saveMyOfferPageNo(1));
@@ -122,8 +194,9 @@ export default function Splash(props) {
 
     // Handle navigation after API completion and minimum splash time
     useEffect(() => {
-        if (!isLoading && apiCompleted) {
+        if (!isLoading && apiCompleted && biometricChecked) {
             console.log("*********** Starting navigation *************");
+            console.log("Navigation conditions - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
             
             // Small delay to ensure smooth transition and Redux state update
             setTimeout(() => {
@@ -132,18 +205,43 @@ export default function Splash(props) {
                 console.log("*********** Current user for navigation *************", currentUser);
                 navigateBasedOnUserState(currentUser);
             }, 500);
+        } else {
+            console.log("Navigation blocked - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
         }
-    }, [isLoading, apiCompleted, user])
+    }, [isLoading, apiCompleted, biometricChecked, user]);
+
+    // Check biometric authentication - mandatory for logged in users, optional for logged out users
+    useEffect(() => {
+        // Only run biometric check once when conditions are met and not already in progress
+        if (islogin && biometricEnabled && apiCompleted && !biometricChecked && !biometricInProgress) {
+            // User is logged in and biometric is enabled - MANDATORY biometric check
+            console.log('Logged in user - MANDATORY biometric check');
+            checkBiometricAuth();
+        } else if (!islogin && biometricEnabled && !biometricChecked && !biometricInProgress) {
+            // User is not logged in but biometric is enabled - OPTIONAL biometric check
+            console.log('Not logged in user - OPTIONAL biometric check');
+            checkBiometricAuth();
+        } else if (!biometricEnabled) {
+            // If biometric is disabled, skip biometric check
+            console.log('Skipping biometric check - biometricEnabled:', biometricEnabled, 'islogin:', islogin);
+            setBiometricChecked(true);
+        }
+    }, [islogin, biometricEnabled, apiCompleted, biometricChecked, biometricInProgress]);
 
     return (
         <ImageBackground source={appImages.splashBackground} style={styles.backgroundImage}>
             <Image source={appIcons.appLogo} style={styles.imageLogo} />
             
             {/* Loading indicator */}
-            {/* {(isLoading || !apiCompleted) && (
+            {/* {(isLoading || !apiCompleted || !biometricChecked || biometricInProgress) && (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={colors.primaryColor} />
-                    <Text style={styles.loadingText}>{LocalizedStrings.loading || 'Loading...'}</Text>
+                    <Text style={styles.loadingText}>
+                        {biometricInProgress || (!biometricChecked && biometricEnabled && islogin)
+                            ? (LocalizedStrings.biometric_app_open_prompt || 'Authenticate to open the app')
+                            : (LocalizedStrings.loading || 'Loading...')
+                        }
+                    </Text>
                 </View>
             )} */}
             

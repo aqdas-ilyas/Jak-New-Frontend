@@ -15,8 +15,9 @@ import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
 import { getDeviceId } from 'react-native-device-info';
 import { Loader } from '../../../components/loader/Loader';
-import { useDispatch } from 'react-redux';
-import { saveLoginRemember, saveNumberLogin, setToken, updateUser } from '../../../store/reducers/userDataSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveLoginRemember, saveNumberLogin, setToken, updateUser, saveCredentials } from '../../../store/reducers/userDataSlice';
+import ReactNativeBiometrics from 'react-native-biometrics';
 import { googleLoginData, _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import CountryInput from '../../../components/countryPicker/CountryPicker';
@@ -26,12 +27,24 @@ import appleAuth from '@invertase/react-native-apple-authentication';
 
 const SignIn = props => {
   const dispatch = useDispatch();
+  const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false);
+  const savedCredentials = useSelector(state => state?.user?.savedCredentials || {
+    email: null,
+    password: null,
+    phoneNumber: null,
+    countryCode: null,
+    loginType: null,
+    googleEmail: null,
+    appleEmail: null,
+  });
   const { appLanguage, LocalizedStrings, setAppLanguage } = useContext(LocalizationContext);
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('966');
   const [countryAbbreviationCode, setCountryAbbrivaitionCode] = useState('SA');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +115,19 @@ const SignIn = props => {
         dispatch(saveLoginRemember(toggleCheckBox));
         dispatch(saveNumberLogin(true));
 
+        // Save credentials for biometric login if biometric is enabled
+        if (biometricEnabled) {
+          dispatch(saveCredentials({
+            loginType: 'phone',
+            phoneNumber: phoneNumber,
+            countryCode: countryCode,
+            password: password,
+            email: null,
+            googleEmail: null,
+            appleEmail: null,
+          }));
+        }
+
         if (response?.act === 'login-granted') {
           props.navigation.navigate(routes.tab, { screen: routes.home });
         } else if (response?.act === 'incomplete-profile') {
@@ -169,7 +195,300 @@ const SignIn = props => {
         '773361963603-cv2gjtb7ni4or5i5vpudlmao8b90k1do.apps.googleusercontent.com',
       offlineAccess: true,
     });
+    checkBiometricAvailability();
   }, []);
+
+  // Check biometric availability
+  const checkBiometricAvailability = async () => {
+    try {
+      const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
+      const { available, biometryType } = await rnBiometrics.isSensorAvailable();
+      console.log('Biometric available:', available, 'Type:', biometryType);
+      setBiometricAvailable(available);
+    } catch (error) {
+      console.log('Biometric check error:', error);
+      setBiometricAvailable(false);
+    }
+  };
+
+  // Handle biometric phone login
+  const handleBiometricPhoneLogin = async (credentials) => {
+    console.log('handleBiometricPhoneLogin called with credentials:', credentials);
+
+    const onSuccess = response => {
+      console.log('res while SignInAfterValidation====>', response);
+      dispatch(updateUser(response?.data));
+      dispatch(
+        setToken({
+          token: response?.data?.token,
+          refreshToken: response?.data?.refreshToken,
+        }),
+      );
+      dispatch(saveLoginRemember(true));
+      dispatch(saveNumberLogin(true));
+
+      if (response?.act === 'login-granted') {
+        props.navigation.navigate(routes.tab, { screen: routes.home });
+      } else if (response?.act === 'incomplete-profile') {
+        props?.navigation?.navigate(routes.createProfile, {
+          number: `${credentials.countryCode + credentials.phoneNumber}`,
+        });
+      } else if (response?.act === 'incomplete-preferences') {
+        if (!response?.data?.user?.isPreferencesSkipped) {
+          props?.navigation?.navigate(routes.preferences);
+        } else {
+          if (response?.act == 'admin-pending') {
+            props.navigation.navigate(routes.tab, { screen: routes.home });
+          } else if (response?.act == 'incomplete-subscription') {
+            props?.navigation?.navigate(routes.subscription);
+            showMessage({
+              message: 'You are not subscribed yet!',
+              type: 'danger',
+            });
+          } else {
+            props.navigation.navigate(routes.tab, { screen: routes.home });
+          }
+        }
+      } else {
+        props.navigation.navigate(routes.tab, { screen: routes.home });
+      }
+    };
+
+    const onError = error => {
+      console.log('error while SignInAfterValidation====>', error.message);
+      showMessage({
+        message: error?.message || 'Login failed',
+        type: 'danger',
+      });
+    };
+
+    const endPoint = routs.signIn;
+    const method = Method.POST;
+    const bodyParams = {
+      number: `${credentials.countryCode + credentials.phoneNumber}`,
+      password: credentials.password,
+      language: appLanguage == 'en' ? 'english' : 'arabic',
+      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+    };
+
+    console.log('Biometric phone login API call with params:', bodyParams);
+    callApi(method, endPoint, bodyParams, onSuccess, onError);
+  };
+
+  // Handle biometric email login
+  const handleBiometricEmailLogin = async (credentials) => {
+    console.log('handleBiometricEmailLogin called with credentials:', credentials);
+
+    const onSuccess = response => {
+      console.log('res while SignInAfterValidation====>', response);
+      dispatch(updateUser(response?.data));
+      dispatch(
+        setToken({
+          token: response?.data?.token,
+          refreshToken: response?.data?.refreshToken,
+        }),
+      );
+      dispatch(saveLoginRemember(true));
+
+      if (response?.act === 'login-granted') {
+        props.navigation.navigate(routes.tab, { screen: routes.home });
+      } else if (response?.act === 'email-unverified') {
+        props.navigation.navigate(routes.otp, {
+          email: credentials.email.toLowerCase(),
+          key: 'auth',
+        });
+      } else if (response?.act === 'incomplete-profile') {
+        props?.navigation?.navigate(routes.createProfile, {
+          email: credentials.email.toLowerCase(),
+        });
+      } else if (response?.act === 'incomplete-preferences') {
+        if (!response?.data?.user?.isPreferencesSkipped) {
+          props?.navigation?.navigate(routes.preferences);
+        } else {
+          if (response?.act == 'admin-pending') {
+            props.navigation.navigate(routes.tab, { screen: routes.home });
+          } else if (response?.act == 'incomplete-subscription') {
+            props?.navigation?.navigate(routes.subscription);
+            showMessage({
+              message: 'You are not subscribed yet!',
+              type: 'danger',
+            });
+          } else {
+            props.navigation.navigate(routes.tab, { screen: routes.home });
+          }
+        }
+      } else {
+        props.navigation.navigate(routes.tab, { screen: routes.home });
+      }
+    };
+
+    const onError = error => {
+      console.log('error while SignInAfterValidation====>', error.message);
+      showMessage({
+        message: error?.message || 'Login failed',
+        type: 'danger',
+      });
+    };
+
+    const endPoint = routs.signIn;
+    const method = Method.POST;
+    const bodyParams = {
+      email: credentials?.email.toLowerCase(),
+      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+    };
+
+    console.log('Biometric email login API call with params:', bodyParams);
+    callApi(method, endPoint, bodyParams, onSuccess, onError);
+  };
+
+  // Handle biometric login
+  const handleBiometricLogin = async () => {
+    console.log('handleBiometricLogin called');
+    console.log('Current savedCredentials:', savedCredentials);
+    console.log('biometricAvailable:', biometricAvailable);
+    console.log('biometricEnabled:', biometricEnabled);
+
+    try {
+      const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
+
+      // Check if biometric is available first
+      const { available, biometryType } = await rnBiometrics.isSensorAvailable();
+      console.log('Biometric check - Available:', available, 'Type:', biometryType);
+
+      if (!available) {
+        showMessage({
+          message: 'Biometric authentication is not available on this device',
+          type: 'danger',
+        });
+        return;
+      }
+
+      // Check if we have saved credentials
+      if (!savedCredentials.loginType) {
+        showMessage({
+          message: 'No saved credentials found. Please login normally first.',
+          type: 'danger',
+        });
+        return;
+      }
+
+      // Validate saved credentials based on login type
+      if (savedCredentials.loginType === 'phone') {
+        if (!savedCredentials.phoneNumber || !savedCredentials.countryCode || !savedCredentials.password) {
+          showMessage({
+            message: 'Phone credentials are incomplete. Please login normally first.',
+            type: 'danger',
+          });
+          return;
+        }
+      } else if (savedCredentials.loginType === 'email') {
+        if (!savedCredentials.email || !savedCredentials.password) {
+          showMessage({
+            message: 'Email credentials are incomplete. Please login normally first.',
+            type: 'danger',
+          });
+          return;
+        }
+      }
+
+      console.log('Starting biometric authentication...');
+      const { success, error } = await rnBiometrics.simplePrompt({
+        promptMessage: LocalizedStrings.biometric_login_prompt || 'Authenticate to login',
+        cancelButtonText: LocalizedStrings.cancel || 'Cancel',
+      });
+
+      console.log('Biometric result - Success:', success, 'Error:', error);
+
+      if (success) {
+        console.log('Biometric authentication successful, proceeding with login...');
+
+        if (savedCredentials.loginType === 'phone') {
+          console.log('Processing phone biometric login with credentials:', savedCredentials);
+          // Set fields for display
+          setPhoneNumber(savedCredentials.phoneNumber);
+          setPassword(savedCredentials.password);
+          setCountryCode(savedCredentials.countryCode);
+          // Call API directly
+          handleBiometricPhoneLogin(savedCredentials);
+        } else if (savedCredentials.loginType === 'email') {
+          console.log('Processing email biometric login with credentials:', savedCredentials);
+          // Set fields for display
+          setEmail(savedCredentials.email);
+          setPassword(savedCredentials.password);
+          // Call API directly
+          handleBiometricEmailLogin(savedCredentials);
+        } else if (savedCredentials.loginType === 'google') {
+          // Check if googleEmail exists
+          if (savedCredentials.googleEmail) {
+            handleSociallogin({ email: savedCredentials.googleEmail });
+          } else {
+            showMessage({
+              message: 'Google email not found in saved credentials',
+              type: 'danger',
+            });
+          }
+        } else if (savedCredentials.loginType === 'apple') {
+          // Check if appleEmail exists
+          if (savedCredentials.appleEmail) {
+            handleSociallogin({ email: savedCredentials.appleEmail });
+          } else {
+            showMessage({
+              message: 'Apple email not found in saved credentials',
+              type: 'danger',
+            });
+          }
+        }
+      } else {
+        // Handle different failure scenarios
+        if (error && error.includes('UserCancel')) {
+          showMessage({
+            message: 'Biometric authentication was cancelled',
+            type: 'info',
+          });
+        } else if (error && error.includes('BiometryNotAvailable')) {
+          showMessage({
+            message: 'Biometric authentication is not available',
+            type: 'danger',
+          });
+        } else if (error && error.includes('BiometryNotEnrolled')) {
+          showMessage({
+            message: 'No biometric data enrolled. Please set up biometric authentication in device settings.',
+            type: 'danger',
+          });
+        } else {
+          showMessage({
+            message: 'Biometric authentication failed. Please try again.',
+            type: 'danger',
+          });
+        }
+      }
+    } catch (error) {
+      console.log('Biometric login catch error:', error);
+
+      // Handle specific error types
+      if (error.message && error.message.includes('UserCancel')) {
+        showMessage({
+          message: 'Biometric authentication was cancelled',
+          type: 'info',
+        });
+      } else if (error.message && error.message.includes('BiometryNotAvailable')) {
+        showMessage({
+          message: 'Biometric authentication is not available on this device',
+          type: 'danger',
+        });
+      } else if (error.message && error.message.includes('BiometryNotEnrolled')) {
+        showMessage({
+          message: 'No biometric data enrolled. Please set up biometric authentication in device settings.',
+          type: 'danger',
+        });
+      } else {
+        showMessage({
+          message: 'Biometric authentication failed. Please try again or login normally.',
+          type: 'danger',
+        });
+      }
+    }
+  };
 
   const googleLoginClicked = async () => {
     let info = await googleLoginData();
@@ -182,6 +501,15 @@ const SignIn = props => {
   };
 
   const handleSociallogin = user => {
+    // Check if user and email exist
+    if (!user || !user.email) {
+      showMessage({
+        message: 'Invalid user data for social login',
+        type: 'danger',
+      });
+      return;
+    }
+
     const onSuccess = response => {
       setIsLoading(false);
       console.log('res while handleSociallogin====>', response);
@@ -194,6 +522,19 @@ const SignIn = props => {
         }),
       );
       dispatch(saveLoginRemember(true));
+
+      // Save credentials for biometric login if biometric is enabled
+      if (biometricEnabled) {
+        dispatch(saveCredentials({
+          loginType: 'google',
+          phoneNumber: null,
+          countryCode: null,
+          password: null,
+          email: null,
+          googleEmail: user?.email,
+          appleEmail: null,
+        }));
+      }
 
       if (response?.act === 'login-granted') {
         props.navigation.navigate(routes.tab, { screen: routes.home });
@@ -239,7 +580,7 @@ const SignIn = props => {
 
       if (error?.errorType == 'email-not-verify') {
         props.navigation.navigate(routes.otp, {
-          email: user?.email.toLowerCase(),
+          email: user?.email?.toLowerCase() || '',
           key: 'auth',
         });
       }
@@ -284,6 +625,18 @@ const SignIn = props => {
         console.log('Sub:', sub);
 
         if (email) {
+          // Save credentials for biometric login if biometric is enabled
+          if (biometricEnabled) {
+            dispatch(saveCredentials({
+              loginType: 'apple',
+              phoneNumber: null,
+              countryCode: null,
+              password: null,
+              email: null,
+              googleEmail: null,
+              appleEmail: email,
+            }));
+          }
           // Handle successful login and save user data
           handleSociallogin({ email: email, userFirstName: appleAuthRequestResponse?.fullName?.givenName, userLastName: appleAuthRequestResponse?.fullName?.familyName })
         }
@@ -457,11 +810,50 @@ const SignIn = props => {
         </View>
       </ScrollView>
 
-      <View style={[appStyles.ph20, appStyles.mb5]}>
+      <View style={[appStyles.ph20]}>
         <Button onPress={() => SignInAfterValidation()}>
           {LocalizedStrings.Login}
         </Button>
       </View>
+
+      {/* Biometric Login Button */}
+      {biometricAvailable && biometricEnabled && savedCredentials.loginType && (
+        <TouchableOpacity style={styles.biometricButton} onPress={handleBiometricLogin} activeOpacity={0.8}>
+          <Text style={styles.biometricButtonText}>
+            {LocalizedStrings.biometric_login || 'Use Biometric Authentication'}
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Debug Info */}
+      {__DEV__ && (
+        <View style={[appStyles.ph20, appStyles.mb5]}>
+          <Text style={styles.debugText}>
+            Biometric Available: {biometricAvailable ? 'Yes' : 'No'}
+          </Text>
+          <Text style={styles.debugText}>
+            Biometric Enabled: {biometricEnabled ? 'Yes' : 'No'}
+          </Text>
+          <Text style={styles.debugText}>
+            Login Type: {savedCredentials.loginType || 'None'}
+          </Text>
+          {savedCredentials.loginType === 'phone' && (
+            <>
+              <Text style={styles.debugText}>
+                Phone: {savedCredentials.phoneNumber || 'None'}
+              </Text>
+              <Text style={styles.debugText}>
+                Country Code: {savedCredentials.countryCode || 'None'}
+              </Text>
+            </>
+          )}
+          {savedCredentials.loginType === 'email' && (
+            <Text style={styles.debugText}>
+              Email: {savedCredentials.email || 'None'}
+            </Text>
+          )}
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -559,5 +951,27 @@ const styles = StyleSheet.create({
     width: wp(3.5),
     height: wp(3.5),
     borderRadius: 50,
+  },
+  biometricButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: colors.primaryColor,
+    paddingVertical: hp(1.8),
+    paddingHorizontal: wp(5),
+    marginHorizontal: wp(2),
+    borderRadius: 50,
+  },
+  biometricButtonText: {
+    fontSize: hp(1.6),
+    fontFamily: fontFamily.UrbanistSemiBold,
+    color: colors.primaryColor,
+  },
+  debugText: {
+    fontSize: hp(1.2),
+    fontFamily: fontFamily.UrbanistRegular,
+    color: 'red',
+    marginVertical: hp(0.5),
   },
 });

@@ -18,6 +18,18 @@ export default {
     error_loading_document: 'Failed to load document. Please check your internet connection and try again.',
     retry: 'Retry',
     
+    // Biometric Authentication
+    biometric_login: 'Biometric Login',
+    biometric_description: 'Use your fingerprint or face to quickly and securely access your account',
+    biometric_prompt_message: 'Authenticate to enable biometric login',
+    biometric_enabled: 'Biometric authentication enabled',
+    biometric_disabled: 'Biometric authentication disabled',
+    biometric_error: 'Failed to enable biometric authentication',
+    biometric_login_prompt: 'Authenticate to login',
+    biometric_no_credentials: 'No saved credentials found',
+    biometric_login_error: 'Biometric authentication failed',
+    biometric_app_open_prompt: 'Authenticate to open the app',
+    
     // About Us Sections
     about_intro: "Welcome to Jak",
     about_intro_desc: "Jak is your ultimate companion for discovering exclusive deals, offers, and loyalty programs from your favorite stores and merchants. We're committed to helping you save money while enjoying the best shopping experience across Saudi Arabia.",

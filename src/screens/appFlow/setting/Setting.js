@@ -29,14 +29,15 @@ import LogoHeader from '../../../components/logoHeader/LogoHeader';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { LocalizationContext } from '../../../language/LocalizationContext';
 import RNRestart from 'react-native-restart'; // Import package from node modules
-import { logout, updateUser } from '../../../store/reducers/userDataSlice';
+import { logout, updateUser, saveBiometricEnabled } from '../../../store/reducers/userDataSlice';
+import ReactNativeBiometrics from 'react-native-biometrics';
 import { useDispatch, useSelector } from 'react-redux';
 import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
 import { getDeviceId } from 'react-native-device-info';
 import { Loader } from '../../../components/loader/Loader';
-import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { showMessage } from 'react-native-flash-message';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { saveFavourite } from '../../../store/reducers/FavoruiteOffersSlice';
 import CallModal from '../../../components/modal';
 import {
@@ -54,6 +55,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 export default Setting = props => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.user.user.user);
+  const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false);
   const { appLanguage, LocalizedStrings, setAppLanguage } =
     React.useContext(LocalizationContext);
   const [subscriptionObj, setSubscriptionObj] = useState([]);
@@ -62,6 +64,7 @@ export default Setting = props => {
   const [toggle, setToggle] = useState(user?.isNotification);
   const [language, setLanguage] = useState(appLanguage === 'ar' ? true : false);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
 
   const settingsArray = [
     // { id: 1, name: LocalizedStrings.complete_your_profile, onpress: () => props.navigation.navigate(routes.editProfile) },
@@ -126,7 +129,135 @@ export default Setting = props => {
   useEffect(() => {
     getSubscriptions(); // Get User Subscription
     setToggle(user?.isNotification); // Get Notification is Enabled or Not?
+    checkBiometricAvailability(); // Check biometric availability
   }, [user]);
+
+  // Check biometric availability
+  const checkBiometricAvailability = async () => {
+    try {
+      const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
+      const { available, biometryType } = await rnBiometrics.isSensorAvailable();
+      console.log('Biometric available:', available, 'Type:', biometryType);
+      setBiometricAvailable(available);
+    } catch (error) {
+      console.log('Biometric check error:', error);
+      setBiometricAvailable(false);
+    }
+  };
+
+  // Handle biometric toggle
+  const handleBiometricToggle = async (value) => {
+    if (value) {
+      // Enable biometric authentication
+      try {
+        const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
+
+        // Check if biometric is available first
+        const { available, biometryType } = await rnBiometrics.isSensorAvailable();
+        console.log('Biometric check - Available:', available, 'Type:', biometryType);
+
+        if (!available) {
+          showMessage({
+            message: 'Biometric authentication is not available on this device',
+            type: 'danger',
+          });
+          return;
+        }
+
+        console.log('Starting biometric authentication for settings...');
+        const { success, error } = await rnBiometrics.simplePrompt({
+          promptMessage: LocalizedStrings.biometric_prompt_message || 'Authenticate to enable biometric login',
+          cancelButtonText: LocalizedStrings.cancel || 'Cancel',
+        });
+
+        console.log('Biometric result - Success:', success, 'Error:', error);
+
+        if (success) {
+          dispatch(saveBiometricEnabled(true));
+          updateBiometricSetting(true);
+          showMessage({
+            message: LocalizedStrings.biometric_enabled || 'Biometric authentication enabled',
+            type: 'success',
+          });
+        } else {
+          // Handle different failure scenarios
+          if (error && error.includes('UserCancel')) {
+            showMessage({
+              message: 'Biometric authentication was cancelled',
+              type: 'info',
+            });
+          } else if (error && error.includes('BiometryNotAvailable')) {
+            showMessage({
+              message: 'Biometric authentication is not available',
+              type: 'danger',
+            });
+          } else if (error && error.includes('BiometryNotEnrolled')) {
+            showMessage({
+              message: 'No biometric data enrolled. Please set up biometric authentication in device settings.',
+              type: 'danger',
+            });
+          } else {
+            showMessage({
+              message: 'Biometric authentication failed. Please try again.',
+              type: 'danger',
+            });
+          }
+        }
+      } catch (error) {
+        console.log('Biometric authentication catch error:', error);
+
+        // Handle specific error types
+        if (error.message && error.message.includes('UserCancel')) {
+          showMessage({
+            message: 'Biometric authentication was cancelled',
+            type: 'info',
+          });
+        } else if (error.message && error.message.includes('BiometryNotAvailable')) {
+          showMessage({
+            message: 'Biometric authentication is not available on this device',
+            type: 'danger',
+          });
+        } else if (error.message && error.message.includes('BiometryNotEnrolled')) {
+          showMessage({
+            message: 'No biometric data enrolled. Please set up biometric authentication in device settings.',
+            type: 'danger',
+          });
+        } else {
+          showMessage({
+            message: LocalizedStrings.biometric_error || 'Failed to enable biometric authentication',
+            type: 'danger',
+          });
+        }
+      }
+    } else {
+      // Disable biometric authentication
+      dispatch(saveBiometricEnabled(false));
+      updateBiometricSetting(false);
+      showMessage({
+        message: LocalizedStrings.biometric_disabled || 'Biometric authentication disabled',
+        type: 'info',
+      });
+    }
+  };
+
+  // Update biometric setting in backend
+  const updateBiometricSetting = (enabled) => {
+    const onSuccess = response => {
+      console.log('Biometric setting updated:', response);
+    };
+
+    const onError = error => {
+      console.log('Error updating biometric setting:', error);
+    };
+
+    const endPoint = routs.updateProfile;
+    const method = Method.PATCH;
+    const bodyParams = {
+      biometricEnabled: enabled,
+    };
+
+    callApi(method, endPoint, bodyParams, onSuccess, onError);
+  };
 
   const getSubscriptions = () => {
     const onSuccess = response => {
@@ -431,6 +562,31 @@ export default Setting = props => {
             );
           }}
         />
+
+        {/* Biometric Authentication Section */}
+        {biometricAvailable && (
+          <View style={styles.biometricSection}>
+            <View style={styles.biometricTextContainer}>
+              <Text style={styles.biometricTitle}>
+                🔐 {LocalizedStrings.biometric_login || 'Biometric Login'}
+              </Text>
+              <Text style={styles.biometricDescription}>
+                {LocalizedStrings.biometric_description || 'Use your fingerprint or face to quickly and securely access your account'}
+              </Text>
+            </View>
+
+            <View style={styles.biometricToggleContainer}>
+              <ToggleSwitch
+                isOn={biometricEnabled}
+                onColor={colors.primaryColor}
+                offColor={colors.grayColor}
+                size="medium"
+                onToggle={handleBiometricToggle}
+                disabled={!biometricAvailable}
+              />
+            </View>
+          </View>
+        )}
       </ScrollView>
 
       <CallModal
@@ -529,5 +685,39 @@ const styles = StyleSheet.create({
     width: wp(3.5),
     height: wp(3.5),
     borderRadius: 50,
+  },
+  biometricSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: hp(2.5),
+    paddingTop: hp(2),
+    borderTopWidth: 1,
+    borderTopColor: colors.borderColor,
+  },
+  biometricLeftSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  biometricTextContainer: {
+    flex: 1,
+  },
+  biometricTitle: {
+    fontSize: hp(1.8),
+    fontFamily: fontFamily.UrbanistBold,
+    color: colors.BlackSecondary,
+    marginBottom: hp(0.5),
+  },
+  biometricDescription: {
+    fontSize: hp(1.4),
+    fontFamily: fontFamily.UrbanistMedium,
+    color: colors.descriptionColor,
+    lineHeight: hp(2),
+    marginRight: wp(5),
+  },
+  biometricToggleContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

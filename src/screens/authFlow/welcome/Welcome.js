@@ -8,8 +8,8 @@ import SocialButton from '../../../components/socialButton'
 import { LocalizationContext } from '../../../language/LocalizationContext'
 import { GoogleSignin } from '@react-native-google-signin/google-signin'
 import { googleLoginData } from '../../../services/helpingMethods'
-import { useDispatch } from 'react-redux'
-import { saveLoginRemember, setToken, updateUser } from '../../../store/reducers/userDataSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { saveLoginRemember, setToken, updateUser, saveCredentials } from '../../../store/reducers/userDataSlice'
 import routs from '../../../api/routs'
 import { callApi, Method } from '../../../api/apiCaller'
 import { getDeviceId } from 'react-native-device-info'
@@ -21,6 +21,7 @@ import { decodeJWT } from '../../../common/HelpingFunc'
 
 const Welcome = (props) => {
     const dispatch = useDispatch()
+    const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false);
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const [isLoading, setIsLoading] = useState(false)
 
@@ -73,6 +74,19 @@ const Welcome = (props) => {
                 refreshToken: response?.data?.refreshToken,
             }))
             dispatch(saveLoginRemember(true))
+
+            // Save credentials for biometric login if biometric is enabled
+            if (biometricEnabled) {
+                dispatch(saveCredentials({
+                    loginType: 'google',
+                    phoneNumber: null,
+                    countryCode: null,
+                    password: null,
+                    email: null,
+                    googleEmail: user?.email,
+                    appleEmail: null,
+                }));
+            }
 
             if (response?.act === 'login-granted') {
                 props.navigation.navigate(routes.tab, { screen: routes.home })
@@ -155,6 +169,18 @@ const Welcome = (props) => {
                 console.log('Sub:', sub);
 
                 if (email) {
+                    // Save credentials for biometric login if biometric is enabled
+                    if (biometricEnabled) {
+                        dispatch(saveCredentials({
+                            loginType: 'apple',
+                            phoneNumber: null,
+                            countryCode: null,
+                            password: null,
+                            email: null,
+                            googleEmail: null,
+                            appleEmail: email,
+                        }));
+                    }
                     // Handle successful login and save user data
                     handleSociallogin({ email: email, userFirstName: appleAuthRequestResponse?.fullName?.givenName, userLastName: appleAuthRequestResponse?.fullName?.familyName })
                 }

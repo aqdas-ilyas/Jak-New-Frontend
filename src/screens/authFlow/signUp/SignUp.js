@@ -12,8 +12,8 @@ import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
 import { getDeviceId } from 'react-native-device-info';
 import { Loader } from '../../../components/loader/Loader';
-import { useDispatch } from 'react-redux';
-import { saveLoginRemember, saveNumberLogin, setToken, updateUser, } from '../../../store/reducers/userDataSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveLoginRemember, saveNumberLogin, setToken, updateUser, saveCredentials } from '../../../store/reducers/userDataSlice';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { googleLoginData, _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
 import CountryInput from '../../../components/countryPicker/CountryPicker';
@@ -23,6 +23,7 @@ import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 const SignUp = props => {
   const dispatch = useDispatch();
+  const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false);
   const { appLanguage, LocalizedStrings } = useContext(LocalizationContext);
 
   const [password, setPassword] = useState('');
@@ -78,6 +79,19 @@ const SignUp = props => {
         showMessage({ message: response?.message, type: 'success' });
 
         dispatch(saveNumberLogin(true));
+
+        // Save credentials for biometric login if biometric is enabled
+        if (biometricEnabled) {
+          dispatch(saveCredentials({
+            loginType: 'phone',
+            phoneNumber: phoneNumber,
+            countryCode: countryCode,
+            password: password,
+            email: null,
+            googleEmail: null,
+            appleEmail: null,
+          }));
+        }
 
         if (response?.success) {
           dispatch(updateUser(response?.data));
@@ -141,6 +155,19 @@ const SignUp = props => {
         }),
       );
       dispatch(saveLoginRemember(true));
+
+      // Save credentials for biometric login if biometric is enabled
+      if (biometricEnabled) {
+        dispatch(saveCredentials({
+          loginType: 'google',
+          phoneNumber: null,
+          countryCode: null,
+          password: null,
+          email: null,
+          googleEmail: user?.email,
+          appleEmail: null,
+        }));
+      }
 
       if (response?.act === 'login-granted') {
         props.navigation.navigate(routes.tab, { screen: routes.home });
@@ -231,6 +258,18 @@ const SignUp = props => {
         console.log('Sub:', sub);
 
         if (email) {
+          // Save credentials for biometric login if biometric is enabled
+          if (biometricEnabled) {
+            dispatch(saveCredentials({
+              loginType: 'apple',
+              phoneNumber: null,
+              countryCode: null,
+              password: null,
+              email: null,
+              googleEmail: null,
+              appleEmail: email,
+            }));
+          }
           // Handle successful login and save user data
           handleSociallogin({ email: email, userFirstName: appleAuthRequestResponse?.fullName?.givenName, userLastName: appleAuthRequestResponse?.fullName?.familyName })
         }
@@ -401,5 +440,35 @@ const styles = StyleSheet.create({
   checbox: {
     height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
     width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
+  },
+  biometricButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primaryColor,
+    paddingVertical: hp(1.8),
+    paddingHorizontal: wp(6),
+    borderRadius: wp(4),
+    marginVertical: hp(1.5),
+    shadowColor: colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  biometricIcon: {
+    width: wp(5.5),
+    height: wp(5.5),
+    resizeMode: 'contain',
+    marginRight: wp(3),
+    tintColor: colors.white,
+  },
+  biometricButtonText: {
+    fontSize: hp(1.7),
+    fontFamily: fontFamily.UrbanistSemiBold,
+    color: colors.white,
   },
 });

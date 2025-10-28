@@ -18,6 +18,18 @@ export default {
   error_loading_document: 'فشل في تحميل المستند. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.',
   retry: 'إعادة المحاولة',
   
+  // Biometric Authentication
+  biometric_login: 'تسجيل الدخول البيومتري',
+  biometric_description: 'استخدم بصمتك أو وجهك للوصول السريع والآمن إلى حسابك',
+  biometric_prompt_message: 'قم بالمصادقة لتمكين تسجيل الدخول البيومتري',
+  biometric_enabled: 'تم تفعيل المصادقة البيومترية',
+  biometric_disabled: 'تم إلغاء تفعيل المصادقة البيومترية',
+  biometric_error: 'فشل في تفعيل المصادقة البيومترية',
+  biometric_login_prompt: 'قم بالمصادقة لتسجيل الدخول',
+  biometric_no_credentials: 'لم يتم العثور على بيانات محفوظة',
+  biometric_login_error: 'فشلت المصادقة البيومترية',
+  biometric_app_open_prompt: 'قم بالمصادقة لفتح التطبيق',
+  
   // About Us Sections
   about_intro: "مرحبًا بك في تطبيق جاك",
   about_intro_desc: "تطبيق جاك هو رفيقك المثالي لاكتشاف الصفقات الحصرية والعروض وبرامج الولاء من متاجرك وتجارك المفضلين. نحن ملتزمون بمساعدتك على توفير المال مع الاستمتاع بأفضل تجربة تسوق في جميع أنحاء المملكة العربية السعودية.",
