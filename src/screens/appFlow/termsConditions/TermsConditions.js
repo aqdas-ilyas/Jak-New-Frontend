@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { colors, hp, fontFamily, wp, appIcons } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
 import Header from '../../../components/header';
 import { LocalizationContext } from '../../../language/LocalizationContext';
-import { Image } from 'react-native';
 
-const PrivacyPolicy = (props) => {
+const TermsConditions = (props) => {
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
-    // Google Docs URL for Privacy Policy
-    const privacyUrl = 'https://docs.google.com/document/d/1o7UAJW5lu-1msK-P9KPQJMaRb-z19MgpriQlk00FTuk/edit?tab=t.0';
+    // Google Docs URL for Terms & Conditions
+    const termsUrl = 'https://docs.google.com/document/d/1Uc2Dk7TuWiw0eLZ-iYgUN_aYTkdBUIr-Ca88A3ncNiU/edit?tab=t.0';
 
     const handleWebViewLoad = () => {
         setLoading(false);
@@ -59,7 +58,7 @@ const PrivacyPolicy = (props) => {
                 {/* WebView */}
                 {!error && (
                     <WebView
-                        source={{ uri: privacyUrl }}
+                        source={{ uri: termsUrl }}
                         style={styles.webView}
                         onLoad={handleWebViewLoad}
                         onError={handleWebViewError}
@@ -79,7 +78,7 @@ const PrivacyPolicy = (props) => {
     );
 };
 
-export default PrivacyPolicy;
+export default TermsConditions;
 
 const styles = StyleSheet.create({
     webView: {

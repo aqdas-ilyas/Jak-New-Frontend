@@ -52,7 +52,7 @@ export const MainNavigator = () => {
           <MyStack.Screen name={routes.changePassword} component={App.ChangePassword} />
           <MyStack.Screen name={routes.aboutUs} component={App.AboutUs} />
           <MyStack.Screen name={routes.privacyPolicy} component={App.PrivacyPolicy} />
-          <MyStack.Screen name={routes.terms} component={App.Terms} />
+          <MyStack.Screen name={routes.termsConditions} component={App.TermsConditions} />
           <MyStack.Screen name={routes.contactUs} component={App.ContactUs} />
           <MyStack.Screen name={routes.deletAccount} component={App.DeleteAccount} />
           <MyStack.Screen name={routes.editProfile} component={App.EditProfile} />

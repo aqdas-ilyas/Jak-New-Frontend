@@ -1,28 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  I18nManager,
-  FlatList,
-  StatusBar,
-  ScrollView,
-} from 'react-native';
-import {
-  colors,
-  hp,
-  fontFamily,
-  wp,
-  routes,
-  heightPixel,
-  widthPixel,
-  emailFormat,
-  passwordFormat,
-} from '../../../services';
-import { appIcons, appImages } from '../../../services/utilities/assets';
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, I18nManager, StatusBar, ScrollView, Platform, } from 'react-native';
+import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, emailFormat, passwordFormat } from '../../../services';
+import { appIcons } from '../../../services/utilities/assets';
 import appStyles from '../../../services/utilities/appStyles';
 import Button from '../../../components/button';
 import Header from '../../../components/header';
@@ -37,30 +16,21 @@ import { callApi, Method } from '../../../api/apiCaller';
 import { getDeviceId } from 'react-native-device-info';
 import { Loader } from '../../../components/loader/Loader';
 import { useDispatch } from 'react-redux';
-import {
-  saveLoginRemember,
-  saveNumberLogin,
-  setToken,
-  updateUser,
-} from '../../../store/reducers/userDataSlice';
-import {
-  googleLoginData,
-  _fetchCountryAbbrevicationCode,
-} from '../../../services/helpingMethods';
+import { saveLoginRemember, saveNumberLogin, setToken, updateUser } from '../../../store/reducers/userDataSlice';
+import { googleLoginData, _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import CountryInput from '../../../components/countryPicker/CountryPicker';
 import { isPossibleNumber } from 'libphonenumber-js';
+import { decodeJWT } from '../../../common/HelpingFunc';
+import appleAuth from '@invertase/react-native-apple-authentication';
 
 const SignIn = props => {
   const dispatch = useDispatch();
   const { appLanguage, LocalizedStrings, setAppLanguage } = useContext(LocalizationContext);
 
-  const [email, setEmail] = useState('');
-  const [Phone, setPhone] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('966');
   const [countryAbbreviationCode, setCountryAbbrivaitionCode] = useState('SA');
-  const [allowPhone, setAllowPhone] = useState(true);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -104,16 +74,6 @@ const SignIn = props => {
 
   // Validate Login Inputs
   const validateInputs = () => {
-    const emailValue = emailFormat.test(email) || email === ' ' ? true : false;
-
-    const passValue =
-      passwordFormat.test(password) || password === ' ' ? true : false;
-
-    // if (!emailValue) {
-    // showMessage({ message: "Invalid Email", type: "danger" });
-    // return false;
-    // }
-
     if (!isPossibleNumber(`+${countryCode}` + phoneNumber)) {
       showMessage({ message: 'Invalid Phone Number', type: 'danger' });
       return false;
@@ -123,10 +83,7 @@ const SignIn = props => {
       showMessage({ message: 'Please enter a strong password', type: 'danger' });
       return false;
     }
-    // if (!passValue) {
-    //     showMessage({ message: "Please enter a strong password (Containing A-Z + a-z + 0-9)", type: "danger", });
-    //     return false;
-    // }
+
     return true;
   };
   const SignInAfterValidation = () => {
@@ -299,6 +256,46 @@ const SignIn = props => {
     callApi(method, endPoint, bodyParams, onSuccess, onError);
   };
 
+
+  const onAppleButtonPress = async () => {
+    try {
+      // Perform the login request
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+
+      // Get credential state for the user
+      const credentialState = await appleAuth.getCredentialStateForUser(
+        appleAuthRequestResponse.user
+      );
+
+      if (credentialState === appleAuth.State.AUTHORIZED) {
+
+        // Decode identity token
+        const decodedToken = await decodeJWT(appleAuthRequestResponse?.identityToken);
+
+        console.log('Decoded Token: ', decodedToken);
+
+        const { email, email_verified, sub } = decodedToken;
+
+        console.log('Email:', email);
+        console.log('Email Verified:', email_verified);
+        console.log('Sub:', sub);
+
+        if (email) {
+          // Handle successful login and save user data
+          handleSociallogin({ email: email, userFirstName: appleAuthRequestResponse?.fullName?.givenName, userLastName: appleAuthRequestResponse?.fullName?.familyName })
+        }
+        // e.g., call your backend with the token or user info
+      } else {
+        console.log('User not authorized');
+      }
+    } catch (error) {
+      console.error('Apple Sign-In Error: ', error);
+    }
+  }
+
   return (
     <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
@@ -317,32 +314,6 @@ const SignIn = props => {
           {LocalizedStrings['Login and manage your Jak Mobile App account.']}
         </Text>
         <View>
-          {/* {
-                        allowPhone ? (
-                            <CountryInput
-                                phoneNumber={phoneNumber}
-                                countryCode={countryCode}
-                                countryAbbreviationCode={countryAbbreviationCode}
-                                setValue={setPhoneNumber}
-                                setSelectedCode={setCountryCode}
-                                layout={'first'}
-                                rghtText={'Use Email Address'}
-                                onrightTextPress={() => setAllowPhone(!allowPhone)}
-                            />
-                        )
-                            : (
-                                <Input
-                                    placeholder={LocalizedStrings.email}
-                                    value={email}
-                                    onChangeText={(value) => setEmail(value)}
-                                    leftIcon={appIcons.message}
-                                    rghtText={'Use Phone Number'}
-                                    onrightTextPress={() => [setCountryCode('966'), setCountryAbbrivaitionCode('SA'), setAllowPhone(!allowPhone)]}
-                                >
-                                    {LocalizedStrings.email}
-                                </Input>
-                            )
-                    } */}
 
           <CountryInput
             phoneNumber={phoneNumber}
@@ -466,19 +437,23 @@ const SignIn = props => {
           </Text>
           <View style={styles.line} />
         </View>
-        <View style={[appStyles.row, appStyles.jcSpaceEvenly]}>
+        <View style={[appStyles.row, appStyles.jcCenter]}>
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => googleLoginClicked()}
-            style={styles.socialLoginTopView}>
+            style={[styles.socialLoginTopView, { marginRight: wp(5) }]}>
             <Image source={appIcons.google} style={styles.socialIconStyle} />
           </TouchableOpacity>
-          {/* <TouchableOpacity style={styles.socialLoginTopView}>
-                        <Image source={appIcons.facebook} style={styles.socialIconStyle} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.socialLoginTopView]}>
-                        <Image source={appIcons.apple} style={styles.socialIconStyle} />
-                    </TouchableOpacity> */}
+          {/* <TouchableOpacity activeOpacity={0.8} style={styles.socialLoginTopView}>
+            <Image source={appIcons.facebook} style={styles.socialIconStyle} />
+          </TouchableOpacity> */}
+          {
+            Platform.OS === 'android' ? null : (
+
+              <TouchableOpacity activeOpacity={0.8} onPress={() => onAppleButtonPress()} style={[styles.socialLoginTopView]}>
+                <Image source={appIcons.apple} style={styles.socialIconStyle} />
+              </TouchableOpacity>
+            )}
         </View>
       </ScrollView>
 

@@ -1,30 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import {
-  colors,
-  hp,
-  fontFamily,
-  wp,
-  routes,
-  heightPixel,
-  widthPixel,
-  emailFormat,
-  passwordFormat,
-} from '../../../services';
-import { appIcons, appImages } from '../../../services/utilities/assets';
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Platform, } from 'react-native';
+import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, emailFormat, passwordFormat, } from '../../../services';
+import { appIcons } from '../../../services/utilities/assets';
 import appStyles from '../../../services/utilities/appStyles';
 import Button from '../../../components/button';
 import Header from '../../../components/header';
 import { Input } from '../../../components/input';
-import CheckBox from '@react-native-community/checkbox';
 import { LocalizationContext } from '../../../language/LocalizationContext';
 import { showMessage } from 'react-native-flash-message';
 import routs from '../../../api/routs';
@@ -32,25 +13,18 @@ import { callApi, Method } from '../../../api/apiCaller';
 import { getDeviceId } from 'react-native-device-info';
 import { Loader } from '../../../components/loader/Loader';
 import { useDispatch } from 'react-redux';
-import {
-  saveLoginRemember,
-  saveNumberLogin,
-  setToken,
-  updateUser,
-} from '../../../store/reducers/userDataSlice';
+import { saveLoginRemember, saveNumberLogin, setToken, updateUser, } from '../../../store/reducers/userDataSlice';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import {
-  googleLoginData,
-  _fetchCountryAbbrevicationCode,
-} from '../../../services/helpingMethods';
+import { googleLoginData, _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
 import CountryInput from '../../../components/countryPicker/CountryPicker';
 import { isPossibleNumber } from 'libphonenumber-js';
+import { decodeJWT } from '../../../common/HelpingFunc';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 const SignUp = props => {
   const dispatch = useDispatch();
   const { appLanguage, LocalizedStrings } = useContext(LocalizationContext);
 
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -80,12 +54,6 @@ const SignUp = props => {
 
   // Validate Login Inputs
   const validateInputs = () => {
-    const emailValue = emailFormat.test(email) || email === ' ' ? true : false;
-
-    const passValue =
-      passwordFormat.test(password) || password === ' ' ? true : false;
-
-    // if (!emailValue) {
     if (!isPossibleNumber(`+${countryCode}` + phoneNumber)) {
       showMessage({ message: 'Invalid Phone Number', type: 'danger' });
       return false;
@@ -95,10 +63,6 @@ const SignUp = props => {
       showMessage({ message: 'Please enter a strong password', type: 'danger' });
       return false;
     }
-    // if (!passValue) {
-    //     showMessage({ message: "Please enter a strong password (Containing A-Z + a-z + 0-9)", type: "danger", });
-    //     return false;
-    // }
 
     if (password !== confirmPassword) {
       showMessage({ message: 'Your Password is not Matched!', type: 'danger' });
@@ -240,6 +204,45 @@ const SignUp = props => {
     callApi(method, endPoint, bodyParams, onSuccess, onError);
   };
 
+  const onAppleButtonPress = async () => {
+    try {
+      // Perform the login request
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+
+      // Get credential state for the user
+      const credentialState = await appleAuth.getCredentialStateForUser(
+        appleAuthRequestResponse.user
+      );
+
+      if (credentialState === appleAuth.State.AUTHORIZED) {
+
+        // Decode identity token
+        const decodedToken = await decodeJWT(appleAuthRequestResponse?.identityToken);
+
+        console.log('Decoded Token: ', decodedToken);
+
+        const { email, email_verified, sub } = decodedToken;
+
+        console.log('Email:', email);
+        console.log('Email Verified:', email_verified);
+        console.log('Sub:', sub);
+
+        if (email) {
+          // Handle successful login and save user data
+          handleSociallogin({ email: email, userFirstName: appleAuthRequestResponse?.fullName?.givenName, userLastName: appleAuthRequestResponse?.fullName?.familyName })
+        }
+        // e.g., call your backend with the token or user info
+      } else {
+        console.log('User not authorized');
+      }
+    } catch (error) {
+      console.error('Apple Sign-In Error: ', error);
+    }
+  }
+
   return (
     <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
@@ -254,15 +257,6 @@ const SignUp = props => {
         </Text>
 
         <View>
-          {/* <Input
-                        placeholder={LocalizedStrings['email']}
-                        value={email}
-                        onChangeText={(value) => setEmail(value)}
-                        leftIcon={appIcons.message}
-                    >
-                        {LocalizedStrings['email']}
-                    </Input> */}
-
           <CountryInput
             phoneNumber={phoneNumber}
             countryCode={countryCode}
@@ -320,19 +314,23 @@ const SignUp = props => {
           </Text>
           <View style={styles.line} />
         </View>
-        <View style={[appStyles.row, appStyles.jcSpaceEvenly]}>
+        <View style={[appStyles.row, appStyles.jcCenter]}>
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => googleLoginClicked()}
-            style={styles.socialLoginTopView}>
+            style={[styles.socialLoginTopView, { marginRight: wp(5) }]}>
             <Image source={appIcons.google} style={styles.socialIconStyle} />
           </TouchableOpacity>
           {/* <TouchableOpacity style={styles.socialLoginTopView}>
-                        <Image source={appIcons.facebook} style={styles.socialIconStyle} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.socialLoginTopView]}>
-                        <Image source={appIcons.apple} style={styles.socialIconStyle} />
-                    </TouchableOpacity> */}
+            <Image source={appIcons.facebook} style={styles.socialIconStyle} />
+          </TouchableOpacity> */}
+          {
+            Platform.OS === 'android' ? null : (
+
+              <TouchableOpacity activeOpacity={0.8}  onPress={() => onAppleButtonPress()} style={[styles.socialLoginTopView]}>
+                <Image source={appIcons.apple} style={styles.socialIconStyle} />
+              </TouchableOpacity>
+            )}
         </View>
       </ScrollView>
 

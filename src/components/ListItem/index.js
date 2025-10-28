@@ -88,9 +88,6 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             <Text style={styles.mainTitle}>
                                 {item?.['store name'].length > 20 ? item?.['store name'].slice(0, 12) + '...' : item?.['store name']}
                             </Text>
-                            <Text style={styles.mainTitle}>
-                                {item?.["expiry date"]}
-                            </Text>
                             <TouchableOpacity style={{ padding: wp(2) }} activeOpacity={0.8} onPress={() => IsFavourites(item)}>
                                 <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
                             </TouchableOpacity>

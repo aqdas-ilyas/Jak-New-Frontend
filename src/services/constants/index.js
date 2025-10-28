@@ -47,7 +47,7 @@ export const routes = {
   changePassword: 'changePassword',
   aboutUs: 'aboutUs',
   contactUs: 'contactUs',
-  terms: 'terms',
+  termsConditions: 'termsConditions',
   privacyPolicy: 'privacyPolicy',
   deletAccount: 'deletAccount',
   editProfile: 'editProfile',

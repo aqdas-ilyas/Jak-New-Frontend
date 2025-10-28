@@ -6,6 +6,62 @@ import Geocoder from 'react-native-geocoding';
 import Geolocation from '@react-native-community/geolocation';
 var fs = require('react-native-fs');
 
+export const decodeBase64Url = (base64Url) => {
+    try {
+        // Replace URL-safe characters with standard Base64 characters
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        console.log("Base64 URL: ", base64Url);
+        console.log("Base64: ", base64);
+
+        // Custom Base64 decoding without `atob`
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        let output = '';
+        let i = 0;
+
+        while (i < base64.length) {
+            let enc1 = chars.indexOf(base64.charAt(i++));
+            let enc2 = chars.indexOf(base64.charAt(i++));
+            let enc3 = chars.indexOf(base64.charAt(i++));
+            let enc4 = chars.indexOf(base64.charAt(i++));
+
+            let chr1 = (enc1 << 2) | (enc2 >> 4);
+            let chr2 = ((enc2 & 0xF) << 4) | (enc3 >> 2);
+            let chr3 = ((enc3 & 0x3) << 6) | enc4;
+
+            output += String.fromCharCode(chr1);
+            if (enc3 !== 64) {
+                output += String.fromCharCode(chr2);
+            }
+            if (enc4 !== 64) {
+                output += String.fromCharCode(chr3);
+            }
+        }
+
+        console.log("Decoded String: ", output);
+        return output;
+    } catch (error) {
+        console.error("Error decoding Base64:", error);
+        return null;
+    }
+};
+
+export const decodeJWT = async (token) => {
+    console.log("JWT Token: ", token);
+
+    const [header, payload] = token.split('.');
+    const decodedPayload = decodeBase64Url(payload);
+
+    if (decodedPayload) {
+        console.log("Decoded Payload: ", decodedPayload);
+        const cleanedStr = decodedPayload.replace(/\u0000/g, '');
+
+        return JSON.parse(cleanedStr);
+    } else {
+        console.error("Failed to decode JWT payload.");
+        return null;
+    }
+};
+
 export const ImageProfileSelectandUpload = (result) => {
     ImagePicker.openPicker({
         width: 300,

@@ -15,6 +15,8 @@ export default {
     privacy: 'Privacy Policy',
     about_us: 'About Us',
     terms_and_privacy: 'Terms & Privacy',
+    error_loading_document: 'Failed to load document. Please check your internet connection and try again.',
+    retry: 'Retry',
     
     // About Us Sections
     about_intro: "Welcome to Jak",

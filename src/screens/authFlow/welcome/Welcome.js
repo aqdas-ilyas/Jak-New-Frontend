@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Alert, BackHandler } from 'react-native'
+import { View, Text, Image, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Alert, BackHandler, Platform } from 'react-native'
 import { colors, hp, fontFamily, wp, routes } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
@@ -16,6 +16,8 @@ import { getDeviceId } from 'react-native-device-info'
 import { Loader } from '../../../components/loader/Loader'
 import { showMessage } from 'react-native-flash-message'
 import { useFocusEffect } from '@react-navigation/native'
+import appleAuth from '@invertase/react-native-apple-authentication'
+import { decodeJWT } from '../../../common/HelpingFunc'
 
 const Welcome = (props) => {
     const dispatch = useDispatch()
@@ -124,6 +126,47 @@ const Welcome = (props) => {
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     }
 
+    const onAppleButtonPress = async () => {
+        try {
+            // Perform the login request
+            const appleAuthRequestResponse = await appleAuth.performRequest({
+                requestedOperation: appleAuth.Operation.LOGIN,
+                requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+            });
+
+            // Get credential state for the user
+            const credentialState = await appleAuth.getCredentialStateForUser(
+                appleAuthRequestResponse.user
+            );
+
+            const iOSMajorVersion = parseInt(Platform.Version, 10);
+
+            if (credentialState === appleAuth.State.AUTHORIZED || iOSMajorVersion === 18) {
+
+                // Decode identity token
+                const decodedToken = await decodeJWT(appleAuthRequestResponse?.identityToken);
+
+                console.log('Decoded Token: ', decodedToken);
+
+                const { email, email_verified, sub } = decodedToken;
+
+                console.log('Email:', email);
+                console.log('Email Verified:', email_verified);
+                console.log('Sub:', sub);
+
+                if (email) {
+                    // Handle successful login and save user data
+                    handleSociallogin({ email: email, userFirstName: appleAuthRequestResponse?.fullName?.givenName, userLastName: appleAuthRequestResponse?.fullName?.familyName })
+                }
+                // e.g., call your backend with the token or user info
+            } else {
+                console.log('User not authorized');
+            }
+        } catch (error) {
+            console.error('Apple Sign-In Error: ', error);
+        }
+    }
+
     return (
         <SafeAreaView style={[appStyles.safeContainer, { alignItems: "center", justifyContent: 'center' }]}>
             <Loader loading={isLoading} />
@@ -139,11 +182,15 @@ const Welcome = (props) => {
                 <SocialButton onPress={googleLoginClicked} imgSrc={appIcons.google}>{LocalizedStrings['Continue with Google']}</SocialButton>
             </View>
 
-            {/* <View style={[appStyles.ph20, appStyles.mb5]}>
-                <SocialButton imgSrc={appIcons.apple}>{LocalizedStrings['Continue with Apple']}</SocialButton>
-            </View>
+            {
+                Platform.OS === 'android' ? null : (
+                    <View style={[appStyles.ph20, appStyles.mb5]}>
+                        <SocialButton onPress={onAppleButtonPress} imgSrc={appIcons.apple}>{LocalizedStrings['Continue with Apple']}</SocialButton>
+                    </View>
 
-            <View style={[appStyles.ph20, appStyles.mb5]}>
+                )
+            }
+            {/*  <View style={[appStyles.ph20, appStyles.mb5]}>
                 <SocialButton imgSrc={appIcons.facebook}>{LocalizedStrings['Continue with Facebook']}</SocialButton>
             </View> */}
 
@@ -154,7 +201,11 @@ const Welcome = (props) => {
                 <Button skip onPress={() => props.navigation.navigate(routes.register)}>{LocalizedStrings['Sign Up']}</Button>
             </View>
 
-            <Text onPress={() => props.navigation.navigate(routes.terms)} style={styles.bottomText}>{LocalizedStrings['Privacy Policy']}  .  {LocalizedStrings['Terms of Service']}</Text>
+            <View style={appStyles.rowCenter}>
+                <Text onPress={() => props.navigation.navigate(routes.privacyPolicy)} style={styles.bottomText}>{LocalizedStrings['Privacy Policy']}</Text>
+                <View style={[{ backgroundColor: colors.descriptionColor, borderRadius: 50, padding: wp(0.5), marginHorizontal: wp(2) }]} />
+                <Text onPress={() => props.navigation.navigate(routes.termsConditions)} style={styles.bottomText}>{LocalizedStrings['Terms of Service']}</Text>
+            </View>
         </SafeAreaView>
     )
 }

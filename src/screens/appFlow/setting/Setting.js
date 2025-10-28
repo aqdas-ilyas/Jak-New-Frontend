@@ -89,15 +89,19 @@ export default Setting = props => {
     },
     {
       id: 7,
-      name: LocalizedStrings.terms_and_privacy,
-      onpress: () => props.navigation.navigate(routes.terms),
+      name: LocalizedStrings.terms,
+      onpress: () => props.navigation.navigate(routes.termsConditions),
     },
     {
       id: 8,
+      name: LocalizedStrings.privacy,
+      onpress: () => props.navigation.navigate(routes.privacyPolicy),
+    },
+    {
+      id: 9,
       name: LocalizedStrings.about_us,
       onpress: () => props.navigation.navigate(routes.aboutUs),
     },
-    // { id: 9, name: LocalizedStrings.privacy, onpress: () => props.navigation.navigate(routes.privacyPolicy) },
     {
       id: 10,
       name: LocalizedStrings.contact_us,

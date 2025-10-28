@@ -22,7 +22,8 @@ export const AuthNavigation = () => {
       <AuthStack.Screen name={routes.subscription} component={Auth.Subscription} />
       <AuthStack.Screen name={routes.payment} component={Auth.Payment} />
       <AuthStack.Screen name={routes.card} component={Auth.Card} />
-      <AuthStack.Screen name={routes.terms} component={App.Terms} />
+      <AuthStack.Screen name={routes.privacyPolicy} component={App.PrivacyPolicy} />
+      <AuthStack.Screen name={routes.termsConditions} component={App.TermsConditions} />
     </AuthStack.Navigator>
   );
 };

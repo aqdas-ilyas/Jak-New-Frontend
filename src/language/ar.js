@@ -15,6 +15,8 @@ export default {
   privacy: 'سياسة الخصوصية',
   about_us: 'عن التطبيق',
   terms_and_privacy: 'الشروط والخصوصية',
+  error_loading_document: 'فشل في تحميل المستند. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.',
+  retry: 'إعادة المحاولة',
   
   // About Us Sections
   about_intro: "مرحبًا بك في تطبيق جاك",

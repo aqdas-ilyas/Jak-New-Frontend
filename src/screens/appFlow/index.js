@@ -12,7 +12,7 @@ import ChangeLanguage from './changeLanguage/ChangeLanguage';
 import ChangePassword from './changePassword/ChangePassword';
 import AboutUs from './aboutUs/AboutUs';
 import PrivacyPolicy from './privacyPolicy/PrivacyPolicy';
-import Terms from './terms/Terms';
+import TermsConditions from './termsConditions/TermsConditions';
 import ContactUs from './contactUs/ContactUs';
 import DeleteAccount from './deletAccount/DeleteAccount';
 import EditProfile from './editProfile/EditProfile';
@@ -36,7 +36,7 @@ export {
     ChangePassword,
     AboutUs,
     PrivacyPolicy,
-    Terms,
+    TermsConditions,
     ContactUs,
     DeleteAccount,
     EditProfile,
