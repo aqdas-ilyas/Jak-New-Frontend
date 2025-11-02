@@ -1,47 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  FlatList,
-  ScrollView,
-  ImageBackground,
-  Alert,
-} from 'react-native';
-import {
-  colors,
-  hp,
-  fontFamily,
-  wp,
-  routes,
-  heightPixel,
-  widthPixel,
-  appImages,
-  appIcons,
-} from '../../../services';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, ImageBackground, Alert, ActivityIndicator } from 'react-native';
+import { colors, hp, fontFamily, wp, } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
 import Header from '../../../components/header';
 import Button from '../../../components/button';
-import {Input} from '../../../components/input';
+import { Input } from '../../../components/input';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {LocalizationContext} from '../../../language/LocalizationContext';
+import { LocalizationContext } from '../../../language/LocalizationContext';
 import routs from '../../../api/routs';
-import {callApi, Method} from '../../../api/apiCaller';
-import {useDispatch, useSelector} from 'react-redux';
-import {saveLoyaltyCards} from '../../../store/reducers/WalletSlice';
-import {
-  ImageProfileCameraUpload,
-  ImageProfileSelectandUpload,
-} from '../../../common/HelpingFunc';
-import {Loader} from '../../../components/loader/Loader';
-import {showMessage} from 'react-native-flash-message';
+import { callApi, Method } from '../../../api/apiCaller';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveLoyaltyCards } from '../../../store/reducers/WalletSlice';
+import { ImageProfileCameraUpload, ImageProfileSelectandUpload, uploadProfileImageOnS3 } from '../../../common/HelpingFunc';
+import { Loader } from '../../../components/loader/Loader';
+import { showMessage } from 'react-native-flash-message';
 
 const AddLoyaltyCard = props => {
-  const {item} = props?.route?.params ?? {};
-  const {LocalizedStrings} = React.useContext(LocalizationContext);
+  const { item } = props?.route?.params ?? {};
+  const { LocalizedStrings } = React.useContext(LocalizationContext);
   const dispatch = useDispatch();
   const user = useSelector(state => state.user.user.user);
 
@@ -52,6 +28,8 @@ const AddLoyaltyCard = props => {
   const [frontImage, setFrontImage] = useState('');
   const [backImage, setBackImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingFront, setIsUploadingFront] = useState(false);
+  const [isUploadingBack, setIsUploadingBack] = useState(false);
 
   const validate = () => {
     if (/\d/.test(name)) {
@@ -62,11 +40,6 @@ const AddLoyaltyCard = props => {
       return false;
     }
 
-    // if (name.length < 2) {
-    //     showMessage({ message: "Please enter a valid name", type: "danger" });
-    //     return false;
-    // }
-
     if (loyaltyName.length < 2) {
       showMessage({
         message: 'Please select your Date of Birth',
@@ -76,14 +49,10 @@ const AddLoyaltyCard = props => {
     }
 
     if (cardNumber.length < 2) {
-      showMessage({message: 'Please add Valid Card Number', type: 'danger'});
+      showMessage({ message: 'Please add Valid Card Number', type: 'danger' });
       return false;
     }
-
-    // if (notes.length < 2) {
-    //     showMessage({ message: "Please Enter Some Notes", type: "danger" });
-    //     return false;
-    // }
+    
     return true;
   };
 
@@ -91,10 +60,12 @@ const AddLoyaltyCard = props => {
     if (validate()) {
       const onSuccess = response => {
         console.log('response createLoyaltyCards===', response?.data);
+        showMessage({ message: response?.message, type: 'success' });
         getLoyaltyCards();
       };
       const onError = error => {
         setIsLoading(false);
+        showMessage({ message: error?.message, type: 'danger' });
         console.log('Error createLoyaltyCards===', error);
       };
 
@@ -119,7 +90,6 @@ const AddLoyaltyCard = props => {
       console.log('response getLoyaltyCards===', response?.data);
       setIsLoading(false);
       dispatch(saveLoyaltyCards(response?.data?.data));
-      // props.navigation.navigate(routes.loyaltyCardList)
       props.navigation.goBack();
     };
 
@@ -153,7 +123,7 @@ const AddLoyaltyCard = props => {
           style: 'cancel',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -174,41 +144,89 @@ const AddLoyaltyCard = props => {
     });
   };
 
-  // Send Picture to AWS Server
-  const uploadImage = async (data, str) => {
-    const onSuccess = response => {
-      console.log('response uploadImage============', response.url);
+
+  const uploadImage = async (photo, str) => {
+    try {
+      // Set loading state for specific image
       if (str == 'front') {
-        setFrontImage(response.url);
+        setIsUploadingFront(true);
       } else {
-        setBackImage(response.url);
+        setIsUploadingBack(true);
       }
-      setIsLoading(false);
-    };
-    const onError = error => {
-      setIsLoading(false);
-      console.log('Error uploadImage============', error.url);
-    };
 
-    const endPoint = routs.uploadFile;
-    const method = Method.POST;
-    const formData = new FormData();
+      const uri = `file://${photo.uri}`;
+      const fileName = photo.uri.substring(photo.uri.lastIndexOf('/') + 1);
+      const fileType = fileName.split('.').pop();
 
-    formData.append('file', {
-      uri: data.uri,
-      name: data.name,
-      type: `image/${data.type}`,
-    });
+      const data = {
+        uri,
+        type: `image/${fileType}`,
+        name: fileName,
+      };
 
-    setIsLoading(true);
-    callApi(method, endPoint, formData, onSuccess, onError, null, true);
+      await uploadProfileImageOnS3(data, (res) => {
+        // Clear loading state for specific image
+        if (str == 'front') {
+          setIsUploadingFront(false);
+        } else {
+          setIsUploadingBack(false);
+        }
+
+        if (res) {
+          if (str == 'front') {
+            setFrontImage(res);
+          } else {
+            setBackImage(res);
+          }
+
+          showMessage({ message: 'Image uploaded successfully', type: 'success' });
+        } else {
+          throw new Error('Image upload failed');
+        }
+      });
+    } catch (error) {
+      // Clear loading state for specific image on error
+      if (str == 'front') {
+        setIsUploadingFront(false);
+      } else {
+        setIsUploadingBack(false);
+      }
+      showMessage({ message: 'Failed to upload image', type: 'danger' });
+      console.log('Upload image error:', error);
+    }
+  };
+
+  const removeImage = (type) => {
+    if (type === 'front') {
+      setFrontImage('');
+    } else {
+      setBackImage('');
+    }
+  };
+
+  const formatCardNumber = (value) => {
+    // Remove all non-digit characters
+    const cleaned = value.replace(/\D/g, '');
+
+    // Limit to 16 digits
+    const limited = cleaned.slice(0, 16);
+
+    // Add space after every 4 digits
+    const formatted = limited.replace(/(.{4})/g, '$1 ').trim();
+
+    return formatted;
+  };
+
+  const handleCardNumberChange = (value) => {
+    const formatted = formatCardNumber(value);
+    setCardNumber(formatted);
   };
 
   useEffect(() => {
     if (item) {
       setName(item?.name);
       setLoyaltyName(item?.loyaltyName);
-      setCardNumber(item?.cardNumber);
+      setCardNumber(formatCardNumber(item?.cardNumber || ''));
       setNotes(item?.notes);
       setFrontImage(item?.frontImage);
       setBackImage(item?.backImage);
@@ -218,11 +236,13 @@ const AddLoyaltyCard = props => {
   const updateLoyaltyCards = () => {
     if (validate()) {
       const onSuccess = response => {
+        showMessage({ message: response?.message, type: 'success' });
         console.log('response createLoyaltyCards===', response?.data);
         getLoyaltyCards();
       };
       const onError = error => {
         setIsLoading(false);
+        showMessage({ message: error?.message, type: 'danger' });
         console.log('Error createLoyaltyCards===', error);
       };
 
@@ -243,14 +263,14 @@ const AddLoyaltyCard = props => {
   };
 
   return (
-    <SafeAreaView style={[appStyles.safeContainer, {margin: wp(4)}]}>
+    <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
       <Header
         leftIcon
         onleftIconPress={() => props.navigation.goBack()}
         title={LocalizedStrings['new_card']}
       />
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{ flex: 1 }}>
         {/* <Input
                     value={name}
                     onChangeText={(value) => setName(value)}
@@ -273,9 +293,11 @@ const AddLoyaltyCard = props => {
           }}>
           <Input
             value={cardNumber}
-            onChangeText={value => setCardNumber(value)}
+            onChangeText={handleCardNumberChange}
             placeholder={LocalizedStrings['Card Number']}
-            // WholeContainer={{ width: wp(78) }}
+            keyboardType="numeric"
+            maxLength={19}
+          // WholeContainer={{ width: wp(78) }}
           >
             {LocalizedStrings['Card Number']}
           </Input>
@@ -292,76 +314,118 @@ const AddLoyaltyCard = props => {
             marginTop: wp(5),
           }}>
           {frontImage != '' ? (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => handleUpload('front')}>
-              <ImageBackground
-                source={{uri: frontImage}}
-                style={{
-                  width: wp(40),
-                  height: wp(25),
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                borderRadius={10}
-                blurRadius={5}>
-                <Entypo
-                  name={'camera'}
-                  color={colors.BlackSecondary}
-                  size={wp(5)}
-                />
-              </ImageBackground>
-            </TouchableOpacity>
+            <View style={styles.imageContainer}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => handleUpload('front')}
+                style={styles.imageWrapper}>
+                {isUploadingFront ? (
+                  <View style={styles.uploadingContainer}>
+                    <ActivityIndicator size="large" color={colors.primaryColor} />
+                  </View>
+                ) : (
+                  <ImageBackground
+                    source={{ uri: frontImage }}
+                    style={styles.imageBackground}
+                    borderRadius={10}
+                    blurRadius={5}>
+                    <Entypo
+                      name={'camera'}
+                      color={colors.BlackSecondary}
+                      size={wp(5)}
+                    />
+                  </ImageBackground>
+                )}
+              </TouchableOpacity>
+              {!isUploadingFront && (
+                <TouchableOpacity
+                  onPress={() => removeImage('front')}
+                  style={styles.removeButton}>
+                  <Entypo
+                    name={'cross'}
+                    color={colors.fullWhite}
+                    size={wp(4)}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
           ) : (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => handleUpload('front')}
               style={styles.cameraBox}>
-              <Entypo
-                name={'camera'}
-                color={colors.BlackSecondary}
-                size={wp(5)}
-              />
-              <Text style={styles.imageText}>
-                {LocalizedStrings['Add Front Image']}
-              </Text>
+              {isUploadingFront ? (
+                <ActivityIndicator size="large" color={colors.primaryColor} />
+              ) : (
+                <>
+                  <Entypo
+                    name={'camera'}
+                    color={colors.BlackSecondary}
+                    size={wp(5)}
+                  />
+                  <Text style={styles.imageText}>
+                    {LocalizedStrings['Add Front Image']}
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
           )}
 
           {backImage != '' ? (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => handleUpload('back')}>
-              <ImageBackground
-                source={{uri: backImage}}
-                style={{
-                  width: wp(40),
-                  height: wp(25),
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                borderRadius={10}
-                blurRadius={5}>
-                <Entypo
-                  name={'camera'}
-                  color={colors.BlackSecondary}
-                  size={wp(5)}
-                />
-              </ImageBackground>
-            </TouchableOpacity>
+            <View style={styles.imageContainer}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => handleUpload('back')}
+                style={styles.imageWrapper}>
+                {isUploadingBack ? (
+                  <View style={styles.uploadingContainer}>
+                    <ActivityIndicator size="large" color={colors.primaryColor} />
+                  </View>
+                ) : (
+                  <ImageBackground
+                    source={{ uri: backImage }}
+                    style={styles.imageBackground}
+                    borderRadius={10}
+                    blurRadius={5}>
+                    <Entypo
+                      name={'camera'}
+                      color={colors.BlackSecondary}
+                      size={wp(5)}
+                    />
+                  </ImageBackground>
+                )}
+              </TouchableOpacity>
+              {!isUploadingBack && (
+                <TouchableOpacity
+                  onPress={() => removeImage('back')}
+                  style={styles.removeButton}>
+                  <Entypo
+                    name={'cross'}
+                    color={colors.fullWhite}
+                    size={wp(4)}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
           ) : (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => handleUpload('back')}
               style={styles.cameraBox}>
-              <Entypo
-                name={'camera'}
-                color={colors.BlackSecondary}
-                size={wp(5)}
-              />
-              <Text style={styles.imageText}>
-                {LocalizedStrings['Add Back Image']}
-              </Text>
+              {isUploadingBack ? (
+                <ActivityIndicator size="large" color={colors.primaryColor} />
+              ) : (
+                <>
+                  <Entypo
+                    name={'camera'}
+                    color={colors.BlackSecondary}
+                    size={wp(5)}
+                  />
+                  <Text style={styles.imageText}>
+                    {LocalizedStrings['Add Back Image']}
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
           )}
           {/* <View style={styles.cameraBox}>
@@ -380,7 +444,7 @@ const AddLoyaltyCard = props => {
             paddingVertical: wp(2),
             alignItems: 'flex-start',
           }}
-          WholeContainer={{marginTop: -wp(5)}}
+          WholeContainer={{ marginTop: -wp(5) }}
         />
       </ScrollView>
 
@@ -404,12 +468,49 @@ const styles = StyleSheet.create({
     paddingVertical: wp(4),
     alignItems: 'center',
     justifyContent: 'center',
+    width: wp(40),
+    height: wp(25),
   },
   imageText: {
-    fontSize: hp(1.6),
-    lineHeight: 24,
+    fontSize: hp(1.4),
+    lineHeight: hp(2.1),
     fontFamily: fontFamily.UrbanistSemiBold,
     color: colors.BlackSecondary,
     marginTop: wp(2),
+  },
+  imageContainer: {
+    width: wp(40),
+    height: wp(25),
+    position: 'relative',
+  },
+  imageWrapper: {
+    width: '100%',
+    height: '100%',
+  },
+  imageBackground: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  uploadingContainer: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.offWhite,
+    borderRadius: 10,
+  },
+  removeButton: {
+    position: 'absolute',
+    top: wp(-1),
+    right: wp(-1),
+    backgroundColor: colors.primaryColor,
+    borderRadius: wp(3),
+    width: wp(6),
+    height: wp(6),
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
   },
 });

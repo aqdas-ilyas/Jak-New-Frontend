@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   I18nManager,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import {
   heightPixel,
@@ -296,7 +297,7 @@ export default Setting = props => {
       props.navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: routes.auth, params: { screen: routes.login } }],
+          routes: [{ name: routes.auth, params: { screen: routes.welcome } }],
         })
       );
 
@@ -381,11 +382,17 @@ export default Setting = props => {
   };
 
   return (
-    <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
-      <Loader loading={isLoading} />
-      <LogoHeader />
+    <>
+      <StatusBar 
+        barStyle={'dark-content'} 
+        backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
+        translucent={Platform.OS === 'android'}
+      />
+      <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+        <Loader loading={isLoading} />
+        <LogoHeader />
 
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View style={styles.imageContainer}>
           <Image
             source={
@@ -602,6 +609,7 @@ export default Setting = props => {
         onCancel={() => setLogoutModalVisible(false)}
       />
     </SafeAreaView>
+    </>
   );
 };
 

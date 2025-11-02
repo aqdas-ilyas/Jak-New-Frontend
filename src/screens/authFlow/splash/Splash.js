@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View, ActivityIndicator } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, View, ActivityIndicator, StatusBar, Platform } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
@@ -229,28 +229,35 @@ export default function Splash(props) {
     }, [islogin, biometricEnabled, apiCompleted, biometricChecked, biometricInProgress]);
 
     return (
-        <ImageBackground source={appImages.splashBackground} style={styles.backgroundImage}>
-            <Image source={appIcons.appLogo} style={styles.imageLogo} />
-            
-            {/* Loading indicator */}
-            {/* {(isLoading || !apiCompleted || !biometricChecked || biometricInProgress) && (
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={colors.primaryColor} />
-                    <Text style={styles.loadingText}>
-                        {biometricInProgress || (!biometricChecked && biometricEnabled && islogin)
-                            ? (LocalizedStrings.biometric_app_open_prompt || 'Authenticate to open the app')
-                            : (LocalizedStrings.loading || 'Loading...')
-                        }
-                    </Text>
+        <>
+            <StatusBar 
+                barStyle={'light-content'} 
+                backgroundColor={Platform.OS === 'android' ? 'transparent' : undefined}
+                translucent={Platform.OS === 'android'}
+            />
+            <ImageBackground source={appImages.splashBackground} style={styles.backgroundImage}>
+                <Image source={appIcons.appLogo} style={styles.imageLogo} />
+                
+                {/* Loading indicator */}
+                {/* {(isLoading || !apiCompleted || !biometricChecked || biometricInProgress) && (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color={colors.primaryColor} />
+                        <Text style={styles.loadingText}>
+                            {biometricInProgress || (!biometricChecked && biometricEnabled && islogin)
+                                ? (LocalizedStrings.biometric_app_open_prompt || 'Authenticate to open the app')
+                                : (LocalizedStrings.loading || 'Loading...')
+                            }
+                        </Text>
+                    </View>
+                )} */}
+                
+                <View style={styles.bottomContainer}>
+                    <Text style={styles.welcomeText}>{LocalizedStrings['Welcome to']}</Text>
+                    <Text style={styles.logoText}>{LocalizedStrings['Jak App']}</Text>
+                    <Text style={styles.promotionText}>{LocalizedStrings['Your one stop app for your promotions.']}</Text>
                 </View>
-            )} */}
-            
-            <View style={styles.bottomContainer}>
-                <Text style={styles.welcomeText}>{LocalizedStrings['Welcome to']}</Text>
-                <Text style={styles.logoText}>{LocalizedStrings['Jak App']}</Text>
-                <Text style={styles.promotionText}>{LocalizedStrings['Your one stop app for your promotions.']}</Text>
-            </View>
-        </ImageBackground>
+            </ImageBackground>
+        </>
     )
 }
 

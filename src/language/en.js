@@ -30,6 +30,25 @@ export default {
     biometric_login_error: 'Biometric authentication failed',
     biometric_app_open_prompt: 'Authenticate to open the app',
     
+    // Contact Form
+    send_us_message: 'Send us a Message',
+    contact_form_subtitle: 'We\'d love to hear from you. Send us a message and we\'ll respond as soon as possible.',
+    message_title: 'Message Title',
+    message_body: 'Message',
+    email_address: 'Email Address',
+    phone_number: 'Phone Number',
+    sending: 'Sending...',
+    send_message: 'Send Message',
+    reach_us_directly: 'Or reach us directly:',
+    email_label: 'Email',
+    phone_label: 'Phone',
+    please_enter_message_title: 'Please enter message title',
+    please_enter_message_body: 'Please enter message body',
+    please_enter_phone_number: 'Please enter your phone number',
+    please_enter_email: 'Please enter your email',
+    message_sent_successfully: 'Message sent successfully! We will get back to you soon.',
+    failed_to_send_message: 'Failed to send message. Please try again.',
+    
     // About Us Sections
     about_intro: "Welcome to Jak",
     about_intro_desc: "Jak is your ultimate companion for discovering exclusive deals, offers, and loyalty programs from your favorite stores and merchants. We're committed to helping you save money while enjoying the best shopping experience across Saudi Arabia.",

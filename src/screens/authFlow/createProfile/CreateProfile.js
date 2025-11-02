@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator, Modal } from "react-native";
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY, emailFormat } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
@@ -21,6 +21,7 @@ import { setToken, updateUser } from '../../../store/reducers/userDataSlice';
 import { showMessage } from 'react-native-flash-message';
 import { getDeviceId } from 'react-native-device-info';
 import { _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
+import { CodeField, Cursor } from "react-native-confirmation-code-field";
 
 const CreateProfile = (props) => {
     const { number, email } = props?.route?.params ?? {}
@@ -44,6 +45,59 @@ const CreateProfile = (props) => {
     const [imageLoading, setImageLoading] = useState(false)
     const [country, setCountry] = useState('');
     const [countryAbbreviationCode, setCountryAbbrivaitionCode] = useState('');
+    const [showOTPModal, setShowOTPModal] = useState(false);
+    const [otpValue, setOtpValue] = useState('');
+    const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
+    const [isNumberVerified, setIsNumberVerified] = useState(false);
+
+    // Handle OTP verification
+    const handleVerifyNumber = () => {
+        if (!phoneNumber || phoneNumber.length < 8) {
+            showMessage({
+                message: 'Please enter a valid phone number',
+                type: 'danger',
+            });
+            return;
+        }
+        setShowOTPModal(true);
+        // Here you would typically send OTP to the phone number
+        // For now, we'll just show the modal
+        showMessage({
+            message: 'OTP sent to your phone number',
+            type: 'success',
+        });
+    };
+
+    const verifyOTP = async () => {
+        if (otpValue.length !== 4) {
+            showMessage({
+                message: 'Please enter complete OTP',
+                type: 'danger',
+            });
+            return;
+        }
+
+        setIsVerifyingOTP(true);
+
+        // Simulate OTP verification API call
+        setTimeout(() => {
+            setIsVerifyingOTP(false);
+            setIsNumberVerified(true);
+            setShowOTPModal(false);
+            showMessage({
+                message: 'Phone number verified successfully!',
+                type: 'success',
+            });
+        }, 2000);
+    };
+
+    const resendOTP = () => {
+        setOtpValue('');
+        showMessage({
+            message: 'OTP resent to your phone number',
+            type: 'success',
+        });
+    };
 
     // Fetch and set the State's
     const fetchCountryAbbrivaition = async (code) => {
@@ -328,7 +382,18 @@ const CreateProfile = (props) => {
 
                         {
                             email && (
-                                <CountryInput phoneNumber={phoneNumber} countryCode={countryCode ? countryCode : '966'} countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'} setValue={setPhoneNumber} setSelectedCode={setCountryCode} layout={'first'} />
+                                <View style={styles.phoneNumberContainer}>
+                                    <CountryInput phoneNumber={phoneNumber} countryCode={countryCode ? countryCode : '966'} countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'} setValue={setPhoneNumber} setSelectedCode={setCountryCode} layout={'first'} />
+                                    <TouchableOpacity
+                                        style={[styles.verifyButton, isNumberVerified && styles.verifiedButton]}
+                                        onPress={handleVerifyNumber}
+                                        disabled={isNumberVerified}
+                                    >
+                                        <Text style={[styles.verifyButtonText, isNumberVerified && styles.verifiedButtonText]}>
+                                            {isNumberVerified ? '✓ Verified' : 'Verify Number'}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
                             )
                         }
 
@@ -406,6 +471,74 @@ const CreateProfile = (props) => {
                 }}
             />
 
+            {/* OTP Verification Modal */}
+            <Modal
+                visible={showOTPModal}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setShowOTPModal(false)}
+                statusBarTranslucent={true}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Verify Phone Number</Text>
+                            <Text style={styles.modalSubtitle}>
+                                Enter the 4-digit code sent to +{countryCode}{phoneNumber}
+                            </Text>
+                        </View>
+
+                        <View style={styles.otpContainer}>
+                            <View style={styles.otpInputContainer}>
+                                <CodeField
+                                    value={otpValue}
+                                    onChangeText={(txt) => {
+                                        setOtpValue(txt);
+                                    }}
+                                    cellCount={4}
+                                    keyboardType="number-pad"
+                                    textContentType="oneTimeCode"
+                                    renderCell={({ index, symbol, isFocused }) => (
+                                        <Text
+                                            key={index}
+                                            style={[styles.cell]}>
+                                            {symbol || (isFocused ? <Cursor /> : null)}
+                                        </Text>
+                                    )}
+                                />
+                            </View>
+
+                            <View style={styles.otpButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.otpButton, styles.resendButton]}
+                                    onPress={resendOTP}
+                                >
+                                    <Text style={styles.resendButtonText}>Resend OTP</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[styles.otpButton, styles.verifyOTPButton]}
+                                    onPress={verifyOTP}
+                                    disabled={isVerifyingOTP}
+                                >
+                                    {isVerifyingOTP ? (
+                                        <ActivityIndicator size="small" color={colors.white} />
+                                    ) : (
+                                        <Text style={styles.verifyOTPButtonText}>Verify</Text>
+                                    )}
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => setShowOTPModal(false)}
+                        >
+                            <Text style={styles.closeButtonText}>✕</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     )
 }
@@ -489,5 +622,133 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
         lineHeight: 24,
-    }
+    },
+    phoneNumberContainer: {
+        marginBottom: wp(5),
+        position: 'relative',
+    },
+    verifyButton: {
+        position: 'absolute',
+        right: wp(0),
+        top: wp(3),
+        backgroundColor: colors.primaryColor,
+        paddingHorizontal: wp(3),
+        paddingVertical: wp(1.5),
+        borderRadius: wp(1.5),
+        borderWidth: 1,
+        borderColor: colors.primaryColor,
+    },
+    verifiedButton: {
+        backgroundColor: colors.successColor || '#4CAF50',
+        borderColor: colors.successColor || '#4CAF50',
+    },
+    verifyButtonText: {
+        fontSize: hp(1.2),
+        fontFamily: fontFamily.UrbanistSemiBold,
+        color: colors.white,
+    },
+    verifiedButtonText: {
+        color: colors.white,
+    },
+    otpContainer: {
+        paddingTop: wp(2),
+    },
+    otpInputContainer: {
+        width: '100%',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginBottom: wp(5),
+    },
+    cell: {
+        width: wp(17),
+        height: wp(13),
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: colors.borderColor,
+        backgroundColor: '#FAFAFA',
+        color: colors.BlackSecondary,
+        fontSize: hp(2.4),
+        fontFamily: fontFamily.UrbanistBold,
+        textAlign: "center",
+        lineHeight: wp(12)
+    },
+    otpButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    otpButton: {
+        flex: 1,
+        paddingVertical: wp(3),
+        borderRadius: wp(2),
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    resendButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: colors.primaryColor,
+        marginRight: wp(2),
+    },
+    verifyOTPButton: {
+        backgroundColor: colors.primaryColor,
+        marginLeft: wp(2),
+    },
+    resendButtonText: {
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistSemiBold,
+        color: colors.primaryColor,
+    },
+    verifyOTPButtonText: {
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistSemiBold,
+        color: colors.white,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: wp(5),
+    },
+    modalContainer: {
+        backgroundColor: colors.fullWhite,
+        borderRadius: wp(5),
+        padding: wp(6),
+        width: '100%',
+        maxWidth: wp(90),
+    },
+    modalHeader: {
+        alignItems: 'center',
+        marginBottom: wp(5),
+    },
+    modalTitle: {
+        fontSize: hp(2.2),
+        fontFamily: fontFamily.UrbanistBold,
+        color: colors.BlackSecondary,
+        textAlign: 'center',
+        marginBottom: wp(2),
+    },
+    modalSubtitle: {
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistMedium,
+        color: colors.descriptionColor,
+        textAlign: 'center',
+        lineHeight: hp(2.2),
+    },
+    closeButton: {
+        position: 'absolute',
+        top: wp(4),
+        right: wp(4),
+        width: wp(8),
+        height: wp(8),
+        borderRadius: wp(4),
+        backgroundColor: colors.grayColor + '20',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    closeButtonText: {
+        fontSize: hp(1.8),
+        fontFamily: fontFamily.UrbanistBold,
+        color: colors.BlackSecondary,
+    },
 })

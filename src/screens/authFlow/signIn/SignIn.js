@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, I18nManager, StatusBar, ScrollView, Platform, } from 'react-native';
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, ScrollView, Platform, } from 'react-native';
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, emailFormat, passwordFormat } from '../../../services';
 import { appIcons } from '../../../services/utilities/assets';
 import appStyles from '../../../services/utilities/appStyles';
@@ -8,8 +8,6 @@ import Header from '../../../components/header';
 import { Input } from '../../../components/input';
 import CheckBox from '@react-native-community/checkbox';
 import { LocalizationContext } from '../../../language/LocalizationContext';
-import RNRestart from 'react-native-restart'; // Import package from node modules
-import ToggleSwitch from 'toggle-switch-react-native';
 import { showMessage } from 'react-native-flash-message';
 import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
@@ -66,24 +64,6 @@ const SignIn = props => {
       fetchCountryAbbrivaition('SA');
     }
   }, [countryCode]);
-
-  // Language Change
-  const [language, setLanguage] = useState(appLanguage === 'ar' ? true : false);
-  const onChangeLng = async lng => {
-    setLanguage(lng);
-    if (lng === 'en') {
-      setAppLanguage(lng);
-      I18nManager.forceRTL(false);
-      RNRestart.Restart();
-      return;
-    }
-    if (lng === 'ar') {
-      setAppLanguage(lng);
-      I18nManager.forceRTL(true);
-      RNRestart.Restart();
-      return;
-    }
-  };
 
   // Validate Login Inputs
   const validateInputs = () => {
@@ -660,9 +640,11 @@ const SignIn = props => {
         bounces={false}
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}>
-        <Text style={styles.mainTitle}>
-          {LocalizedStrings['Welcome Back!']}
-        </Text>
+        {LocalizedStrings['Welcome Back!'] && (
+          <Text style={styles.mainTitle}>
+            {LocalizedStrings['Welcome Back!']}
+          </Text>
+        )}
         <Text style={styles.mainDes}>
           {LocalizedStrings['Login and manage your Jak Mobile App account.']}
         </Text>
@@ -717,54 +699,6 @@ const SignIn = props => {
               {LocalizedStrings['Forgot Password?']}
             </Text>
           </TouchableOpacity>
-        </View>
-
-        <View activeOpacity={0.5} style={[appStyles.rowBtw]}>
-          <Text style={[styles.mainText]}>
-            {`${LocalizedStrings.Language}  (`}
-            <Text
-              style={{
-                fontFamily:
-                  appLanguage == 'en'
-                    ? fontFamily.UrbanistBold
-                    : fontFamily.UrbanistMedium,
-                color:
-                  appLanguage == 'en'
-                    ? colors.primaryColor
-                    : colors.descriptionColor,
-              }}>
-              {'En'}
-            </Text>
-            <Text
-              style={{
-                fontFamily: fontFamily.UrbanistMedium,
-                color: colors.descriptionColor,
-              }}>
-              {'/'}
-            </Text>
-            <Text
-              style={{
-                fontFamily:
-                  appLanguage == 'ar'
-                    ? fontFamily.UrbanistBold
-                    : fontFamily.UrbanistMedium,
-                color:
-                  appLanguage == 'ar'
-                    ? colors.primaryColor
-                    : colors.descriptionColor,
-              }}>
-              {'Ar'}
-            </Text>
-            {')'}
-          </Text>
-          <ToggleSwitch
-            isOn={language}
-            onColor={colors.primaryColor}
-            offColor={colors.borderColor}
-            labelStyle={{ display: 'none' }}
-            size="small"
-            onToggle={e => onChangeLng(e ? 'ar' : 'en')}
-          />
         </View>
 
         <View style={[appStyles.rowCenter, appStyles.mt10]}>
@@ -930,13 +864,6 @@ const styles = StyleSheet.create({
   checbox: {
     height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
     width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
-  },
-  languageText: {
-    fontSize: hp(1.6),
-    fontFamily: fontFamily.UrbanistMedium,
-    color: colors.BlackSecondary,
-    lineHeight: 24,
-    textAlign: 'left',
   },
   dotComponentActiveStyle: {
     width: wp(5),

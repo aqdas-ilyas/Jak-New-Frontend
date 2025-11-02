@@ -30,6 +30,25 @@ export default {
   biometric_login_error: 'فشلت المصادقة البيومترية',
   biometric_app_open_prompt: 'قم بالمصادقة لفتح التطبيق',
   
+  // Contact Form
+  send_us_message: 'أرسل لنا رسالة',
+  contact_form_subtitle: 'يسرنا أن تكتبوا لنا عن ملاحظاتكم أو اقتراحاتكم',
+  message_title: 'عنوان الرسالة',
+  message_body: 'الرسالة',
+  email_address: 'عنوان البريد الإلكتروني',
+  phone_number: 'رقم الهاتف',
+  sending: 'جاري الإرسال...',
+  send_message: 'إرسال الرسالة',
+  reach_us_directly: 'أو تواصل معنا مباشرة:',
+  email_label: 'البريد الإلكتروني',
+  phone_label: 'الهاتف',
+  please_enter_message_title: 'يرجى إدخال عنوان الرسالة',
+  please_enter_message_body: 'يرجى إدخال نص الرسالة',
+  please_enter_phone_number: 'يرجى إدخال رقم هاتفك',
+  please_enter_email: 'يرجى إدخال بريدك الإلكتروني',
+  message_sent_successfully: 'تم إرسال الرسالة بنجاح! سنعود إليك قريباً.',
+  failed_to_send_message: 'فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى.',
+  
   // About Us Sections
   about_intro: "مرحبًا بك في تطبيق جاك",
   about_intro_desc: "تطبيق جاك هو رفيقك المثالي لاكتشاف الصفقات الحصرية والعروض وبرامج الولاء من متاجرك وتجارك المفضلين. نحن ملتزمون بمساعدتك على توفير المال مع الاستمتاع بأفضل تجربة تسوق في جميع أنحاء المملكة العربية السعودية.",
@@ -371,7 +390,7 @@ export default {
 
   'Welcome Back!': 'مرحبًا بعودتك!',
   'Login and manage your Jak Mobile App account.':
-    'قم بتسجيل الدخول وإدارة حساب وإدارة حسابك في تطبيق جاك .',
+    'قم بتسجيل الدخول وإدارة حسابك في تطبيق جاك .',
 
   email: 'البريد الإلكتروني',
   remember_me: 'تذكرنى',
@@ -388,7 +407,7 @@ export default {
   'Continue with Facebook': 'حساب فيسبوك',
 
   'Login with Email': 'تسجيل الدخول برقم الهاتف',
-  'Sign Up': 'اشتراك',
+  'Sign Up': 'تسجيل حساب جديد',
 
   'Privacy Policy': 'سياسة الخصوصية',
   'Terms of Service': 'شروط الخدمة',

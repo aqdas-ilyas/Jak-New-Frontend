@@ -1,9 +1,16 @@
 import React, { useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Linking } from 'react-native'
+import { View, Text, Image, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Linking, Alert, StatusBar, Platform } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, appIcons } from '../../../services'
 import appStyles from '../../../services/utilities/appStyles'
 import Header from '../../../components/header'
 import { LocalizationContext } from '../../../language/LocalizationContext'
+import { Input } from '../../../components/input'
+import Button from '../../../components/button'
+import { useSelector } from 'react-redux'
+import { callApi, Method } from '../../../api/apiCaller'
+import routs from '../../../api/routs'
+import { showMessage } from 'react-native-flash-message'
+import CountryInput from '../../../components/countryPicker/CountryPicker'
 
 const socialButton = [
     // { id: 1, img: appIcons.facebookContact, url: 'https://facebook.com' },
@@ -14,32 +21,90 @@ const socialButton = [
 
 const ContactUs = (props) => {
     const { LocalizedStrings } = React.useContext(LocalizationContext);
-    const contactUsList = [
-        { id: 1, mainTitle: LocalizedStrings.chat_to_us, desc: LocalizedStrings.our_friendly_team_is_here_to_help, email: 'Admin@jak-app.com', img: appIcons.chatToUs },
-        { id: 2, mainTitle: LocalizedStrings.phone, desc: LocalizedStrings.lorem_ipsum_dolor_sit_amet, email: '+966570578852', img: appIcons.phoneToUs },
-    ]
+    const user = useSelector(state => state?.user?.user?.user);
 
-    const openWhatsAppChat = (whatsApp) => {
-        // Construct the deep link to open WhatsApp with the phone number
-        const url = `whatsapp://send?phone=${whatsApp}`;
+    // Form state
+    const [messageTitle, setMessageTitle] = useState('');
+    const [messageBody, setMessageBody] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [countryCode, setCountryCode] = useState('966');
+    const [isLoading, setIsLoading] = useState(false);
 
-        // Check if the WhatsApp app is installed and open the chat
-        Linking.canOpenURL(url).then(supported => {
-            if (supported) {
-                return Linking.openURL(url);
-            } else {
-                console.log("WhatsApp is not installed on this device.");
+    // Check if user is social login
+    const isSocialUser = user?.isSocial;
+
+    const handleSubmit = () => {
+        // Validation
+        if (!messageTitle.trim()) {
+            showMessage({
+                message: LocalizedStrings.please_enter_message_title || 'Please enter message title',
+                type: 'danger',
+            });
+            return;
+        }
+
+        if (!messageBody.trim()) {
+            showMessage({
+                message: LocalizedStrings.please_enter_message_body || 'Please enter message body',
+                type: 'danger',
+            });
+            return;
+        }
+
+        if (isSocialUser) {
+            if (!phoneNumber.trim()) {
+                showMessage({
+                    message: LocalizedStrings.please_enter_phone_number || 'Please enter your phone number',
+                    type: 'danger',
+                });
+                return;
             }
-        }).catch(error => {
-            console.error("An error occurred while opening WhatsApp:", error);
-        });
-    };
+        } else {
+            if (!email.trim()) {
+                showMessage({
+                    message: LocalizedStrings.please_enter_email || 'Please enter your email',
+                    type: 'danger',
+                });
+                return;
+            }
+        }
 
-    const handleEmailPress = (strEmail) => {
-        const email = strEmail;
-        const mailtoURL = `mailto:${email}`;
+        setIsLoading(true);
 
-        Linking.openURL(mailtoURL).catch((err) => console.error('Error opening email app', err));
+        const onSuccess = (response) => {
+            setIsLoading(false);
+            showMessage({
+                message: LocalizedStrings.message_sent_successfully || 'Message sent successfully! We will get back to you soon.',
+                type: 'success',
+            });
+            // Reset form
+            setMessageTitle('');
+            setMessageBody('');
+            setEmail('');
+            setPhoneNumber('');
+        };
+
+        const onError = (error) => {
+            setIsLoading(false);
+            showMessage({
+                message: error?.message || (LocalizedStrings.failed_to_send_message || 'Failed to send message. Please try again.'),
+                type: 'danger',
+            });
+        };
+
+        const method = Method.POST;
+        const endPoint = routs.contactUs; // You'll need to add this route
+        const bodyParams = {
+            title: messageTitle,
+            message: messageBody,
+            email: isSocialUser ? user?.email : email,
+            phoneNumber: isSocialUser ? `${countryCode}${phoneNumber}` : user?.phoneNumber,
+            userId: user?.id,
+            userName: user?.name,
+        };
+
+        callApi(method, endPoint, bodyParams, onSuccess, onError);
     };
 
     const handleSocialPress = (url) => {
@@ -53,37 +118,104 @@ const ContactUs = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
-            <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.contact_us} />
-            <View style={{ flex: 1 }}>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.scrollContent}
-                >
-                    <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>{LocalizedStrings.contact_us_description}</Text>
-                    
-                    {contactUsList.map((item, index) => (
-                        <View key={index} style={{ flexDirection: "row", alignItems: "flex-start", marginVertical: wp(2) }}>
-                            <Image source={item.img} style={styles.ImageStyle} />
-                            <View style={{ marginLeft: wp(3), flex: 1 }}>
-                                <Text style={[styles.mainTitle]}>{item.mainTitle}</Text>
-                                <Text style={[styles.mainDesc]}>{item.desc}</Text>
-                                <Text onPress={() => handleEmailPress(item.email)} style={[styles.emailText]}>{item.email}</Text>
-                            </View>
+        <>
+            <StatusBar 
+                barStyle={'dark-content'} 
+                backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
+                translucent={Platform.OS === 'android'}
+            />
+            <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+                <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.contact_us} />
+
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
+                <View style={styles.formContainer}>
+                    {/* <Text style={styles.formTitle}>{LocalizedStrings.send_us_message || "Send us a Message"}</Text> */}
+                    <Text style={styles.formSubtitle}>
+                        {LocalizedStrings.contact_form_subtitle || "We'd love to hear from you. Send us a message and we'll respond as soon as possible."}
+                    </Text>
+
+                    {/* Message Title */}
+                    <View style={styles.inputContainer}>
+                        <Input
+                            placeholder={LocalizedStrings.message_title || "Message Title"}
+                            value={messageTitle}
+                            onChangeText={setMessageTitle}
+                        >
+                            {LocalizedStrings.message_title || "Message Title"}
+                        </Input>
+                    </View>
+
+                    {/* Message Body */}
+                    <View style={styles.inputContainer}>
+                        <Input
+                            placeholder={LocalizedStrings.message_body || "Enter your message"}
+                            value={messageBody}
+                            onChangeText={setMessageBody}
+                            multiline={true}
+                            numberOfLines={4}
+                            containerStyle={styles.messageInput}
+                            inputStyle={styles.messageInput}
+                        >
+                            {LocalizedStrings.message_body || "Message"}
+                        </Input>
+                    </View>
+
+                    {/* Conditional Contact Field */}
+                    {isSocialUser ? (
+                        <View style={styles.inputContainer}>
+                            <CountryInput
+                                phoneNumber={phoneNumber}
+                                countryCode={countryCode}
+                                countryAbbreviationCode="SA"
+                                setValue={setPhoneNumber}
+                                setSelectedCode={setCountryCode}
+                                layout="first"
+                            >
+                                {LocalizedStrings.phone_number || "Phone Number"}
+                            </CountryInput>
                         </View>
-                    ))}
+                    ) : (
+                        <View style={styles.inputContainer}>
+                            <Input
+                                placeholder={LocalizedStrings.email_address || "Enter your email"}
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                leftIcon={appIcons.message}
+                            >
+                                {LocalizedStrings.email_address || "Email Address"}
+                            </Input>
+                        </View>
+                    )}
 
-                    <TouchableOpacity activeOpacity={0.8} onPress={() => openWhatsAppChat('+966570578852')}>
-                        <Image source={appIcons.whatsapp} style={styles.whatsappIcon} />
-                    </TouchableOpacity>
-                </ScrollView>
-            </View>
+                    {/* Submit Button */}
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            onPress={handleSubmit}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (LocalizedStrings.sending || 'Sending...') : (LocalizedStrings.send_message || 'Send Message')}
+                        </Button>
+                    </View>
 
+                    {/* Contact Info */}
+                    <View style={styles.contactInfoContainer}>
+                        <Text style={styles.contactInfoTitle}>{LocalizedStrings.reach_us_directly || "Or reach us directly:"}</Text>
+                        <Text style={styles.contactInfoText}>{LocalizedStrings.email_label || "Email"}: admin@jak-app.com</Text>
+                        <Text style={styles.contactInfoText}>{LocalizedStrings.phone_label || "Phone"}: +966570578852</Text>
+                    </View>
+                </View>
+            </ScrollView>
+
+            {/* Social Media Links */}
             <View style={[appStyles.ph20, styles.socialContainer]}>
                 <View style={styles.socialButtonsRow}>
                     {socialButton.map((item, index) => (
-                        <TouchableOpacity 
-                            key={index} 
+                        <TouchableOpacity
+                            key={index}
                             style={{ margin: wp(2) }}
                             activeOpacity={0.7}
                             onPress={() => handleSocialPress(item.url)}
@@ -94,6 +226,7 @@ const ContactUs = (props) => {
                 </View>
             </View>
         </SafeAreaView>
+        </>
     )
 }
 
@@ -101,51 +234,56 @@ export default ContactUs
 
 const styles = StyleSheet.create({
     scrollContent: {
-        paddingBottom: wp(5),
+        paddingBottom: wp(10),
     },
-    mainTitle: {
+    formContainer: {
+        paddingVertical: wp(3),
+    },
+    formTitle: {
+        fontSize: hp(2.4),
+        fontFamily: fontFamily.UrbanistBold,
+        color: colors.BlackSecondary,
+        textAlign: 'center',
+        marginBottom: wp(2),
+    },
+    formSubtitle: {
         fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistMedium,
+        color: colors.descriptionColor,
+        textAlign: 'center',
+        lineHeight: hp(2.2),
+        marginBottom: wp(5),
+    },
+    inputContainer: {
+        // marginBottom: wp(4),
+    },
+    messageInput: {
+        height: hp(12),
+        textAlignVertical: 'top',
+    },
+    buttonContainer: {
+        marginTop: wp(3),
+        marginBottom: wp(5),
+    },
+    contactInfoContainer: {
+        backgroundColor: colors.grayColor + '10',
+        padding: wp(4),
+        borderRadius: wp(3),
+        marginTop: wp(3),
+    },
+    contactInfoTitle: {
+        fontSize: hp(1.8),
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
-        lineHeight: 24,
-        textAlign: 'left'
+        marginBottom: wp(2),
+        textAlign: 'center',
     },
-    mainDesc: {
-        fontSize: hp(1.4),
-        fontFamily: fontFamily.UrbanistLight,
-        color: colors.descriptionColor,
-        lineHeight: 22,
-        textAlign: 'left'
-    },
-    emailText: {
-        fontSize: hp(1.4),
+    contactInfoText: {
+        fontSize: hp(1.5),
         fontFamily: fontFamily.UrbanistMedium,
-        color: colors.BlackSecondary,
-        lineHeight: 22,
-        textAlign: 'left'
-    },
-    mainDes: {
-        fontSize: hp(1.6),
-        fontFamily: fontFamily.UrbanistRegular,
         color: colors.descriptionColor,
-        lineHeight: 24,
-        textAlign: 'left'
-    },
-    ImageStyle: {
-        width: wp(12),
-        height: wp(12),
-        resizeMode: 'contain',
-    },
-    ContactImageStyle: {
-        width: wp(15),
-        height: wp(15),
-        resizeMode: 'contain',
-    },
-    whatsappIcon: {
-        width: heightPixel(50),
-        height: heightPixel(50),
-        resizeMode: 'contain',
-        margin: wp(2)
+        textAlign: 'center',
+        marginBottom: wp(1),
     },
     socialContainer: {
         alignItems: "center",
@@ -156,5 +294,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    ContactImageStyle: {
+        width: wp(8),
+        height: wp(8),
+        resizeMode: 'contain',
     },
 })

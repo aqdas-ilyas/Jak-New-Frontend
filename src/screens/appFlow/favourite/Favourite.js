@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, RefreshControl, StatusBar } from "react-native";
 import { heightPixel, hp, routes, wp } from "../../../services/constants";
 import { appIcons, appImages } from "../../../services/utilities/assets";
 import Header from "../../../components/header";
@@ -131,11 +131,17 @@ export default Favourite = (props) => {
     }, [])
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
-            <Loader loading={isLoading} />
-            <LogoHeader />
+        <>
+            <StatusBar 
+                barStyle={'dark-content'} 
+                backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
+                translucent={Platform.OS === 'android'}
+            />
+            <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+                <Loader loading={isLoading} />
+                <LogoHeader />
 
-            <FlatList
+                <FlatList
                 data={favorite && favorite.length > 0 ? favorite.filter(item => item !== null) : []}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(item, index) => index.toString()}
@@ -162,6 +168,7 @@ export default Favourite = (props) => {
                 }}
             />
         </SafeAreaView>
+        </>
     )
 };
 

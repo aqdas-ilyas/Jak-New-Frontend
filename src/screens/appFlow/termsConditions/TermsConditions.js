@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity, Image, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { colors, hp, fontFamily, wp, appIcons } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
@@ -25,7 +25,7 @@ const TermsConditions = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { marginHorizontal: wp(4) }]}>
+        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4), paddingTop: Platform.OS == 'android' ? wp(5) : 0, }]}>
             <View style={{ flex: 1 }}>
                 <TouchableOpacity activeOpacity={0.9} onPress={() => props.navigation.goBack()} style={{ backgroundColor: 'white', borderRadius: 50, position: "absolute", top: wp(2.5), zIndex: 1, left: wp(1), padding: wp(2) }}>
                     <Image source={appIcons.back} style={[styles.back, { transform: [{ rotate: appLanguage == 'en' ? '0deg' : '180deg' }] }]} />

@@ -19,7 +19,11 @@ const App = () => {
     <Provider store={store}>
       <LocalizationProvider>
         {/* <StatusBar barStyle={'dark-content'} backgroundColor='#fff' /> */}
-        <StatusBar translucent backgroundColor="transparent" />
+        <StatusBar 
+          barStyle={'dark-content'} 
+          backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
+          translucent={Platform.OS === 'android'}
+        />
         <PersistGate loading={null} persistor={persistor}>
           {
             Platform.OS === 'ios' ?

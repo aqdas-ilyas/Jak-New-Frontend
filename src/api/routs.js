@@ -28,6 +28,7 @@ export default {
   createSubscriptions: BASE_URL + 'subscription/create/',
   cancelSubscription: BASE_URL + 'subscription-cancel/create',
   getNotification: BASE_URL + 'user/mynotifications',
+  contactUs: BASE_URL + 'contact-us',
 
   privacy: BASE_URL + 'privacy/',
   aboutUs: BASE_URL + 'about-us/',

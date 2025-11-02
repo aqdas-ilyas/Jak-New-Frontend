@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, ActivityIndicator, Pressable, RefreshControl } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, ActivityIndicator, Pressable, RefreshControl, StatusBar } from "react-native";
 import { heightPixel, hp, routes, widthPixel, wp } from "../../../services/constants";
 import appStyles from "../../../services/utilities/appStyles";
 import { appIcons, colors, fontFamily } from "../../../services";
@@ -308,11 +308,17 @@ export default Offer = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, {paddingTop: Platform.OS == 'android' ? wp(10) : 0, margin: wp(4) }]}>
-            <Loader loading={isLoading} />
-            {/* <LogoHeader /> */}
+        <>
+            <StatusBar 
+                barStyle={'dark-content'} 
+                backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
+                translucent={Platform.OS === 'android'}
+            />
+            <SafeAreaView style={[appStyles.safeContainer, {paddingTop: Platform.OS == 'android' ? wp(10) : 0, margin: wp(4) }]}>
+                <Loader loading={isLoading} />
+                {/* <LogoHeader /> */}
 
-            <View style={styles.tabTopView}>
+                <View style={styles.tabTopView}>
                 {/* <Tab.Navigator
                     sceneContainerStyle={{ backgroundColor: colors.fullWhite }}
                     initialRouteName={LocalizedStrings.my_offers}
@@ -441,6 +447,7 @@ export default Offer = (props) => {
                 />
             </ActionSheet> */}
         </SafeAreaView>
+        </>
     )
 };
 
