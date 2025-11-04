@@ -34,7 +34,7 @@ export default {
     send_us_message: 'Send us a Message',
     contact_form_subtitle: 'We\'d love to hear from you. Send us a message and we\'ll respond as soon as possible.',
     message_title: 'Message Title',
-    message_body: 'Message',
+    message_body: 'Message Body',
     email_address: 'Email Address',
     phone_number: 'Phone Number',
     sending: 'Sending...',

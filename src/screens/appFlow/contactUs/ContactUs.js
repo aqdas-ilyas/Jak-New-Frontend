@@ -159,7 +159,7 @@ const ContactUs = (props) => {
                             containerStyle={styles.messageInput}
                             inputStyle={styles.messageInput}
                         >
-                            {LocalizedStrings.message_body || "Message"}
+                            {LocalizedStrings.message_body || "Message Body"}
                         </Input>
                     </View>
 
