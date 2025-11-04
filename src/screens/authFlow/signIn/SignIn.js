@@ -114,29 +114,33 @@ const SignIn = props => {
           props?.navigation?.navigate(routes.createProfile, {
             number: `${countryCode + phoneNumber}`,
           });
-        } else if (response?.act === 'incomplete-preferences') {
-          if (!response?.data?.user?.isPreferencesSkipped) {
-            props?.navigation?.navigate(routes.preferences);
-          } else {
-            if (response?.act == 'admin-pending') {
-              props.navigation.navigate(routes.tab, { screen: routes.home });
-              // props?.navigation?.navigate(routes.preferences);
-              // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
-            } else if (response?.act == 'incomplete-subscription') {
-              props?.navigation?.navigate(routes.subscription);
-              showMessage({
-                message: 'You are not subscribed yet!',
-                type: 'danger',
-              });
-            }
-          }
-        } else if (response?.act == 'admin-pending') {
+        }
+        // else if (response?.act === 'incomplete-preferences') {
+        //   if (!response?.data?.user?.isPreferencesSkipped) {
+        //     props?.navigation?.navigate(routes.preferences);
+        //   } else {
+        //     if (response?.act == 'admin-pending') {
+        //       props.navigation.navigate(routes.tab, { screen: routes.home });
+        //       // props?.navigation?.navigate(routes.preferences);
+        //       // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
+        //     } else if (response?.act == 'incomplete-subscription') {
+        //       props?.navigation?.navigate(routes.subscription);
+        //       showMessage({
+        //         message: 'You are not subscribed yet!',
+        //         type: 'danger',
+        //       });
+        //     }
+        //   }
+        // } else if (response?.act == 'admin-pending') {
+        //   props.navigation.navigate(routes.tab, { screen: routes.home });
+        //   // props?.navigation?.navigate(routes.preferences);
+        //   // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
+        // } else if (response?.act == 'incomplete-subscription') {
+        //   props?.navigation?.navigate(routes.subscription);
+        //   showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
+        // }
+        else {
           props.navigation.navigate(routes.tab, { screen: routes.home });
-          // props?.navigation?.navigate(routes.preferences);
-          // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
-        } else if (response?.act == 'incomplete-subscription') {
-          props?.navigation?.navigate(routes.subscription);
-          showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
         }
       };
 
@@ -213,23 +217,25 @@ const SignIn = props => {
         props?.navigation?.navigate(routes.createProfile, {
           number: `${credentials.countryCode + credentials.phoneNumber}`,
         });
-      } else if (response?.act === 'incomplete-preferences') {
-        if (!response?.data?.user?.isPreferencesSkipped) {
-          props?.navigation?.navigate(routes.preferences);
-        } else {
-          if (response?.act == 'admin-pending') {
-            props.navigation.navigate(routes.tab, { screen: routes.home });
-          } else if (response?.act == 'incomplete-subscription') {
-            props?.navigation?.navigate(routes.subscription);
-            showMessage({
-              message: 'You are not subscribed yet!',
-              type: 'danger',
-            });
-          } else {
-            props.navigation.navigate(routes.tab, { screen: routes.home });
-          }
-        }
-      } else {
+      }
+      // else if (response?.act === 'incomplete-preferences') {
+      //   if (!response?.data?.user?.isPreferencesSkipped) {
+      //     props?.navigation?.navigate(routes.preferences);
+      //   } else {
+      //     if (response?.act == 'admin-pending') {
+      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //     } else if (response?.act == 'incomplete-subscription') {
+      //       props?.navigation?.navigate(routes.subscription);
+      //       showMessage({
+      //         message: 'You are not subscribed yet!',
+      //         type: 'danger',
+      //       });
+      //     } else {
+      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //     }
+      //   }
+      // }
+      else {
         props.navigation.navigate(routes.tab, { screen: routes.home });
       }
     };
@@ -281,23 +287,25 @@ const SignIn = props => {
         props?.navigation?.navigate(routes.createProfile, {
           email: credentials.email.toLowerCase(),
         });
-      } else if (response?.act === 'incomplete-preferences') {
-        if (!response?.data?.user?.isPreferencesSkipped) {
-          props?.navigation?.navigate(routes.preferences);
-        } else {
-          if (response?.act == 'admin-pending') {
-            props.navigation.navigate(routes.tab, { screen: routes.home });
-          } else if (response?.act == 'incomplete-subscription') {
-            props?.navigation?.navigate(routes.subscription);
-            showMessage({
-              message: 'You are not subscribed yet!',
-              type: 'danger',
-            });
-          } else {
-            props.navigation.navigate(routes.tab, { screen: routes.home });
-          }
-        }
-      } else {
+      }
+      // else if (response?.act === 'incomplete-preferences') {
+      //   if (!response?.data?.user?.isPreferencesSkipped) {
+      //     props?.navigation?.navigate(routes.preferences);
+      //   } else {
+      //     if (response?.act == 'admin-pending') {
+      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //     } else if (response?.act == 'incomplete-subscription') {
+      //       props?.navigation?.navigate(routes.subscription);
+      //       showMessage({
+      //         message: 'You are not subscribed yet!',
+      //         type: 'danger',
+      //       });
+      //     } else {
+      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //     }
+      //   }
+      // }
+      else {
         props.navigation.navigate(routes.tab, { screen: routes.home });
       }
     };
@@ -527,29 +535,33 @@ const SignIn = props => {
         props?.navigation?.navigate(routes.createProfile, {
           email: user?.email.toLowerCase(),
         });
-      } else if (response?.act === 'incomplete-preferences') {
-        if (!response?.data?.user?.isPreferencesSkipped) {
-          props?.navigation?.navigate(routes.preferences);
-        } else {
-          if (response?.act == 'admin-pending') {
-            // props?.navigation?.navigate(routes.preferences);
-            props.navigation.navigate(routes.tab, { screen: routes.home });
-            // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
-          } else if (response?.act == 'incomplete-subscription') {
-            props?.navigation?.navigate(routes.subscription);
-            showMessage({
-              message: 'You are not subscribed yet!',
-              type: 'danger',
-            });
-          }
-        }
-      } else if (response?.act == 'admin-pending') {
-        // props?.navigation?.navigate(routes.preferences);
+      }
+      // else if (response?.act === 'incomplete-preferences') {
+      //   if (!response?.data?.user?.isPreferencesSkipped) {
+      //     props?.navigation?.navigate(routes.preferences);
+      //   } else {
+      //     if (response?.act == 'admin-pending') {
+      //       // props?.navigation?.navigate(routes.preferences);
+      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
+      //     } else if (response?.act == 'incomplete-subscription') {
+      //       props?.navigation?.navigate(routes.subscription);
+      //       showMessage({
+      //         message: 'You are not subscribed yet!',
+      //         type: 'danger',
+      //       });
+      //     }
+      //   }
+      // } else if (response?.act == 'admin-pending') {
+      //   // props?.navigation?.navigate(routes.preferences);
+      //   props.navigation.navigate(routes.tab, { screen: routes.home });
+      //   // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
+      // } else if (response?.act == 'incomplete-subscription') {
+      //   props?.navigation?.navigate(routes.subscription);
+      //   showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
+      // }
+      else {
         props.navigation.navigate(routes.tab, { screen: routes.home });
-        // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
-      } else if (response?.act == 'incomplete-subscription') {
-        props?.navigation?.navigate(routes.subscription);
-        showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
       }
     };
 

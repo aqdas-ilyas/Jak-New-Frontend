@@ -499,7 +499,6 @@ export default Setting = props => {
                   ]}>
                   <Text style={[styles.mainText]}>
                     {`${item.name}`}
-                    {/* <Text style={{ fontFamily: fontFamily.UrbanistMedium, color: colors.descriptionColor }}>{index > 0 ? '' : `20% ${LocalizedStrings.Complete}`}</Text> */}
                     <Text
                       style={{
                         fontFamily:
@@ -511,7 +510,7 @@ export default Setting = props => {
                             ? colors.primaryColor
                             : colors.descriptionColor,
                       }}>
-                      {item.name == LocalizedStrings.change_language ? '(En' : ''}
+                      {item.name == LocalizedStrings.change_language ? ' (En' : ''}
                     </Text>
                     <Text
                       style={{
@@ -531,9 +530,8 @@ export default Setting = props => {
                             ? colors.primaryColor
                             : colors.descriptionColor,
                       }}>
-                      {item.name == LocalizedStrings.change_language ? 'Ar)' : ''}
+                      {item.name == LocalizedStrings.change_language ? 'Ar) ' : ''}
                     </Text>
-
                   </Text>
 
                   {item.name === LocalizedStrings.Notification ? (
@@ -708,6 +706,7 @@ const styles = StyleSheet.create({
   },
   biometricTextContainer: {
     flex: 1,
+    alignItems: "flex-start"
   },
   biometricTitle: {
     fontSize: hp(1.8),
@@ -720,7 +719,6 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistMedium,
     color: colors.descriptionColor,
     lineHeight: hp(2),
-    marginRight: wp(5),
   },
   biometricToggleContainer: {
     alignItems: 'center',

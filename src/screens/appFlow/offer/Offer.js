@@ -101,7 +101,8 @@ export default Offer = (props) => {
             console.log('Error getMyOffers===', error);
         };
 
-        const endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        // const endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        const endPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
         const method = Method.GET;
         const bodyParams = {};
 
@@ -187,7 +188,8 @@ export default Offer = (props) => {
             setIsLoading(false);
         };
 
-        let endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        // let endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        let endPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
 
         if (formattedCheckedStrings) {
             endPoint += `&category=${formattedCheckedStrings}`;
@@ -221,7 +223,7 @@ export default Offer = (props) => {
     const onRefresh = () => {
         setRefreshing(true);
         refreshCounterRef.current = 0;
-        
+
         const checkAndSetRefreshing = () => {
             refreshCounterRef.current += 1;
             if (refreshCounterRef.current >= 2) {
@@ -232,7 +234,7 @@ export default Offer = (props) => {
         // Refresh categories
         const onCategorySuccess = (response) => {
             console.log('response get Map Category Home===', response?.categories);
-            
+
             const categories = response?.categories;
             const uniqueCategories = Array.from(new Set(categories));
             const formattedCategories = uniqueCategories.map((category, index) => ({
@@ -249,7 +251,7 @@ export default Offer = (props) => {
 
             formattedCategories.unshift(allItem);
             setCheckboxes(formattedCategories);
-            
+
             checkAndSetRefreshing();
         };
 
@@ -270,7 +272,7 @@ export default Offer = (props) => {
             } else {
                 dispatch(saveMyOffer([]));
             }
-            
+
             checkAndSetRefreshing();
         };
 
@@ -279,7 +281,8 @@ export default Offer = (props) => {
             checkAndSetRefreshing();
         };
 
-        const offersEndPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        // const offersEndPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        const offersEndPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
         callApi(Method.GET, offersEndPoint, {}, onOffersSuccess, onOffersError);
     };
 
