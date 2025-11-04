@@ -56,17 +56,17 @@ const SignUp = props => {
   // Validate Login Inputs
   const validateInputs = () => {
     if (!isPossibleNumber(`+${countryCode}` + phoneNumber)) {
-      showMessage({ message: 'Invalid Phone Number', type: 'danger' });
+      showMessage({ message: LocalizedStrings.invalid_phone_number, type: 'danger' });
       return false;
     }
 
     if (password.length < 4) {
-      showMessage({ message: 'Please enter a strong password', type: 'danger' });
+      showMessage({ message: LocalizedStrings.please_enter_strong_password, type: 'danger' });
       return false;
     }
 
     if (password !== confirmPassword) {
-      showMessage({ message: 'Your Password is not Matched!', type: 'danger' });
+      showMessage({ message: LocalizedStrings.password_not_matched, type: 'danger' });
       return false;
     }
     return true;

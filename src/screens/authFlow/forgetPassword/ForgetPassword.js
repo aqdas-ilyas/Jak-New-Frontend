@@ -70,7 +70,7 @@ const ForgetPassword = (props) => {
             setIsLoading(true)
             callApi(method, endPoint, bodyParams, onSuccess, onError);
         } else {
-            showMessage({ message: "Invalid Phone Number", type: "danger", });
+            showMessage({ message: LocalizedStrings.invalid_phone_number, type: "danger", });
             return false;
         }
     }

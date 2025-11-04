@@ -93,8 +93,6 @@ const Welcome = (props) => {
                 token: response?.data?.token,
                 refreshToken: response?.data?.refreshToken,
             }))
-            dispatch(saveLoginRemember(true))
-
             // Save credentials for biometric login if biometric is enabled
             if (biometricEnabled) {
                 dispatch(saveCredentials({
@@ -109,34 +107,39 @@ const Welcome = (props) => {
             }
 
             if (response?.act === 'login-granted') {
+                dispatch(saveLoginRemember(true))
                 props.navigation.navigate(routes.tab, { screen: routes.home })
             } else if (response?.act === 'email-unverified') {
                 props.navigation.navigate(routes.otp, { email: user?.email.toLowerCase(), key: 'auth' })
             } else if (response?.act === 'incomplete-profile') {
                 props?.navigation?.navigate(routes.createProfile, { email: user?.email.toLowerCase() });
-            } else if (response?.act === 'incomplete-preferences') {
-                if (!response?.data?.user?.isPreferencesSkipped) {
-                    props?.navigation?.navigate(routes.preferences);
-                } else {
-                    if (response?.act == 'admin-pending') {
-                        props.navigation.navigate(routes.tab, { screen: routes.home })
-
-                        // props?.navigation?.navigate(routes.preferences);
-                        // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
-                    } else if (response?.act == 'incomplete-subscription') {
-                        props?.navigation?.navigate(routes.subscription);
-                        showMessage({ message: 'You are not subscribed yet!', type: 'danger' })
-                    }
-                }
-            } else if (response?.act == 'admin-pending') {
+            } else {
+                dispatch(saveLoginRemember(true))
                 props.navigation.navigate(routes.tab, { screen: routes.home })
-
-                // props?.navigation?.navigate(routes.preferences);
-                // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
-            } else if (response?.act == 'incomplete-subscription') {
-                props?.navigation?.navigate(routes.subscription);
-                showMessage({ message: 'You are not subscribed yet!', type: 'danger' })
             }
+            // else if (response?.act === 'incomplete-preferences') {
+            //     if (!response?.data?.user?.isPreferencesSkipped) {
+            //         props?.navigation?.navigate(routes.preferences);
+            //     } else {
+            //         if (response?.act == 'admin-pending') {
+            //             props.navigation.navigate(routes.tab, { screen: routes.home })
+
+            //             // props?.navigation?.navigate(routes.preferences);
+            //             // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
+            //         } else if (response?.act == 'incomplete-subscription') {
+            //             props?.navigation?.navigate(routes.subscription);
+            //             showMessage({ message: 'You are not subscribed yet!', type: 'danger' })
+            //         }
+            //     }
+            // } else if (response?.act == 'admin-pending') {
+            //     props.navigation.navigate(routes.tab, { screen: routes.home })
+
+            //     // props?.navigation?.navigate(routes.preferences);
+            //     // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
+            // } else if (response?.act == 'incomplete-subscription') {
+            //     props?.navigation?.navigate(routes.subscription);
+            //     showMessage({ message: 'You are not subscribed yet!', type: 'danger' })
+            // }
         };
 
         const onError = error => {

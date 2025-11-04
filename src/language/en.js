@@ -439,5 +439,56 @@ export default {
     'Premium Version': 'Premium Version',
     'Select Category': 'Select Category',
     'All': 'All',
-    'Loyal Cards': 'Loyalty Cards'
+    'Loyal Cards': 'Loyalty Cards',
+    
+    // Phone Number Verification
+    verify_number: 'Verify Number',
+    change_number: 'Change Number',
+    verified: 'Verified',
+    phone_number_verified_successfully: 'Phone number verified successfully!',
+    please_verify_your_phone_number: 'Please verify your phone number',
+    verify_phone_number: 'Verify Phone Number',
+    enter_4_digit_code_sent_to: 'Enter the 4-digit code sent to',
+    resend_otp: 'Resend OTP',
+    
+    // Profile Validation Messages
+    name_only_alphabets: 'Name can only consist of alphabets between A to Z or a to z',
+    please_enter_valid_name: 'Please enter a valid name',
+    please_select_date_of_birth: 'Please select your Date of Birth',
+    please_add_valid_phone_number: 'Please add a valid phone number',
+    invalid_email: 'Invalid Email',
+    please_enter_valid_country: 'Please enter a valid country',
+    image_uploaded_successfully: 'Image uploaded successfully',
+    profile_created_successfully: 'Profile Created Successfully!',
+    please_enter_valid_phone: 'Please enter a valid phone number',
+    otp_sent_to_phone: 'OTP sent to your phone number',
+    please_enter_complete_otp: 'Please enter complete OTP',
+    please_enter_valid_otp: 'Please enter a valid OTP',
+    failed_to_upload_image: 'Failed to upload image',
+    
+    // SignIn Screen
+    invalid_phone_number: 'Invalid Phone Number',
+    please_enter_strong_password: 'Please enter a strong password',
+    google_email_not_found: 'Google email not found in saved credentials',
+    apple_email_not_found: 'Apple email not found in saved credentials',
+    biometric_authentication_cancelled: 'Biometric authentication was cancelled',
+    biometric_authentication_not_available: 'Biometric authentication is not available',
+    biometric_authentication_not_available_device: 'Biometric authentication is not available on this device',
+    no_biometric_data_enrolled: 'No biometric data enrolled. Please set up biometric authentication in device settings.',
+    biometric_authentication_failed: 'Biometric authentication failed. Please try again.',
+    biometric_authentication_failed_login: 'Biometric authentication failed. Please try again or login normally.',
+    
+    // EditProfile Screen
+    profile_updated: 'Profile Updated!',
+    
+    // AirArabia Screen
+    please_add_valid_card_number: 'Please add Valid Card Number',
+    updated_successfully: 'Updated Successfully',
+    
+    // SignUp Screen
+    password_not_matched: 'Your Password is not Matched!',
+    passwords_do_not_match: 'Passwords do not match.',
+    
+    // ChangePassword Screen
+    please_enter_valid_current_password: 'Please enter a valid current password',
 }

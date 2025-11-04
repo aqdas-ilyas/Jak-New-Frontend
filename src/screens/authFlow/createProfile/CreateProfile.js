@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator, Modal, KeyboardAvoidingView } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Keyboard } from "react-native";
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY, emailFormat } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
@@ -14,9 +14,9 @@ import moment from 'moment';
 import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
 import { Loader } from '../../../components/loader/Loader';
-import { isPossiblePhoneNumber } from 'libphonenumber-js'
+import { isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setToken, updateUser } from '../../../store/reducers/userDataSlice';
 import { showMessage } from 'react-native-flash-message';
 import { getDeviceId } from 'react-native-device-info';
@@ -26,7 +26,8 @@ import { CodeField, Cursor } from "react-native-confirmation-code-field";
 const CreateProfile = (props) => {
     const { number, email } = props?.route?.params ?? {}
     const dispatch = useDispatch()
-    const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const user = useSelector(state => state.user.user.user);
+    const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
 
     const genderArray = [
         { id: 1, title: LocalizedStrings.Male },
@@ -48,56 +49,9 @@ const CreateProfile = (props) => {
     const [showOTPModal, setShowOTPModal] = useState(false);
     const [otpValue, setOtpValue] = useState('');
     const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
+    const [isResendingOTP, setIsResendingOTP] = useState(false);
     const [isNumberVerified, setIsNumberVerified] = useState(false);
-
-    // Handle OTP verification
-    const handleVerifyNumber = () => {
-        if (!phoneNumber || phoneNumber.length < 8) {
-            showMessage({
-                message: 'Please enter a valid phone number',
-                type: 'danger',
-            });
-            return;
-        }
-        setShowOTPModal(true);
-        // Here you would typically send OTP to the phone number
-        // For now, we'll just show the modal
-        showMessage({
-            message: 'OTP sent to your phone number',
-            type: 'success',
-        });
-    };
-
-    const verifyOTP = async () => {
-        if (otpValue.length !== 4) {
-            showMessage({
-                message: 'Please enter complete OTP',
-                type: 'danger',
-            });
-            return;
-        }
-
-        setIsVerifyingOTP(true);
-
-        // Simulate OTP verification API call
-        setTimeout(() => {
-            setIsVerifyingOTP(false);
-            setIsNumberVerified(true);
-            setShowOTPModal(false);
-            showMessage({
-                message: 'Phone number verified successfully!',
-                type: 'success',
-            });
-        }, 2000);
-    };
-
-    const resendOTP = () => {
-        setOtpValue('');
-        showMessage({
-            message: 'OTP resent to your phone number',
-            type: 'success',
-        });
-    };
+    const [phoneInputDisabled, setPhoneInputDisabled] = useState(false);
 
     // Fetch and set the State's
     const fetchCountryAbbrivaition = async (code) => {
@@ -115,6 +69,14 @@ const CreateProfile = (props) => {
             fetchCountryAbbrivaition(countryCode)
         }
     }, [countryCode])
+
+    useEffect(() => {
+        // If user already has verified number, disable input
+        if (user?.isNumberVerified) {
+            setIsNumberVerified(true);
+            setPhoneInputDisabled(true);
+        }
+    }, [user?.isNumberVerified])
 
     // Show image picker options (Camera or Gallery)
     const showImagePickerOptions = () => {
@@ -168,17 +130,17 @@ const CreateProfile = (props) => {
         const emailValue = emailFormat.test(userEmail) || userEmail === ' ' ? true : false;
 
         if (/\d/.test(name)) {
-            showMessage({ message: "Name can only consists of alphabets between A to Z or a to z", type: "danger" });
+            showMessage({ message: LocalizedStrings.name_only_alphabets, type: "danger" });
             return false;
         }
 
         if (name.length < 2) {
-            showMessage({ message: "Please enter a valid name", type: "danger" });
+            showMessage({ message: LocalizedStrings.please_enter_valid_name, type: "danger" });
             return false;
         }
 
         if (dob.length < 2) {
-            showMessage({ message: "Please select your Date of Birth", type: "danger" });
+            showMessage({ message: LocalizedStrings.please_select_date_of_birth, type: "danger" });
             return false;
         }
 
@@ -205,25 +167,26 @@ const CreateProfile = (props) => {
 
         if (email) {
             if (!isPossiblePhoneNumber(`+${countryCode}` + phoneNumber)) {
-                showMessage({ message: "Please add Valid Phone Number", type: "danger" });
+                showMessage({ message: LocalizedStrings.please_add_valid_phone_number, type: "danger" });
                 return false;
             }
         } else {
             if (!emailValue) {
-                showMessage({ message: "Invalid Email", type: "danger" });
+                showMessage({ message: LocalizedStrings.invalid_email, type: "danger" });
                 return false;
             }
         }
 
         if (country.length < 2) {
-            showMessage({ message: "Please Enter Valid Country", type: "danger" });
+            showMessage({ message: LocalizedStrings.please_enter_valid_country, type: "danger" });
             return false;
         }
 
-        // if (!image?.uri) {
-        //     showMessage({ message: "Please Upload a Profile Picture", type: "danger" });
-        //     return false;
-        // }
+        if (!isNumberVerified && email) {
+            showMessage({ message: LocalizedStrings.please_verify_your_phone_number, type: "danger" });
+            return false;
+        }
+
         return true
     }
 
@@ -245,14 +208,14 @@ const CreateProfile = (props) => {
 
                 if (res) {
                     setImage({ uri: res });
-                    showMessage({ message: 'Image uploaded successfully', type: 'success' });
+                    showMessage({ message: LocalizedStrings.image_uploaded_successfully, type: 'success' });
                 } else {
                     throw new Error('Image upload failed');
                 }
             });
         } catch (error) {
             setIsLoading(false);
-            handleImageError(error, 'Failed to upload image');
+            showMessage({ message: LocalizedStrings.failed_to_upload_image, type: 'danger' });
         }
     };
 
@@ -260,7 +223,7 @@ const CreateProfile = (props) => {
         const onSuccess = response => {
             setIsLoading(false);
             console.log('Success while UpdateProfile====>', response);
-            showMessage({ message: 'Profile Created Successfully!', type: 'success' })
+            showMessage({ message: LocalizedStrings.profile_created_successfully, type: 'success' })
             dispatch(updateUser(response?.data))
             dispatch(setToken({
                 token: response?.data?.token,
@@ -301,12 +264,133 @@ const CreateProfile = (props) => {
         }
 
         if (email) {
-            body = { ...body, "number": countryCode + phoneNumber }
+            body = { ...body, "number": countryCode + phoneNumber, isNumberVerified: true }
         }
 
         setIsLoading(true);
         callApi(method, endPoint, body, onSuccess, onError);
     }
+
+    // Handle Change Number
+    const handleChangeNumber = () => {
+        setPhoneNumber('');
+        setIsNumberVerified(false);
+        setPhoneInputDisabled(false);
+        setShowOTPModal(false);
+        setOtpValue('');
+    };
+
+    // Handle OTP Sent
+    const handleVerifyNumber = async () => {
+        if (!phoneNumber || phoneNumber.length < 8) {
+            showMessage({
+                message: LocalizedStrings.please_enter_valid_phone,
+                type: 'danger',
+            });
+            return;
+        }
+
+        if (!isPossiblePhoneNumber(`+${countryCode}` + phoneNumber)) {
+            showMessage({
+                message: LocalizedStrings.please_enter_valid_phone,
+                type: 'danger'
+            });
+            return;
+        }
+
+        await sendOTP()
+    };
+    const sendOTP = () => {
+        const onSuccess = response => {
+            setIsResendingOTP(false)
+            setIsLoading(false)
+            console.log('res while sendOTP====>', response);
+            showMessage({ message: LocalizedStrings.otp_sent_to_phone, type: 'success', });
+
+            setTimeout(() => {
+                setShowOTPModal(true);
+            }, 1000);
+        };
+        const onError = error => {
+            setIsResendingOTP(false)
+            setIsLoading(false)
+            console.log('error while sendOTP====>', error.message);
+            showMessage({ message: error?.message, type: "danger" });
+        };
+        const method = Method.POST;
+        const endPoint = routs.verifyNumber
+        const bodyParams = {
+            number: countryCode + phoneNumber,
+            language: appLanguage == 'en' ? 'english' : 'arabic',
+        };
+
+        setIsResendingOTP(true)
+        setIsLoading(true)
+        callApi(method, endPoint, bodyParams, onSuccess, onError);
+    }
+
+    // Handle OTP verification
+    const verifyOTP = async () => {
+        if (otpValue.length !== 4) {
+            showMessage({
+                message: LocalizedStrings.please_enter_complete_otp,
+                type: 'danger',
+            });
+            return;
+        }
+
+        if (isNaN(parseFloat(otpValue))) {
+            showMessage({
+                message: LocalizedStrings.please_enter_valid_otp,
+                type: 'danger',
+            });
+            return;
+        }
+
+        await _verifyOTP()
+    };
+    const _verifyOTP = () => {
+        const onSuccess = response => {
+            console.log('res while verifyOTP====>', response);
+            dispatch(updateUser(response?.data))
+
+            setIsVerifyingOTP(false)
+            setIsLoading(false)
+            setIsNumberVerified(true)
+            setPhoneInputDisabled(true)
+            showMessage({
+                message: LocalizedStrings.phone_number_verified_successfully,
+                type: 'success'
+            });
+
+            // Close modal and reset OTP
+            setTimeout(() => {
+                setShowOTPModal(false);
+                setOtpValue('');
+            }, 1000);
+        };
+        const onError = error => {
+            console.log('error while verifyOTP====>', error.message);
+            setIsVerifyingOTP(false)
+            setIsLoading(false)
+            showMessage({ message: error?.message, type: "danger", });
+        };
+
+        const method = Method.POST;
+        const endPoint = routs.otpVerifyNumber
+        const bodyParams = {
+            otp: parseFloat(otpValue),
+            email: user?.email,
+            number: countryCode + phoneNumber,
+            device: { id: getDeviceId(), deviceToken: "fcmToken" }
+        }
+
+        console.log("bodyParams: ", bodyParams);
+
+        setIsVerifyingOTP(true)
+        setIsLoading(true)
+        callApi(method, endPoint, bodyParams, onSuccess, onError);
+    };
 
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
@@ -395,16 +479,38 @@ const CreateProfile = (props) => {
                             {
                                 email && (
                                     <View style={styles.phoneNumberContainer}>
-                                        <CountryInput phoneNumber={phoneNumber} countryCode={countryCode ? countryCode : '966'} countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'} setValue={setPhoneNumber} setSelectedCode={setCountryCode} layout={'first'} />
-                                        <TouchableOpacity
-                                            style={[styles.verifyButton, isNumberVerified && styles.verifiedButton]}
-                                            onPress={handleVerifyNumber}
-                                            disabled={isNumberVerified}
-                                        >
-                                            <Text style={[styles.verifyButtonText, isNumberVerified && styles.verifiedButtonText]}>
-                                                {isNumberVerified ? '✓ Verified' : 'Verify Number'}
-                                            </Text>
-                                        </TouchableOpacity>
+                                        <CountryInput
+                                            phoneNumber={phoneNumber}
+                                            countryCode={countryCode ? countryCode : '966'}
+                                            countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'}
+                                            setValue={phoneInputDisabled ? () => { } : setPhoneNumber}
+                                            setSelectedCode={phoneInputDisabled ? () => { } : setCountryCode}
+                                            layout={'first'}
+                                            disabled={phoneInputDisabled}
+                                        />
+                                        <View style={[appStyles.rowStart, {
+                                            position: 'absolute',
+                                            right: wp(0),
+                                            top: wp(3),
+                                        }]}>
+                                            {isNumberVerified && (
+                                                <TouchableOpacity
+                                                    style={styles.changeNumberButton}
+                                                    onPress={handleChangeNumber}
+                                                >
+                                                    <Text style={styles.changeNumberButtonText}>{LocalizedStrings.change_number}</Text>
+                                                </TouchableOpacity>
+                                            )}
+                                            <TouchableOpacity
+                                                style={[styles.verifyButton, isNumberVerified && styles.verifiedButton]}
+                                                onPress={handleVerifyNumber}
+                                                disabled={isNumberVerified || phoneInputDisabled}
+                                            >
+                                                <Text style={[styles.verifyButtonText, isNumberVerified && styles.verifiedButtonText]}>
+                                                    {isNumberVerified ? `✓ ${LocalizedStrings.verified}` : LocalizedStrings.verify_number}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 )
                             }
@@ -495,9 +601,9 @@ const CreateProfile = (props) => {
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Verify Phone Number</Text>
+                            <Text style={styles.modalTitle}>{LocalizedStrings.verify_phone_number}</Text>
                             <Text style={styles.modalSubtitle}>
-                                Enter the 4-digit code sent to +{countryCode}{phoneNumber}
+                                {LocalizedStrings.enter_4_digit_code_sent_to} +{countryCode}{phoneNumber}
                             </Text>
                         </View>
 
@@ -506,7 +612,11 @@ const CreateProfile = (props) => {
                                 <CodeField
                                     value={otpValue}
                                     onChangeText={(txt) => {
-                                        setOtpValue(txt);
+                                        if (txt.length == 4) {
+                                            Keyboard.dismiss()
+                                        }
+
+                                        setOtpValue(txt)
                                     }}
                                     cellCount={4}
                                     keyboardType="number-pad"
@@ -523,21 +633,26 @@ const CreateProfile = (props) => {
 
                             <View style={styles.otpButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.otpButton, styles.resendButton]}
-                                    onPress={resendOTP}
+                                    style={[styles.otpButton, styles.resendButton, isResendingOTP && styles.buttonDisabled]}
+                                    onPress={sendOTP}
+                                    disabled={isResendingOTP || isVerifyingOTP}
                                 >
-                                    <Text style={styles.resendButtonText}>Resend OTP</Text>
+                                    {isResendingOTP ? (
+                                        <ActivityIndicator size="small" color={colors.primaryColor} />
+                                    ) : (
+                                        <Text style={styles.resendButtonText}>{LocalizedStrings.resend_otp}</Text>
+                                    )}
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    style={[styles.otpButton, styles.verifyOTPButton]}
+                                    style={[styles.otpButton, styles.verifyOTPButton, (isVerifyingOTP || isResendingOTP) && styles.buttonDisabled]}
                                     onPress={verifyOTP}
-                                    disabled={isVerifyingOTP}
+                                    disabled={isVerifyingOTP || isResendingOTP}
                                 >
                                     {isVerifyingOTP ? (
-                                        <ActivityIndicator size="small" color={colors.white} />
+                                        <ActivityIndicator size="small" color={colors.fullWhite} />
                                     ) : (
-                                        <Text style={styles.verifyOTPButtonText}>Verify</Text>
+                                        <Text style={styles.verifyOTPButtonText}>{LocalizedStrings.verify}</Text>
                                     )}
                                 </TouchableOpacity>
                             </View>
@@ -640,10 +755,21 @@ const styles = StyleSheet.create({
         marginBottom: wp(5),
         position: 'relative',
     },
+    changeNumberButton: {
+        marginHorizontal: wp(2),
+        backgroundColor: 'transparent',
+        paddingHorizontal: wp(3),
+        paddingVertical: wp(1.5),
+        borderRadius: wp(1.5),
+        borderWidth: 1,
+        borderColor: '#FF3B30',
+    },
+    changeNumberButtonText: {
+        fontSize: hp(1.2),
+        fontFamily: fontFamily.UrbanistSemiBold,
+        color: '#FF3B30',
+    },
     verifyButton: {
-        position: 'absolute',
-        right: wp(0),
-        top: wp(3),
         backgroundColor: colors.primaryColor,
         paddingHorizontal: wp(3),
         paddingVertical: wp(1.5),
@@ -658,10 +784,10 @@ const styles = StyleSheet.create({
     verifyButtonText: {
         fontSize: hp(1.2),
         fontFamily: fontFamily.UrbanistSemiBold,
-        color: colors.white,
+        color: colors.fullWhite,
     },
     verifiedButtonText: {
-        color: colors.white,
+        color: colors.fullWhite,
     },
     otpContainer: {
         paddingTop: wp(2),
@@ -714,7 +840,7 @@ const styles = StyleSheet.create({
     verifyOTPButtonText: {
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistSemiBold,
-        color: colors.white,
+        color: colors.fullWhite,
     },
     modalOverlay: {
         flex: 1,
@@ -763,5 +889,8 @@ const styles = StyleSheet.create({
         fontSize: hp(1.8),
         fontFamily: fontFamily.UrbanistBold,
         color: colors.BlackSecondary,
+    },
+    buttonDisabled: {
+        opacity: 0.6,
     },
 })

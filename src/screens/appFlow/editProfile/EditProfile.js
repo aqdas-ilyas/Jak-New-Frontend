@@ -139,7 +139,7 @@ export default EditProfile = (props) => {
         if (user?.isSocial ? isPossiblePhoneNumber(`+${countryCode}` + phoneNumber) : true) {
             UpdateProfile()
         } else {
-            showMessage({ message: "Please add Valid Phone Number", type: "danger" });
+            showMessage({ message: LocalizedStrings.please_add_valid_phone_number, type: "danger" });
         }
     }
 
@@ -161,14 +161,14 @@ export default EditProfile = (props) => {
 
                 if (res) {
                     setImage({ uri: res });
-                    showMessage({ message: 'Image uploaded successfully', type: 'success' });
+                    showMessage({ message: LocalizedStrings.image_uploaded_successfully, type: 'success' });
                 } else {
                     throw new Error('Image upload failed');
                 }
             });
         } catch (error) {
             setIsLoading(false);
-            handleImageError(error, 'Failed to upload image');
+            showMessage({ message: LocalizedStrings.failed_to_upload_image, type: 'danger' });
         }
     };
 
@@ -177,7 +177,7 @@ export default EditProfile = (props) => {
             console.log('Success while UpdateProfile====>', response);
             setIsLoading(false);
             dispatch(updateUser({ user: response?.data?.data }))
-            showMessage({ message: 'Profile Updated!', type: "success" });
+            showMessage({ message: LocalizedStrings.profile_updated, type: "success" });
         };
 
         const onError = error => {

@@ -454,4 +454,55 @@ export default {
   'Select Category': 'اختر الفئة',
   All: 'الجميع',
   'Loyal Cards': 'بطاقات الولاء',
+  
+  // Phone Number Verification
+  verify_number: 'التحقق من الرقم',
+  change_number: 'تغيير الرقم',
+  verified: 'تم التحقق',
+  phone_number_verified_successfully: 'تم التحقق من رقم الهاتف بنجاح!',
+  please_verify_your_phone_number: 'يرجى التحقق من رقم هاتفك',
+  verify_phone_number: 'التحقق من رقم الهاتف',
+  enter_4_digit_code_sent_to: 'أدخل الرمز المكون من 4 أرقام المرسل إلى',
+  resend_otp: 'إعادة إرسال الرمز',
+  
+  // Profile Validation Messages
+  name_only_alphabets: 'يمكن أن يتكون الاسم فقط من الأحرف الأبجدية من A إلى Z أو من a إلى z',
+  please_enter_valid_name: 'يرجى إدخال اسم صحيح',
+  please_select_date_of_birth: 'يرجى تحديد تاريخ ميلادك',
+  please_add_valid_phone_number: 'يرجى إضافة رقم هاتف صحيح',
+  invalid_email: 'بريد إلكتروني غير صحيح',
+  please_enter_valid_country: 'يرجى إدخال بلد صحيح',
+  image_uploaded_successfully: 'تم تحميل الصورة بنجاح',
+  profile_created_successfully: 'تم إنشاء الملف الشخصي بنجاح!',
+  please_enter_valid_phone: 'يرجى إدخال رقم هاتف صحيح',
+  otp_sent_to_phone: 'تم إرسال رمز OTP إلى رقم هاتفك',
+  please_enter_complete_otp: 'يرجى إدخال رمز OTP الكامل',
+  please_enter_valid_otp: 'يرجى إدخال رمز OTP صحيح',
+  failed_to_upload_image: 'فشل تحميل الصورة',
+  
+  // SignIn Screen
+  invalid_phone_number: 'رقم هاتف غير صحيح',
+  please_enter_strong_password: 'يرجى إدخال كلمة مرور قوية',
+  google_email_not_found: 'البريد الإلكتروني لـ Google غير موجود في بيانات الاعتماد المحفوظة',
+  apple_email_not_found: 'البريد الإلكتروني لـ Apple غير موجود في بيانات الاعتماد المحفوظة',
+  biometric_authentication_cancelled: 'تم إلغاء المصادقة البيومترية',
+  biometric_authentication_not_available: 'المصادقة البيومترية غير متاحة',
+  biometric_authentication_not_available_device: 'المصادقة البيومترية غير متاحة على هذا الجهاز',
+  no_biometric_data_enrolled: 'لم يتم تسجيل بيانات بيومترية. يرجى إعداد المصادقة البيومترية في إعدادات الجهاز.',
+  biometric_authentication_failed: 'فشلت المصادقة البيومترية. يرجى المحاولة مرة أخرى.',
+  biometric_authentication_failed_login: 'فشلت المصادقة البيومترية. يرجى المحاولة مرة أخرى أو تسجيل الدخول بشكل طبيعي.',
+  
+  // EditProfile Screen
+  profile_updated: 'تم تحديث الملف الشخصي!',
+  
+  // AirArabia Screen
+  please_add_valid_card_number: 'يرجى إضافة رقم بطاقة صحيح',
+  updated_successfully: 'تم التحديث بنجاح',
+  
+  // SignUp Screen
+  password_not_matched: 'كلمة المرور غير متطابقة!',
+  passwords_do_not_match: 'كلمات المرور غير متطابقة.',
+  
+  // ChangePassword Screen
+  please_enter_valid_current_password: 'يرجى إدخال كلمة المرور الحالية الصحيحة',
 };

@@ -49,7 +49,7 @@ const AddLoyaltyCard = props => {
     }
 
     if (cardNumber.length < 2) {
-      showMessage({ message: 'Please add Valid Card Number', type: 'danger' });
+      showMessage({ message: LocalizedStrings.please_add_valid_card_number, type: 'danger' });
       return false;
     }
     
@@ -179,7 +179,7 @@ const AddLoyaltyCard = props => {
             setBackImage(res);
           }
 
-          showMessage({ message: 'Image uploaded successfully', type: 'success' });
+          showMessage({ message: LocalizedStrings.image_uploaded_successfully, type: 'success' });
         } else {
           throw new Error('Image upload failed');
         }
@@ -191,7 +191,7 @@ const AddLoyaltyCard = props => {
       } else {
         setIsUploadingBack(false);
       }
-      showMessage({ message: 'Failed to upload image', type: 'danger' });
+      showMessage({ message: LocalizedStrings.failed_to_upload_image, type: 'danger' });
       console.log('Upload image error:', error);
     }
   };
@@ -236,7 +236,7 @@ const AddLoyaltyCard = props => {
   const updateLoyaltyCards = () => {
     if (validate()) {
       const onSuccess = response => {
-        showMessage({ message: response?.message || 'Updated Successfully', type: 'success' });
+        showMessage({ message: response?.message || LocalizedStrings.updated_successfully, type: 'success' });
         console.log('response createLoyaltyCards===', response?.data);
         getLoyaltyCards();
       };

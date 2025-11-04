@@ -32,49 +32,55 @@ const CountryInput = (props) => {
                     fontFamily: fontFamily.UrbanistMedium,
                     fontSize: hp(1.6),
                     color: colors.BlackSecondary,
-                    backgroundColor: '#FAFAFA',
+                    backgroundColor: props.disabled ? '#E0E0E0' : '#FAFAFA',
                     textAlign: appLanguage == 'en' ? 'left' : 'right',
                 }}
                 codeTextStyle={{
                     fontFamily: fontFamily.UrbanistMedium,
                     fontSize: hp(1.6),
                     color: colors.BlackSecondary,
-                    backgroundColor: '#FAFAFA',
+                    backgroundColor: props.disabled ? '#E0E0E0' : '#FAFAFA',
                 }}
                 countryPickerButtonStyle={{
                     width: wp(25),
                     height: hp(6),
-                    backgroundColor: '#FAFAFA',
+                    backgroundColor: props.disabled ? '#E0E0E0' : '#FAFAFA',
                     borderRadius: 10,
                 }}
                 textContainerStyle={{
                     flex: 2,
-                    backgroundColor: '#FAFAFA',
+                    backgroundColor: props.disabled ? '#E0E0E0' : '#FAFAFA',
                     height: hp(6),
                     marginLeft: wp(3),
                     borderRadius: 10,
                 }}
                 renderDropdownImage={
-                    <Image source={appIcons.arrowDown} style={{ height: hp(3), width: wp(3), resizeMode: "cover", tintColor: colors.fullBlack }} />
+                    props.disabled ? null : <Image source={appIcons.arrowDown} style={{ height: hp(3), width: wp(3), resizeMode: "cover", tintColor: colors.fullBlack }} />
                 }
                 ref={phoneInput}
                 defaultCode={'SA'} // Set default country code
                 value={''} // Set current phone number value
                 layout={props.layout}
                 placeholder='Number'
+                disabled={props.disabled}
                 textInputProps={{
-                    placeholderTextColor: colors.grey
+                    placeholderTextColor: colors.grey,
+                    editable: !props.disabled
                 }}
                 onChangeText={(text) => {
-                    console.log("onChangeText: ", text)
-                    props.setValue(`${text}`)
+                    if (!props.disabled) {
+                        console.log("onChangeText: ", text)
+                        props.setValue(`${text}`)
+                    }
                 }}
                 onChangeFormattedText={(text) => {
                     console.log("onChangeFormattedText: ", text)
                 }}
                 onChangeCountry={(text) => {
-                    console.log("onChangeCountry: ", `+${text?.callingCode}`)
-                    props.setSelectedCode(`${text?.callingCode}`)
+                    if (!props.disabled) {
+                        console.log("onChangeCountry: ", `+${text?.callingCode}`)
+                        props.setSelectedCode(`${text?.callingCode}`)
+                    }
                 }}
             // withDarkTheme
             // withShadow

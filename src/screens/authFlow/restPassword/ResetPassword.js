@@ -29,7 +29,7 @@ const ResetPassword = (props) => {
 
     const validate = () => {
         if (password.length < 4) {
-            showMessage({ message: "Please enter a strong password", type: "danger", });
+            showMessage({ message: LocalizedStrings.please_enter_strong_password, type: "danger", });
             return false;
         }
         // if (!passValue) {
@@ -37,7 +37,7 @@ const ResetPassword = (props) => {
         //     return false;
         // }
         else if (password != confirmPassword) {
-            showMessage({ message: "Passwords do not match.", type: "danger", });
+            showMessage({ message: LocalizedStrings.passwords_do_not_match, type: "danger", });
             return false;
         }
 

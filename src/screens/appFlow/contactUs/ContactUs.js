@@ -11,6 +11,7 @@ import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
 import { showMessage } from 'react-native-flash-message'
 import CountryInput from '../../../components/countryPicker/CountryPicker'
+import { Loader } from '../../../components/loader/Loader'
 
 const socialButton = [
     // { id: 1, img: appIcons.facebookContact, url: 'https://facebook.com' },
@@ -70,9 +71,9 @@ const ContactUs = (props) => {
             }
         }
 
-        setIsLoading(true);
-
+        // API Call
         const onSuccess = (response) => {
+            console.log('Contact Us Response:', response);
             setIsLoading(false);
             showMessage({
                 message: LocalizedStrings.message_sent_successfully || 'Message sent successfully! We will get back to you soon.',
@@ -95,15 +96,16 @@ const ContactUs = (props) => {
 
         const method = Method.POST;
         const endPoint = routs.contactUs; // You'll need to add this route
-        const bodyParams = {
+        let bodyParams = {
             title: messageTitle,
             message: messageBody,
-            email: isSocialUser ? user?.email : email,
-            phoneNumber: isSocialUser ? `${countryCode}${phoneNumber}` : user?.phoneNumber,
-            userId: user?.id,
-            userName: user?.name,
+            number: phoneNumber ? `${countryCode}${phoneNumber}` : user?.number,
+            email: email ? email : user?.email,
         };
 
+        console.log('Contact Us Body Params:', bodyParams);
+
+        setIsLoading(true)
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     };
 
@@ -119,113 +121,115 @@ const ContactUs = (props) => {
 
     return (
         <>
-            <StatusBar 
-                barStyle={'dark-content'} 
+            <StatusBar
+                barStyle={'dark-content'}
                 backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
                 translucent={Platform.OS === 'android'}
             />
             <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+                <Loader loading={isLoading} />
+
                 <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.contact_us} />
 
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContent}
-            >
-                <View style={styles.formContainer}>
-                    {/* <Text style={styles.formTitle}>{LocalizedStrings.send_us_message || "Send us a Message"}</Text> */}
-                    <Text style={styles.formSubtitle}>
-                        {LocalizedStrings.contact_form_subtitle || "We'd love to hear from you. Send us a message and we'll respond as soon as possible."}
-                    </Text>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollContent}
+                >
+                    <View style={styles.formContainer}>
+                        {/* <Text style={styles.formTitle}>{LocalizedStrings.send_us_message || "Send us a Message"}</Text> */}
+                        <Text style={styles.formSubtitle}>
+                            {LocalizedStrings.contact_form_subtitle || "We'd love to hear from you. Send us a message and we'll respond as soon as possible."}
+                        </Text>
 
-                    {/* Message Title */}
-                    <View style={styles.inputContainer}>
-                        <Input
-                            placeholder={LocalizedStrings.message_title || "Message Title"}
-                            value={messageTitle}
-                            onChangeText={setMessageTitle}
-                        >
-                            {LocalizedStrings.message_title || "Message Title"}
-                        </Input>
-                    </View>
-
-                    {/* Message Body */}
-                    <View style={styles.inputContainer}>
-                        <Input
-                            placeholder={LocalizedStrings.message_body || "Enter your message"}
-                            value={messageBody}
-                            onChangeText={setMessageBody}
-                            multiline={true}
-                            numberOfLines={4}
-                            containerStyle={styles.messageInput}
-                            inputStyle={styles.messageInput}
-                        >
-                            {LocalizedStrings.message_body || "Message Body"}
-                        </Input>
-                    </View>
-
-                    {/* Conditional Contact Field */}
-                    {isSocialUser ? (
-                        <View style={styles.inputContainer}>
-                            <CountryInput
-                                phoneNumber={phoneNumber}
-                                countryCode={countryCode}
-                                countryAbbreviationCode="SA"
-                                setValue={setPhoneNumber}
-                                setSelectedCode={setCountryCode}
-                                layout="first"
-                            >
-                                {LocalizedStrings.phone_number || "Phone Number"}
-                            </CountryInput>
-                        </View>
-                    ) : (
+                        {/* Message Title */}
                         <View style={styles.inputContainer}>
                             <Input
-                                placeholder={LocalizedStrings.email_address || "Enter your email"}
-                                value={email}
-                                onChangeText={setEmail}
-                                keyboardType="email-address"
-                                leftIcon={appIcons.message}
+                                placeholder={LocalizedStrings.message_title || "Message Title"}
+                                value={messageTitle}
+                                onChangeText={setMessageTitle}
                             >
-                                {LocalizedStrings.email_address || "Email Address"}
+                                {LocalizedStrings.message_title || "Message Title"}
                             </Input>
                         </View>
-                    )}
 
-                    {/* Submit Button */}
-                    <View style={styles.buttonContainer}>
-                        <Button
-                            onPress={handleSubmit}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (LocalizedStrings.sending || 'Sending...') : (LocalizedStrings.send_message || 'Send Message')}
-                        </Button>
+                        {/* Message Body */}
+                        <View style={styles.inputContainer}>
+                            <Input
+                                placeholder={LocalizedStrings.message_body || "Enter your message"}
+                                value={messageBody}
+                                onChangeText={setMessageBody}
+                                multiline={true}
+                                numberOfLines={4}
+                                containerStyle={styles.messageInput}
+                                inputStyle={styles.messageInput}
+                            >
+                                {LocalizedStrings.message_body || "Message Body"}
+                            </Input>
+                        </View>
+
+                        {/* Conditional Contact Field */}
+                        {isSocialUser ? (
+                            <View style={styles.inputContainer}>
+                                <CountryInput
+                                    phoneNumber={phoneNumber}
+                                    countryCode={countryCode}
+                                    countryAbbreviationCode="SA"
+                                    setValue={setPhoneNumber}
+                                    setSelectedCode={setCountryCode}
+                                    layout="first"
+                                >
+                                    {LocalizedStrings.phone_number || "Phone Number"}
+                                </CountryInput>
+                            </View>
+                        ) : (
+                            <View style={styles.inputContainer}>
+                                <Input
+                                    placeholder={LocalizedStrings.email_address || "Enter your email"}
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    keyboardType="email-address"
+                                    leftIcon={appIcons.message}
+                                >
+                                    {LocalizedStrings.email_address || "Email Address"}
+                                </Input>
+                            </View>
+                        )}
+
+                        {/* Submit Button */}
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                onPress={handleSubmit}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (LocalizedStrings.sending || 'Sending...') : (LocalizedStrings.send_message || 'Send Message')}
+                            </Button>
+                        </View>
+
+                        {/* Contact Info */}
+                        <View style={styles.contactInfoContainer}>
+                            <Text style={styles.contactInfoTitle}>{LocalizedStrings.reach_us_directly || "Or reach us directly:"}</Text>
+                            <Text style={styles.contactInfoText}>{LocalizedStrings.email_label || "Email"}: admin@jak-app.com</Text>
+                            <Text style={styles.contactInfoText}>{LocalizedStrings.phone_label || "Phone"}: +966570578852</Text>
+                        </View>
                     </View>
+                </ScrollView>
 
-                    {/* Contact Info */}
-                    <View style={styles.contactInfoContainer}>
-                        <Text style={styles.contactInfoTitle}>{LocalizedStrings.reach_us_directly || "Or reach us directly:"}</Text>
-                        <Text style={styles.contactInfoText}>{LocalizedStrings.email_label || "Email"}: admin@jak-app.com</Text>
-                        <Text style={styles.contactInfoText}>{LocalizedStrings.phone_label || "Phone"}: +966570578852</Text>
+                {/* Social Media Links */}
+                <View style={[appStyles.ph20, styles.socialContainer]}>
+                    <View style={styles.socialButtonsRow}>
+                        {socialButton.map((item, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={{ margin: wp(2) }}
+                                activeOpacity={0.7}
+                                onPress={() => handleSocialPress(item.url)}
+                            >
+                                <Image source={item.img} style={styles.ContactImageStyle} />
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 </View>
-            </ScrollView>
-
-            {/* Social Media Links */}
-            <View style={[appStyles.ph20, styles.socialContainer]}>
-                <View style={styles.socialButtonsRow}>
-                    {socialButton.map((item, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={{ margin: wp(2) }}
-                            activeOpacity={0.7}
-                            onPress={() => handleSocialPress(item.url)}
-                        >
-                            <Image source={item.img} style={styles.ContactImageStyle} />
-                        </TouchableOpacity>
-                    ))}
-                </View>
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
         </>
     )
 }

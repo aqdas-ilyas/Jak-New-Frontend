@@ -68,12 +68,12 @@ const SignIn = props => {
   // Validate Login Inputs
   const validateInputs = () => {
     if (!isPossibleNumber(`+${countryCode}` + phoneNumber)) {
-      showMessage({ message: 'Invalid Phone Number', type: 'danger' });
+      showMessage({ message: LocalizedStrings.invalid_phone_number, type: 'danger' });
       return false;
     }
 
     if (password.length < 4) {
-      showMessage({ message: 'Please enter a strong password', type: 'danger' });
+      showMessage({ message: LocalizedStrings.please_enter_strong_password, type: 'danger' });
       return false;
     }
 
@@ -411,7 +411,7 @@ const SignIn = props => {
             handleSociallogin({ email: savedCredentials.googleEmail });
           } else {
             showMessage({
-              message: 'Google email not found in saved credentials',
+              message: LocalizedStrings.google_email_not_found,
               type: 'danger',
             });
           }
@@ -421,7 +421,7 @@ const SignIn = props => {
             handleSociallogin({ email: savedCredentials.appleEmail });
           } else {
             showMessage({
-              message: 'Apple email not found in saved credentials',
+              message: LocalizedStrings.apple_email_not_found,
               type: 'danger',
             });
           }
@@ -430,22 +430,22 @@ const SignIn = props => {
         // Handle different failure scenarios
         if (error && error.includes('UserCancel')) {
           showMessage({
-            message: 'Biometric authentication was cancelled',
+            message: LocalizedStrings.biometric_authentication_cancelled,
             type: 'info',
           });
         } else if (error && error.includes('BiometryNotAvailable')) {
           showMessage({
-            message: 'Biometric authentication is not available',
+            message: LocalizedStrings.biometric_authentication_not_available,
             type: 'danger',
           });
         } else if (error && error.includes('BiometryNotEnrolled')) {
           showMessage({
-            message: 'No biometric data enrolled. Please set up biometric authentication in device settings.',
+            message: LocalizedStrings.no_biometric_data_enrolled,
             type: 'danger',
           });
         } else {
           showMessage({
-            message: 'Biometric authentication failed. Please try again.',
+            message: LocalizedStrings.biometric_authentication_failed,
             type: 'danger',
           });
         }
@@ -456,22 +456,22 @@ const SignIn = props => {
       // Handle specific error types
       if (error.message && error.message.includes('UserCancel')) {
         showMessage({
-          message: 'Biometric authentication was cancelled',
+          message: LocalizedStrings.biometric_authentication_cancelled,
           type: 'info',
         });
       } else if (error.message && error.message.includes('BiometryNotAvailable')) {
         showMessage({
-          message: 'Biometric authentication is not available on this device',
+          message: LocalizedStrings.biometric_authentication_not_available_device,
           type: 'danger',
         });
       } else if (error.message && error.message.includes('BiometryNotEnrolled')) {
         showMessage({
-          message: 'No biometric data enrolled. Please set up biometric authentication in device settings.',
+          message: LocalizedStrings.no_biometric_data_enrolled,
           type: 'danger',
         });
       } else {
         showMessage({
-          message: 'Biometric authentication failed. Please try again or login normally.',
+          message: LocalizedStrings.biometric_authentication_failed_login,
           type: 'danger',
         });
       }

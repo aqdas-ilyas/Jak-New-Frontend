@@ -9,6 +9,8 @@ export default {
   signUp: BASE_URL + 'user/signup',
   otpVerifyEmail: BASE_URL + 'user/verify',
   sendOTP: BASE_URL + 'user/sendOTP',
+  verifyNumber: BASE_URL + 'user/sendOTP-loggedin',
+  otpVerifyNumber: BASE_URL + 'user/verify-number',
   uploadFile: BASE_URL + 'user/upload',
   accountSetup: BASE_URL + 'user/acount-setup',
   updateProfile: BASE_URL + 'user/',
@@ -29,7 +31,7 @@ export default {
   createSubscriptions: BASE_URL + 'subscription/create/',
   cancelSubscription: BASE_URL + 'subscription-cancel/create',
   getNotification: BASE_URL + 'user/mynotifications',
-  contactUs: BASE_URL + 'contact-us',
+  contactUs: BASE_URL + 'user/contact-us',
 
   privacy: BASE_URL + 'privacy/',
   aboutUs: BASE_URL + 'about-us/',
