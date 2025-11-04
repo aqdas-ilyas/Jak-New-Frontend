@@ -74,12 +74,12 @@ export default Setting = props => {
       name: LocalizedStrings.edit_profile,
       onpress: () => props.navigation.navigate(routes.editProfile),
     },
-    {
-      id: 3,
-      name: LocalizedStrings.my_preference,
-      onpress: () =>
-        props.navigation.navigate(routes.preferences, { key: 'settings' }),
-    },
+    // {
+    //   id: 3,
+    //   name: LocalizedStrings.my_preference,
+    //   onpress: () =>
+    //     props.navigation.navigate(routes.preferences, { key: 'settings' }),
+    // },
     // { id: 4, name: LocalizedStrings.Notification },
     {
       id: 5,
@@ -383,8 +383,8 @@ export default Setting = props => {
 
   return (
     <>
-      <StatusBar 
-        barStyle={'dark-content'} 
+      <StatusBar
+        barStyle={'dark-content'}
         backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
         translucent={Platform.OS === 'android'}
       />
@@ -393,40 +393,40 @@ export default Setting = props => {
         <LogoHeader />
 
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={
-              user && Object.values(user).length > 0 && user?.image
-                ? { uri: user?.image }
-                : appImages.profile1
-            }
-            style={[
-              styles.imageStyle,
-              { alignSelf: 'center', resizeMode: 'cover' },
-            ]}
-            onLoadStart={() => setImageLoading(true)}
-            onLoadEnd={() => setImageLoading(false)}
-            onError={() => setImageLoading(false)}
-          />
-          {imageLoading && (
-            <View style={styles.imageLoaderContainer}>
-              <ActivityIndicator
-                size="small"
-                color={colors.primaryColor}
-              />
-            </View>
-          )}
-        </View>
-        <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>
-          {user && Object.values(user).length > 0 && user?.name}
-        </Text>
-        <Text style={styles.mainDes}>
-          {user && Object.values(user).length > 0 && user?.email
-            ? user?.email
-            : `+${user?.number}`}
-        </Text>
+          <View style={styles.imageContainer}>
+            <Image
+              source={
+                user && Object.values(user).length > 0 && user?.image
+                  ? { uri: user?.image }
+                  : appImages.profile1
+              }
+              style={[
+                styles.imageStyle,
+                { alignSelf: 'center', resizeMode: 'cover' },
+              ]}
+              onLoadStart={() => setImageLoading(true)}
+              onLoadEnd={() => setImageLoading(false)}
+              onError={() => setImageLoading(false)}
+            />
+            {imageLoading && (
+              <View style={styles.imageLoaderContainer}>
+                <ActivityIndicator
+                  size="small"
+                  color={colors.primaryColor}
+                />
+              </View>
+            )}
+          </View>
+          <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>
+            {user && Object.values(user).length > 0 && user?.name}
+          </Text>
+          <Text style={styles.mainDes}>
+            {user && Object.values(user).length > 0 && user?.email
+              ? user?.email
+              : `+${user?.number}`}
+          </Text>
 
-        <TouchableOpacity
+          {/* <TouchableOpacity
           activeOpacity={0.9}
           onPress={() =>
             user.subscriptionPlan == 'not-subscribed'
@@ -456,10 +456,6 @@ export default Setting = props => {
                 <Text style={styles.mainTitle}>
                   {subscriptionObj.length > 0 ? subscriptionObj[0]?.price : ''}{' '}
                   {appLanguage === 'ar' ? 'ريال' : 'SAR'}
-                  {/* /{' '}
-                  {subscriptionObj.length > 0
-                    ? subscriptionObj[0]?.duration
-                    : ''} */}
                 </Text>
               </View>
             ) : (
@@ -483,132 +479,132 @@ export default Setting = props => {
             color={colors.BlackSecondary}
             size={wp(5)}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <View style={styles.line} />
+          <View style={styles.line} />
 
-        <FlatList
-          data={settingsArray}
-          keyExtractor={(item, index) => index}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                activeOpacity={0.5}
-                onPress={item.onpress}
-                style={[
-                  appStyles.rowBtw,
-                  { marginTop: index > 0 ? wp(6) : wp(3) },
-                ]}>
-                <Text style={[styles.mainText]}>
-                  {`${item.name}`}
-                  {/* <Text style={{ fontFamily: fontFamily.UrbanistMedium, color: colors.descriptionColor }}>{index > 0 ? '' : `20% ${LocalizedStrings.Complete}`}</Text> */}
-                  <Text
-                    style={{
-                      fontFamily:
-                        appLanguage == 'en'
-                          ? fontFamily.UrbanistBold
-                          : fontFamily.UrbanistMedium,
-                      color:
-                        appLanguage == 'en'
-                          ? colors.primaryColor
-                          : colors.descriptionColor,
-                    }}>
-                    {item.name == LocalizedStrings.change_language ? '(En' : ''}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: fontFamily.UrbanistMedium,
-                      color: colors.descriptionColor,
-                    }}>
-                    {item.name == LocalizedStrings.change_language ? '/' : ''}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily:
-                        appLanguage == 'ar'
-                          ? fontFamily.UrbanistBold
-                          : fontFamily.UrbanistMedium,
-                      color:
-                        appLanguage == 'ar'
-                          ? colors.primaryColor
-                          : colors.descriptionColor,
-                    }}>
-                    {item.name == LocalizedStrings.change_language ? 'Ar)' : ''}
+          <FlatList
+            data={settingsArray}
+            keyExtractor={(item, index) => index}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) => {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  activeOpacity={0.5}
+                  onPress={item.onpress}
+                  style={[
+                    appStyles.rowBtw,
+                    { marginTop: index > 0 ? wp(6) : wp(3) },
+                  ]}>
+                  <Text style={[styles.mainText]}>
+                    {`${item.name}`}
+                    {/* <Text style={{ fontFamily: fontFamily.UrbanistMedium, color: colors.descriptionColor }}>{index > 0 ? '' : `20% ${LocalizedStrings.Complete}`}</Text> */}
+                    <Text
+                      style={{
+                        fontFamily:
+                          appLanguage == 'en'
+                            ? fontFamily.UrbanistBold
+                            : fontFamily.UrbanistMedium,
+                        color:
+                          appLanguage == 'en'
+                            ? colors.primaryColor
+                            : colors.descriptionColor,
+                      }}>
+                      {item.name == LocalizedStrings.change_language ? '(En' : ''}
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: fontFamily.UrbanistMedium,
+                        color: colors.descriptionColor,
+                      }}>
+                      {item.name == LocalizedStrings.change_language ? '/' : ''}
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily:
+                          appLanguage == 'ar'
+                            ? fontFamily.UrbanistBold
+                            : fontFamily.UrbanistMedium,
+                        color:
+                          appLanguage == 'ar'
+                            ? colors.primaryColor
+                            : colors.descriptionColor,
+                      }}>
+                      {item.name == LocalizedStrings.change_language ? 'Ar)' : ''}
+                    </Text>
+
                   </Text>
 
+                  {item.name === LocalizedStrings.Notification ? (
+                    <ToggleSwitch
+                      isOn={toggle}
+                      onColor={colors.primaryColor}
+                      offColor={colors.borderColor}
+                      labelStyle={{ display: 'none' }}
+                      size="small"
+                      onToggle={e => [setToggle(e), UpdateProfile(e)]}
+                    />
+                  ) : item.name == LocalizedStrings.change_language ? (
+                    <ToggleSwitch
+                      isOn={language}
+                      onColor={colors.primaryColor}
+                      offColor={colors.borderColor}
+                      labelStyle={{ display: 'none' }}
+                      size="small"
+                      onToggle={e => onChangeLng(e ? 'ar' : 'en')}
+                    />
+                  ) : (
+                    <AntDesign
+                      name={appLanguage == 'en' ? 'right' : 'left'}
+                      color={colors.BlackSecondary}
+                      size={wp(4)}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
+
+          {/* Biometric Authentication Section */}
+          {biometricAvailable && (
+            <View style={styles.biometricSection}>
+              <View style={styles.biometricTextContainer}>
+                <Text style={styles.biometricTitle}>
+                  🔐 {LocalizedStrings.biometric_login || 'Biometric Login'}
                 </Text>
+                <Text style={styles.biometricDescription}>
+                  {LocalizedStrings.biometric_description || 'Use your fingerprint or face to quickly and securely access your account'}
+                </Text>
+              </View>
 
-                {item.name === LocalizedStrings.Notification ? (
-                  <ToggleSwitch
-                    isOn={toggle}
-                    onColor={colors.primaryColor}
-                    offColor={colors.borderColor}
-                    labelStyle={{ display: 'none' }}
-                    size="small"
-                    onToggle={e => [setToggle(e), UpdateProfile(e)]}
-                  />
-                ) : item.name == LocalizedStrings.change_language ? (
-                  <ToggleSwitch
-                    isOn={language}
-                    onColor={colors.primaryColor}
-                    offColor={colors.borderColor}
-                    labelStyle={{ display: 'none' }}
-                    size="small"
-                    onToggle={e => onChangeLng(e ? 'ar' : 'en')}
-                  />
-                ) : (
-                  <AntDesign
-                    name={appLanguage == 'en' ? 'right' : 'left'}
-                    color={colors.BlackSecondary}
-                    size={wp(4)}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          }}
+              <View style={styles.biometricToggleContainer}>
+                <ToggleSwitch
+                  isOn={biometricEnabled}
+                  onColor={colors.primaryColor}
+                  offColor={colors.grayColor}
+                  size="medium"
+                  onToggle={handleBiometricToggle}
+                  disabled={!biometricAvailable}
+                />
+              </View>
+            </View>
+          )}
+        </ScrollView>
+
+        <CallModal
+          modalShow={logoutModalVisible}
+          setModalShow={() => setLogoutModalVisible(false)}
+          warningImage={appImages.warning}
+          title={LocalizedStrings.logout_confirmation || 'Logout Confirmation'}
+          subTitle={LocalizedStrings.logout_confirmation_message || 'Are you sure you want to logout?'}
+          showButtons={true}
+          confirmText={LocalizedStrings.yes || 'Yes'}
+          cancelText={LocalizedStrings.no || 'No'}
+          onConfirm={handleLogoutConfirm}
+          onCancel={() => setLogoutModalVisible(false)}
         />
-
-        {/* Biometric Authentication Section */}
-        {biometricAvailable && (
-          <View style={styles.biometricSection}>
-            <View style={styles.biometricTextContainer}>
-              <Text style={styles.biometricTitle}>
-                🔐 {LocalizedStrings.biometric_login || 'Biometric Login'}
-              </Text>
-              <Text style={styles.biometricDescription}>
-                {LocalizedStrings.biometric_description || 'Use your fingerprint or face to quickly and securely access your account'}
-              </Text>
-            </View>
-
-            <View style={styles.biometricToggleContainer}>
-              <ToggleSwitch
-                isOn={biometricEnabled}
-                onColor={colors.primaryColor}
-                offColor={colors.grayColor}
-                size="medium"
-                onToggle={handleBiometricToggle}
-                disabled={!biometricAvailable}
-              />
-            </View>
-          </View>
-        )}
-      </ScrollView>
-
-      <CallModal
-        modalShow={logoutModalVisible}
-        setModalShow={() => setLogoutModalVisible(false)}
-        warningImage={appImages.warning}
-        title={LocalizedStrings.logout_confirmation || 'Logout Confirmation'}
-        subTitle={LocalizedStrings.logout_confirmation_message || 'Are you sure you want to logout?'}
-        showButtons={true}
-        confirmText={LocalizedStrings.yes || 'Yes'}
-        cancelText={LocalizedStrings.no || 'No'}
-        onConfirm={handleLogoutConfirm}
-        onCancel={() => setLogoutModalVisible(false)}
-      />
-    </SafeAreaView>
+      </SafeAreaView>
     </>
   );
 };
@@ -625,6 +621,8 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistRegular,
     color: colors.descriptionColor,
     textAlign: 'center',
+
+    marginBottom: wp(2)
   },
   mainText: {
     fontSize: hp(1.6),

@@ -13,6 +13,7 @@ import { LocalizationContext } from '../../../language/LocalizationContext';
 const Tab = createBottomTabNavigator();
 
 const TabButton = props => {
+  const { appLanguage } = React.useContext(LocalizationContext);
   const { item, onPress, accessibilityState } = props;
   const focused = accessibilityState.selected;
 
@@ -21,7 +22,7 @@ const TabButton = props => {
       <View style={[styles.btn]}>
         <View style={{ alignItems: 'center' }}>
           <Image source={focused ? item.iconfill : item.iconUnfill} style={[styles.tabIcon, { tintColor: focused ? colors.primaryColor : colors.inActiveText }]} />
-          <Text style={[styles.bottomText, { color: focused ? colors.primaryColor : colors.inActiveText }]}>{item.route}</Text>
+          <Text style={[styles.bottomText, { marginTop: appLanguage == 'en' ? wp(2) : 0, color: focused ? colors.primaryColor : colors.inActiveText }]}>{item.route}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -138,6 +139,5 @@ const styles = StyleSheet.create({
   bottomText: {
     fontFamily: fontFamily.UrbanistMedium,
     fontSize: hp(1.4),
-    marginTop: wp(2)
   }
 });

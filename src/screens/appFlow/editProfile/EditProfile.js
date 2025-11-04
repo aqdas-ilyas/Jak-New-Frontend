@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator, KeyboardAvoidingView } from "react-native";
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY } from '../../../services'
 import { appIcons, appImages } from "../../../services/utilities/assets";
 import Header from "../../../components/header";
@@ -231,7 +231,18 @@ export default EditProfile = (props) => {
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.edit_profile} />
-            <ScrollView keyboardShouldPersistTaps={"always"} bounces={false} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+            <KeyboardAvoidingView 
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+                <ScrollView 
+                    keyboardShouldPersistTaps={"handled"} 
+                    bounces={false} 
+                    style={{ flex: 1 }} 
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: hp(10) }}
+                >
                 <View style={{ marginVertical: wp(5) }}>
                     <View style={styles.imageTopView}>
                         <View style={styles.imageView}>
@@ -330,7 +341,8 @@ export default EditProfile = (props) => {
                 <View style={[appStyles.ph20, appStyles.mt10]}>
                     <Button onPress={() => updateUserProfile()}>{LocalizedStrings.save_changes}</Button>
                 </View>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
 
             <DatePicker
                 modal

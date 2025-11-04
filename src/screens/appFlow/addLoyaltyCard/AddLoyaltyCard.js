@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, appImages } from '../../../services'
 import appStyles from '../../../services/utilities/appStyles'
 import Header from '../../../components/header'
@@ -11,27 +11,13 @@ import { callApi, Method } from '../../../api/apiCaller'
 import { Loader } from '../../../components/loader/Loader'
 import { saveLoyaltyCards } from '../../../store/reducers/WalletSlice'
 
-const SubscriptionArray = [
-    { id: 1, imgSrc: appImages.wallet5 },
-    { id: 2, imgSrc: appImages.wallet1 },
-    { id: 3, imgSrc: appImages.wallet2 },
-    { id: 4, imgSrc: appImages.wallet3 },
-    { id: 5, imgSrc: appImages.wallet4 },
-    { id: 6, imgSrc: appImages.wallet6 },
-    { id: 7, imgSrc: appImages.wallet5 },
-    { id: 8, imgSrc: appImages.wallet1 },
-    { id: 9, imgSrc: appImages.wallet2 },
-    { id: 10, imgSrc: appImages.wallet3 },
-    { id: 11, imgSrc: appImages.wallet4 },
-    { id: 12, imgSrc: appImages.wallet6 },
-]
-
 const AddLoyaltyCard = (props) => {
     const dispatch = useDispatch()
     const loyaltyCards = useSelector(state => state.loyalty.loyaltyCards)
     const user = useSelector(state => state.user.user.user)
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const [isLoading, setIsLoading] = useState(false)
+    const [imageLoadingStates, setImageLoadingStates] = useState({})
 
     useEffect(() => {
         getLoyaltyCards()
@@ -67,14 +53,37 @@ const AddLoyaltyCard = (props) => {
                 data={loyaltyCards}
                 numColumns={2}
                 showsVerticalScrollIndicator={false}
-                keyExtractor={item => item.id}
+                keyExtractor={(item, index) => item?._id || item?.id || index.toString()}
                 ListEmptyComponent={
                     <Text style={styles.imageText}>No Card Found!</Text>
                 }
                 renderItem={({ item, index }) => {
+                    const imageKey = item?._id || item?.id || index.toString();
+                    const isImageLoading = imageLoadingStates[imageKey] !== undefined ? imageLoadingStates[imageKey] : true;
+                    
                     return (
                         <TouchableOpacity onPress={() => props.navigation.navigate(routes.airArabia, { item })} key={index} activeOpacity={0.8} style={{ marginHorizontal: wp(2), marginTop: wp(2) }}>
-                            <Image source={{ uri: item.backImage }} style={[styles.imageStyle, { borderRadius: 10 }]} />
+                            <View style={styles.imageContainer}>
+                                {isImageLoading && (
+                                    <View style={styles.imageLoaderContainer}>
+                                        <ActivityIndicator size="large" color={colors.primaryColor} />
+                                    </View>
+                                )}
+                                <Image 
+                                    source={{ uri: item?.backImage }} 
+                                    style={[styles.imageStyle, { borderRadius: 10 }]}
+                                    onLoadStart={() => {
+                                        setImageLoadingStates(prev => ({ ...prev, [imageKey]: true }));
+                                    }}
+                                    onLoadEnd={() => {
+                                        setImageLoadingStates(prev => ({ ...prev, [imageKey]: false }));
+                                    }}
+                                    onError={() => {
+                                        setImageLoadingStates(prev => ({ ...prev, [imageKey]: false }));
+                                    }}
+                                    resizeMode="cover"
+                                />
+                            </View>
                             <View style={{ position: 'absolute', alignItems: "center", justifyContent: "center", top: 0, left: 0, right: 0, bottom: 0 }}>
                                 <View style={{ backgroundColor: colors.primaryColor, borderRadius: 50, padding: wp(1) }}>
                                     <AntDesign name='plus' color={colors.fullWhite} size={wp(4)} />
@@ -91,10 +100,26 @@ const AddLoyaltyCard = (props) => {
 export default AddLoyaltyCard
 
 const styles = StyleSheet.create({
+    imageContainer: {
+        width: wp(42),
+        height: wp(28),
+        position: 'relative',
+    },
     imageStyle: {
         width: wp(42),
         height: wp(28),
         // resizeMode: 'contain',
+    },
+    imageLoaderContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     imageText: {
         fontSize: hp(1.6),

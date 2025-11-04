@@ -4,6 +4,7 @@ import { appIcons, appImages, colors, fontFamily, hp, routes, wp } from '../../s
 import { useNavigation } from '@react-navigation/native'
 import Button from '../button'
 import { LocalizationContext } from '../../language/LocalizationContext'
+import appStyles from '../../services/utilities/appStyles'
 
 // const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
 
@@ -99,18 +100,29 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </Text>
                         </View> */}
 
-                        <View style={{ flexDirection: "row", alignItems: 'center', marginBottom: wp(1) }}>
-                            <Text style={[styles.mainDes, { fontSize: buttonEnable ? hp(1.2) : hp(1.6) }]}>
-                                {LocalizedStrings.category}:
-                            </Text>
+                        <View style={appStyles.rowBtw}>
+                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                                {/* <Text style={[styles.mainDes, { fontSize: buttonEnable ? hp(1.2) : hp(1.6) }]}>
+                                    {LocalizedStrings.category}:
+                                </Text> */}
 
-                            <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, width: buttonEnable ? wp(62) : wp(55), fontSize: buttonEnable ? hp(1.2) : hp(1.6), marginLeft: wp(1) }]}>
-                                {item?.category}
-                            </Text>
+                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: buttonEnable ? hp(1.2) : hp(1.6), marginLeft: wp(1) }]}>
+                                    {item?.category}
+                                </Text>
+                            </View>
+
+                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                                <Text style={[styles.mainDes, { fontSize: buttonEnable ? hp(1.2) : hp(1.6) }]}>
+                                    {LocalizedStrings['Discount Offer']}:
+                                </Text>
+
+                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: buttonEnable ? hp(1.2) : hp(1.6), marginLeft: wp(1) }]}>
+                                    {item?.['discount %']} %
+                                </Text>
+                            </View>
                         </View>
 
-                        {/* {
-                            hasCoordinates && (
+                        {/* {hasCoordinates && (
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                                     <Text style={[styles.discount]}>{LocalizedStrings['Discount Offer']}: <Text style={{ fontFamily: fontFamily.MontserratSemiBold, color: colors.primaryColor }}>{item?.['discount %'] ? item?.['discount %'] : 0}%</Text></Text>
                                     <TouchableOpacity onPress={() => OpenMap()}>

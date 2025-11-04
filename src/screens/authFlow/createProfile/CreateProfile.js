@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator, Modal } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator, Modal, KeyboardAvoidingView } from "react-native";
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY, emailFormat } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
@@ -267,7 +267,8 @@ const CreateProfile = (props) => {
                 refreshToken: response?.data?.refreshToken,
             }))
 
-            props?.navigation?.navigate(routes.preferences);
+            // props?.navigation?.navigate(routes.preferences);
+            props.navigation.replace(routes.tab, { screen: routes.home })
         };
 
         const onError = error => {
@@ -317,123 +318,135 @@ const CreateProfile = (props) => {
             // rightTitle={LocalizedStrings.skip}
             // onPressRightTitle={() => props.navigation.navigate(routes.preferences)}
             />
-            <ScrollView keyboardShouldPersistTaps={"always"} bounces={false} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-                <View style={{ marginVertical: wp(5) }}>
-                    <View style={styles.imageTopView}>
-                        <View style={styles.imageView}>
-                            <Image
-                                source={Object.keys(image).length !== 0 ? image : appImages.profile1}
-                                style={[styles.imageStyle, { resizeMode: 'cover' }]}
-                                onLoadStart={() => setImageLoading(true)}
-                                onLoadEnd={() => setImageLoading(false)}
-                                onError={() => setImageLoading(false)}
-                            />
-                            {imageLoading && (
-                                <View style={styles.imageLoaderContainer}>
-                                    <ActivityIndicator
-                                        size="small"
-                                        color={colors.primaryColor}
-                                    />
-                                </View>
-                            )}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+                <ScrollView
+                    keyboardShouldPersistTaps={"handled"}
+                    bounces={false}
+                    style={{ flex: 1 }}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: hp(10) }}
+                >
+                    <View style={{ marginVertical: wp(5) }}>
+                        <View style={styles.imageTopView}>
+                            <View style={styles.imageView}>
+                                <Image
+                                    source={Object.keys(image).length !== 0 ? image : appImages.profile1}
+                                    style={[styles.imageStyle, { resizeMode: 'cover' }]}
+                                    onLoadStart={() => setImageLoading(true)}
+                                    onLoadEnd={() => setImageLoading(false)}
+                                    onError={() => setImageLoading(false)}
+                                />
+                                {imageLoading && (
+                                    <View style={styles.imageLoaderContainer}>
+                                        <ActivityIndicator
+                                            size="small"
+                                            color={colors.primaryColor}
+                                        />
+                                    </View>
+                                )}
+                            </View>
+                            <TouchableOpacity style={styles.editIconView} onPress={() => showImagePickerOptions()}>
+                                <Image source={appIcons.edit} style={styles.editIcon} />
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.editIconView} onPress={() => showImagePickerOptions()}>
-                            <Image source={appIcons.edit} style={styles.editIcon} />
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>{LocalizedStrings.profile_picture}</Text>
-                    <View>
-                        <Input
-                            placeholder={LocalizedStrings.full_name}
-                            value={name}
-                            onChangeText={(value) => setName(value)}
-                        >
-                            {LocalizedStrings.full_name}
-                        </Input>
+                        <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>{LocalizedStrings.profile_picture}</Text>
+                        <View>
+                            <Input
+                                placeholder={LocalizedStrings.full_name}
+                                value={name}
+                                onChangeText={(value) => setName(value)}
+                            >
+                                {LocalizedStrings.full_name}
+                            </Input>
 
-                        <Input
-                            editable={false}
-                            placeholder={'mm/dd/yyyy'}
-                            value={dob}
-                            rightIcon
-                            onPressIcon={() => setShowDatePicker(true)}
-                            eyeValue={appIcons.calender1}
-                            rightIconColor={colors.primaryColor}
-                            touchable
-                        >
-                            {LocalizedStrings.DOB}
-                        </Input>
+                            <Input
+                                editable={false}
+                                placeholder={'mm/dd/yyyy'}
+                                value={dob}
+                                rightIcon
+                                onPressIcon={() => setShowDatePicker(true)}
+                                eyeValue={appIcons.calender1}
+                                rightIconColor={colors.primaryColor}
+                                touchable
+                            >
+                                {LocalizedStrings.DOB}
+                            </Input>
 
-                        {
-                            number
-                            && (
-                                <View style={{ marginBottom: wp(5) }}>
-                                    <Input
-                                        placeholder={LocalizedStrings.email}
-                                        value={userEmail}
-                                        onChangeText={(value) => setEmail(value)}
-                                        leftIcon={appIcons.message}
-                                    >
-                                        {LocalizedStrings.email}
-                                    </Input>
-                                </View>
-                            )
-                        }
-
-                        {
-                            email && (
-                                <View style={styles.phoneNumberContainer}>
-                                    <CountryInput phoneNumber={phoneNumber} countryCode={countryCode ? countryCode : '966'} countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'} setValue={setPhoneNumber} setSelectedCode={setCountryCode} layout={'first'} />
-                                    <TouchableOpacity
-                                        style={[styles.verifyButton, isNumberVerified && styles.verifiedButton]}
-                                        onPress={handleVerifyNumber}
-                                        disabled={isNumberVerified}
-                                    >
-                                        <Text style={[styles.verifyButtonText, isNumberVerified && styles.verifiedButtonText]}>
-                                            {isNumberVerified ? '✓ Verified' : 'Verify Number'}
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )
-                        }
-
-                        <FlatList
-                            data={genderArray}
-                            keyExtractor={(_, index) => index.toString()}
-                            ListHeaderComponent={
-                                <Text style={[styles.headerText]}>{LocalizedStrings.gender}</Text>
-                            }
-                            renderItem={({ item, index }) => {
-                                return (
-                                    <Pressable key={index} onPress={() => setGender(item.id)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: wp(3) }}>
-                                        <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginRight: wp(3) }]}>
-                                            <View style={[styles.dotComponentStyle, { backgroundColor: gender == item.id ? colors.primaryColor : 'transparent' }]} />
-                                        </View>
-                                        <Text style={styles.mainDes}>{item.title}</Text>
-                                    </Pressable>
+                            {
+                                number
+                                && (
+                                    <View style={{ marginBottom: wp(5) }}>
+                                        <Input
+                                            placeholder={LocalizedStrings.email}
+                                            value={userEmail}
+                                            onChangeText={(value) => setEmail(value)}
+                                            leftIcon={appIcons.message}
+                                        >
+                                            {LocalizedStrings.email}
+                                        </Input>
+                                    </View>
                                 )
-                            }}
-                        />
+                            }
 
-                        <Input
-                            placeholder={LocalizedStrings.Location}
-                            rightIcon
-                            eyeValue={appIcons.location}
-                            rightIconColor={colors.primaryColor}
-                            value={country}
-                            onChangeText={(text) => setCountry(text)}
-                        >
-                            {LocalizedStrings.Location}
-                        </Input>
+                            {
+                                email && (
+                                    <View style={styles.phoneNumberContainer}>
+                                        <CountryInput phoneNumber={phoneNumber} countryCode={countryCode ? countryCode : '966'} countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'} setValue={setPhoneNumber} setSelectedCode={setCountryCode} layout={'first'} />
+                                        <TouchableOpacity
+                                            style={[styles.verifyButton, isNumberVerified && styles.verifiedButton]}
+                                            onPress={handleVerifyNumber}
+                                            disabled={isNumberVerified}
+                                        >
+                                            <Text style={[styles.verifyButtonText, isNumberVerified && styles.verifiedButtonText]}>
+                                                {isNumberVerified ? '✓ Verified' : 'Verify Number'}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            }
+
+                            <FlatList
+                                data={genderArray}
+                                keyExtractor={(_, index) => index.toString()}
+                                ListHeaderComponent={
+                                    <Text style={[styles.headerText]}>{LocalizedStrings.gender}</Text>
+                                }
+                                renderItem={({ item, index }) => {
+                                    return (
+                                        <Pressable key={index} onPress={() => setGender(item.id)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: wp(3) }}>
+                                            <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginRight: wp(3) }]}>
+                                                <View style={[styles.dotComponentStyle, { backgroundColor: gender == item.id ? colors.primaryColor : 'transparent' }]} />
+                                            </View>
+                                            <Text style={styles.mainDes}>{item.title}</Text>
+                                        </Pressable>
+                                    )
+                                }}
+                            />
+
+                            <Input
+                                placeholder={LocalizedStrings.Location}
+                                rightIcon
+                                eyeValue={appIcons.location}
+                                rightIconColor={colors.primaryColor}
+                                value={country}
+                                onChangeText={(text) => setCountry(text)}
+                            >
+                                {LocalizedStrings.Location}
+                            </Input>
 
 
+                        </View>
                     </View>
-                </View>
 
-                <View style={[appStyles.ph20, appStyles.mt10]}>
-                    <Button onPress={() => createUserProfile()}>{LocalizedStrings.save_changes}</Button>
-                </View>
-            </ScrollView>
+                    <View style={[appStyles.ph20, appStyles.mt10]}>
+                        <Button onPress={() => createUserProfile()}>{LocalizedStrings.save_changes}</Button>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
 
             <DatePicker
                 modal

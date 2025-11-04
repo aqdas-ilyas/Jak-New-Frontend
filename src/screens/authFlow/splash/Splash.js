@@ -20,7 +20,7 @@ export default function Splash(props) {
     const [apiCompleted, setApiCompleted] = useState(false);
     const [biometricChecked, setBiometricChecked] = useState(false);
     const [biometricInProgress, setBiometricInProgress] = useState(false);
-    
+
     const islogin = useSelector(state => state?.user?.isRemember)
     const numberLogin = useSelector(state => state?.user?.numberLogin)
     const splash = useSelector(state => state?.user?.splash)
@@ -42,10 +42,10 @@ export default function Splash(props) {
             setBiometricInProgress(true);
             const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
             const { available } = await rnBiometrics.isSensorAvailable();
-            
+
             if (available && biometricEnabled) {
                 console.log('Starting MANDATORY biometric authentication...');
-                
+
                 // Keep prompting until success - NO CANCEL OPTION
                 let biometricSuccess = false;
                 while (!biometricSuccess) {
@@ -77,7 +77,7 @@ export default function Splash(props) {
             }
         } catch (error) {
             console.log('Biometric check error:', error);
-            
+
             if (islogin) {
                 // If biometric check fails for logged in user, logout
                 console.log('Biometric check error for logged in user - logging out');
@@ -116,7 +116,7 @@ export default function Splash(props) {
 
     const navigateBasedOnUserState = (currentUser) => {
         console.log("*********** Navigating based on user state *************", currentUser);
-        
+
         if (islogin) {
             if (currentUser) {
                 if (!currentUser.isBlocked) {
@@ -127,26 +127,31 @@ export default function Splash(props) {
                         } else {
                             props?.navigation?.replace(routes.createProfile, { email: 'email' });
                         }
-                    } else if (!currentUser.isPreferencesSet) {
-                        // User preferences not set
-                        if (!currentUser.isPreferencesSkipped) {
-                            props?.navigation?.replace(routes.preferences);
-                        } else if (!currentUser.isAdminApproved) {
-                            props?.navigation?.replace(routes.preferences);
-                        } else if (currentUser.subscriptionPlan == "not-subscribed") {
-                            props?.navigation?.replace(routes.subscription);
-                        } else {
-                            props.navigation.replace(routes.tab, { screen: routes.home })
-                        }
-                    } 
+                    }
+                    // else if (!currentUser.isPreferencesSet) {
+                    //     // User preferences not set
+                    //     if (!currentUser.isPreferencesSkipped) {
+                    //         props?.navigation?.replace(routes.preferences);
+                    //     } else if (!currentUser.isAdminApproved) {
+                    //         props?.navigation?.replace(routes.preferences);
+                    //     } else if (currentUser.subscriptionPlan == "not-subscribed") {
+                    //         props?.navigation?.replace(routes.subscription);
+                    //     } else {
+                    //         props.navigation.replace(routes.tab, { screen: routes.home })
+                    //     }
+                    // } 
                     // else if (!currentUser.isAdminApproved) {
                     //     // User not approved by admin
                     //     props?.navigation?.replace(routes.preferences);
                     // } 
-                    else if (currentUser.subscriptionPlan == "not-subscribed") {
-                        // User not subscribed
-                        props?.navigation?.replace(routes.subscription);
-                    } else {
+                    // else if (currentUser.subscriptionPlan == "not-subscribed") {
+                    //     // User not subscribed
+                    //     props?.navigation?.replace(routes.subscription);
+                    // } else {
+                    //     // User is complete and approved - go to home
+                    //     props.navigation.replace(routes.tab, { screen: routes.home })
+                    // }
+                    else {
                         // User is complete and approved - go to home
                         props.navigation.replace(routes.tab, { screen: routes.home })
                     }
@@ -171,7 +176,7 @@ export default function Splash(props) {
     useEffect(() => {
         // Migrate state to ensure new properties exist
         dispatch(migrateState());
-        
+
         dispatch(saveMyOffer(null));
         dispatch(saveTotalMyOfferPagesCount(1));
         dispatch(saveMyOfferPageNo(1));
@@ -197,7 +202,7 @@ export default function Splash(props) {
         if (!isLoading && apiCompleted && biometricChecked) {
             console.log("*********** Starting navigation *************");
             console.log("Navigation conditions - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
-            
+
             // Small delay to ensure smooth transition and Redux state update
             setTimeout(() => {
                 // Get fresh user data from Redux after API call
@@ -230,14 +235,14 @@ export default function Splash(props) {
 
     return (
         <>
-            <StatusBar 
-                barStyle={'light-content'} 
+            <StatusBar
+                barStyle={'light-content'}
                 backgroundColor={Platform.OS === 'android' ? 'transparent' : undefined}
                 translucent={Platform.OS === 'android'}
             />
             <ImageBackground source={appImages.splashBackground} style={styles.backgroundImage}>
                 <Image source={appIcons.appLogo} style={styles.imageLogo} />
-                
+
                 {/* Loading indicator */}
                 {/* {(isLoading || !apiCompleted || !biometricChecked || biometricInProgress) && (
                     <View style={styles.loadingContainer}>
@@ -250,7 +255,7 @@ export default function Splash(props) {
                         </Text>
                     </View>
                 )} */}
-                
+
                 <View style={styles.bottomContainer}>
                     <Text style={styles.welcomeText}>{LocalizedStrings['Welcome to']}</Text>
                     <Text style={styles.logoText}>{LocalizedStrings['Jak App']}</Text>

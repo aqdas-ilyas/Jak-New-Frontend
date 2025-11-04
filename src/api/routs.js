@@ -1,5 +1,6 @@
 // export const BASE_URL = 'http://ec2-13-60-3-16.eu-north-1.compute.amazonaws.com/api/v1/';
-export const BASE_URL = 'https://api.jak-app.com/api/v1/';
+// export const BASE_URL = 'https://api.jak-app.com/api/v1/';
+export const BASE_URL = 'https://5ybkmffmxq.us-east-1.awsapprunner.com/api/v1/';
 
 export default {
   // -----AUTH------//

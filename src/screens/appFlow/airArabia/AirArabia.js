@@ -236,7 +236,7 @@ const AddLoyaltyCard = props => {
   const updateLoyaltyCards = () => {
     if (validate()) {
       const onSuccess = response => {
-        showMessage({ message: response?.message, type: 'success' });
+        showMessage({ message: response?.message || 'Updated Successfully', type: 'success' });
         console.log('response createLoyaltyCards===', response?.data);
         getLoyaltyCards();
       };
