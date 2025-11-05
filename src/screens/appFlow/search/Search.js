@@ -144,7 +144,7 @@ export default Search = (props) => {
         const onSuccess = async (response) => {
             setIsLoadingFull(false);
             console.log('response favourite===', response);
-            showMessage({ message: response?.message, type: 'success' })
+            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' })
 
             if (myOffer && myOffer.length > 0) {
                 const newCustomeArray = await myOffer.map((item) => {
@@ -201,7 +201,7 @@ export default Search = (props) => {
             setIsLoadingFull(false);
             console.log('Error favourite===', error);
 
-            showMessage({ message: response?.message, type: 'danger' })
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;

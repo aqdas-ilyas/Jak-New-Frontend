@@ -114,7 +114,7 @@ export default Offer = (props) => {
         const onSuccess = (response) => {
             setIsLoading(false);
             console.log('response favourite===', response);
-            showMessage({ message: response?.message, type: 'success' })
+            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' })
 
             if (myOffer && myOffer.length > 0) {
                 const newCustomeArray = myOffer.map((item) => {
@@ -152,7 +152,7 @@ export default Offer = (props) => {
         const onError = error => {
             setIsLoading(false);
             console.log('Error favourite===', error);
-            showMessage({ message: error?.message || 'Failed to update favorite', type: 'danger' })
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message || LocalizedStrings.failed_to_update_favorite, type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;
@@ -179,7 +179,7 @@ export default Offer = (props) => {
             if (response?.data?.data.length > 0) {
                 setMyOfferFilterArray(response?.data?.data)
             } else {
-                showMessage({ message: 'No Offers Found!', type: 'danger' })
+                showMessage({ message: LocalizedStrings.no_offers_found, type: 'danger' })
             }
         };
 

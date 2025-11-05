@@ -454,7 +454,7 @@ export default {
   'Select Category': 'اختر الفئة',
   All: 'الجميع',
   'Loyal Cards': 'بطاقات الولاء',
-  
+
   // Phone Number Verification
   verify_number: 'التحقق من الرقم',
   change_number: 'تغيير الرقم',
@@ -464,7 +464,7 @@ export default {
   verify_phone_number: 'التحقق من رقم الهاتف',
   enter_4_digit_code_sent_to: 'أدخل الرمز المكون من 4 أرقام المرسل إلى',
   resend_otp: 'إعادة إرسال الرمز',
-  
+
   // Profile Validation Messages
   name_only_alphabets: 'يمكن أن يتكون الاسم فقط من الأحرف الأبجدية من A إلى Z أو من a إلى z',
   please_enter_valid_name: 'يرجى إدخال اسم صحيح',
@@ -479,7 +479,7 @@ export default {
   please_enter_complete_otp: 'يرجى إدخال رمز OTP الكامل',
   please_enter_valid_otp: 'يرجى إدخال رمز OTP صحيح',
   failed_to_upload_image: 'فشل تحميل الصورة',
-  
+
   // SignIn Screen
   invalid_phone_number: 'رقم هاتف غير صحيح',
   please_enter_strong_password: 'يرجى إدخال كلمة مرور قوية',
@@ -491,18 +491,69 @@ export default {
   no_biometric_data_enrolled: 'لم يتم تسجيل بيانات بيومترية. يرجى إعداد المصادقة البيومترية في إعدادات الجهاز.',
   biometric_authentication_failed: 'فشلت المصادقة البيومترية. يرجى المحاولة مرة أخرى.',
   biometric_authentication_failed_login: 'فشلت المصادقة البيومترية. يرجى المحاولة مرة أخرى أو تسجيل الدخول بشكل طبيعي.',
-  
+
   // EditProfile Screen
   profile_updated: 'تم تحديث الملف الشخصي!',
-  
+
   // AirArabia Screen
   please_add_valid_card_number: 'يرجى إضافة رقم بطاقة صحيح',
   updated_successfully: 'تم التحديث بنجاح',
-  
+
   // SignUp Screen
   password_not_matched: 'كلمة المرور غير متطابقة!',
   passwords_do_not_match: 'كلمات المرور غير متطابقة.',
-  
+
   // ChangePassword Screen
   please_enter_valid_current_password: 'يرجى إدخال كلمة المرور الحالية الصحيحة',
+
+  // Static Messages
+  logged_out_successfully: 'تم تسجيل الخروج بنجاح!',
+  logout_failed: 'فشل تسجيل الخروج',
+  preferences_updated: 'تم تحديث التفضيلات!',
+  preferences_created: 'تم إنشاء التفضيلات!',
+  subscription_canceled: 'تم إلغاء الاشتراك!',
+  invalid_otp: 'رمز التحقق غير صحيح',
+  no_offers_found: 'لم يتم العثور على عروض!',
+  failed_to_update_favorite: 'فشل تحديث المفضلة',
+
+  "message": "الرسالة",
+  "User with given number already exist": "المستخدم برقم المعطى موجود بالفعل",
+  "Number already exist": "الرقم موجود بالفعل",
+  "Invalid number": "رقم غير صالح",
+  "OTP Expired": "انتهت صلاحية رمز التحقق",
+  "Please add otp": "يرجى إدخال رمز التحقق",
+  "The given OTP is invalid": "رمز التحقق المعطى غير صالح",
+  "": "",
+  "please provide number and password": "يرجى تقديم الرقم وكلمة المرور",
+  "Incorrect email or password": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+  "please provide email and password": "يرجى تقديم البريد الإلكتروني وكلمة المرور",
+  "Email verification is pending": "التحقق من البريد الإلكتروني معلق",
+  "You are not logged in, please login to get access": "لم تقم بتسجيل الدخول، يرجى تسجيل الدخول للحصول على الوصول",
+  "User not exist now": "المستخدم غير موجود الآن",
+  "User recently changed password please login again!": "قام المستخدم بتغيير كلمة المرور مؤخراً، يرجى تسجيل الدخول مرة أخرى!",
+  "You do not have permission to perform this action": "ليس لديك إذن للقيام بهذا الإجراء",
+  "There is no user with given number address": "لا يوجد مستخدم بعنوان/رقم المعطى",
+  "OTP sent to number": "تم إرسال رمز التحقق إلى الرقم",
+  "There was an error while sending sms. please try again later": "حدث خطأ أثناء إرسال الرسالة القصيرة. يرجى المحاولة لاحقاً",
+  "Token may expire": "قد تنتهي صلاحية التوكن",
+  "Your current password is wrong": "كلمة المرور الحالية خاطئة",
+  "User logged out successfully": "تم تسجيل خروج المستخدم بنجاح",
+  "Removed from Favourite Successfully": "تمت الإزالة من المفضلة بنجاح",
+  "Added to Favourite Successfully": "تمت الإضافة إلى المفضلة بنجاح",
+  "Created": "تم الإنشاء",
+  "Data Retrieved Successfully": "تم استرجاع البيانات بنجاح",
+  "Current Subscription Types Retrieved Successfully": "تم استرجاع أنواع الاشتراك الحالية بنجاح",
+  "Server Error": "خطأ في الخادم",
+  "Invalid language": "لغة غير صالحة",
+  "Enter valid gender": "يرجى إدخال جنس صالح",
+  "Enter valid role ": "يرجى إدخال دور صالح",
+  "Enter valid plan ": "يرجى إدخال خطة صالحة",
+  "File Retrieved Successfully": "تم استرجاع الملف بنجاح",
+  "Something went very wrong!": "حدث خطأ كبير!",
+  "SMS skipped in development mode": "تم تخطي الرسالة القصيرة في وضع التطوير",
+  "You have received a new message from JAK App": "لقد تلقيت رسالة جديدة من تطبيق JAK",
+  "Message": "رسالة",
+  "Review the message details above": "راجع تفاصيل الرسالة أعلاه",
+  "NEW MESSAGE FROM JAK APP": "رسالة جديدة من تطبيق JAK",
+  "MESSAGE:": "الرسالة:"
 };

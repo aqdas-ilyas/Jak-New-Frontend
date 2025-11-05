@@ -49,14 +49,14 @@ const ForgetPassword = (props) => {
             const onSuccess = response => {
                 console.log('res while validateEmail====>', response);
                 setIsLoading(false)
-                showMessage({ message: response?.message, type: "success" });
+                showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success" });
 
                 props.navigation.navigate(routes.otp, { number: `${countryCode + phoneNumber}`, key: 'forget', })
             };
             const onError = error => {
                 setIsLoading(false)
                 console.log('error while validateEmail====>', error.message);
-                showMessage({ message: error?.message, type: "danger" });
+                showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
             };
             const method = Method.POST;
             const endPoint = routs.forgetPassword

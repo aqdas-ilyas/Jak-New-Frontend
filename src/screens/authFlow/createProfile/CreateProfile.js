@@ -237,7 +237,7 @@ const CreateProfile = (props) => {
         const onError = error => {
             setIsLoading(false);
             console.log('error while UpdateProfile====>', error);
-            showMessage({ message: error?.message, type: 'danger' })
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' })
         };
 
         const method = Method.POST;
@@ -315,7 +315,7 @@ const CreateProfile = (props) => {
             setIsResendingOTP(false)
             setIsLoading(false)
             console.log('error while sendOTP====>', error.message);
-            showMessage({ message: error?.message, type: "danger" });
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
         };
         const method = Method.POST;
         const endPoint = routs.verifyNumber
@@ -373,7 +373,7 @@ const CreateProfile = (props) => {
             console.log('error while verifyOTP====>', error.message);
             setIsVerifyingOTP(false)
             setIsLoading(false)
-            showMessage({ message: error?.message, type: "danger", });
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger", });
         };
 
         const method = Method.POST;

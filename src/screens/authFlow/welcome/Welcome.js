@@ -87,7 +87,7 @@ const Welcome = (props) => {
         const onSuccess = response => {
             setIsLoading(false)
             console.log('res while handleSociallogin====>', response);
-            showMessage({ message: response?.message, type: "success" });
+            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success" });
             dispatch(updateUser(response?.data))
             dispatch(setToken({
                 token: response?.data?.token,
@@ -145,7 +145,7 @@ const Welcome = (props) => {
         const onError = error => {
             setIsLoading(false)
             console.log('error while handleSociallogin====>', error);
-            showMessage({ message: error?.message, type: "danger" });
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
 
             if (error?.errorType == 'email-not-verify') {
                 props.navigation.navigate(routes.otp, { email: user?.email.toLowerCase(), key: 'auth' })

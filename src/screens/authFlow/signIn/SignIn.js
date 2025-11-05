@@ -84,7 +84,7 @@ const SignIn = props => {
       const onSuccess = response => {
         setIsLoading(false);
         console.log('res while login====>', response);
-        showMessage({ message: response?.message, type: 'success' });
+        showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' });
         dispatch(updateUser(response?.data));
         dispatch(
           setToken({
@@ -146,7 +146,7 @@ const SignIn = props => {
       const onError = error => {
         setIsLoading(false);
         console.log('error while login====>', error);
-        showMessage({ message: error?.message, type: 'danger' });
+        showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' });
 
         if (error?.errorType == 'number-not-verify') {
           props.navigation.navigate(routes.otp, {
@@ -498,7 +498,7 @@ const SignIn = props => {
     const onSuccess = response => {
       setIsLoading(false);
       console.log('res while handleSociallogin====>', response);
-      showMessage({ message: response?.message, type: 'success' });
+      showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' });
       dispatch(updateUser(response?.data));
       dispatch(
         setToken({
@@ -564,7 +564,7 @@ const SignIn = props => {
     const onError = error => {
       setIsLoading(false);
       console.log('error while handleSociallogin====>', error);
-      showMessage({ message: error?.message, type: 'danger' });
+      showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' });
 
       if (error?.errorType == 'email-not-verify') {
         props.navigation.navigate(routes.otp, {
@@ -768,7 +768,7 @@ const SignIn = props => {
       )}
 
       {/* Debug Info */}
-      {__DEV__ && (
+      {/* {__DEV__ && (
         <View style={[appStyles.ph20, appStyles.mb5]}>
           <Text style={styles.debugText}>
             Biometric Available: {biometricAvailable ? 'Yes' : 'No'}
@@ -795,7 +795,7 @@ const SignIn = props => {
             </Text>
           )}
         </View>
-      )}
+      )} */}
     </SafeAreaView>
   );
 };

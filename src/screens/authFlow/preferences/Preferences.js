@@ -99,7 +99,7 @@ const Preferences = (props) => {
         const onSuccess = response => {
             setIsLoading(false)
             console.log('res while createPreference====>', response);
-            props?.route?.params?.key === 'settings' ? showMessage({ message: 'Preferences Updated!', type: "success" }) : showMessage({ message: 'Preferences Created!', type: "success" })
+            props?.route?.params?.key === 'settings' ? showMessage({ message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.preferences_updated, type: "success" }) : showMessage({ message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.preferences_created, type: "success" })
             props?.route?.params?.key === 'settings' ? null : setModalShow(true)
 
             dispatch(updateUser(response?.data))
@@ -131,7 +131,7 @@ const Preferences = (props) => {
         const onError = error => {
             setIsLoading(false)
             console.log('error while createPreference====>', error);
-            showMessage({ message: error?.message, type: "danger" });
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
         };
 
         const endPoint = routs.createPreferences

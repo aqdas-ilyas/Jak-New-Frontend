@@ -60,12 +60,12 @@ const AddLoyaltyCard = props => {
     if (validate()) {
       const onSuccess = response => {
         console.log('response createLoyaltyCards===', response?.data);
-        showMessage({ message: response?.message, type: 'success' });
+        showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' });
         getLoyaltyCards();
       };
       const onError = error => {
         setIsLoading(false);
-        showMessage({ message: error?.message, type: 'danger' });
+        showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' });
         console.log('Error createLoyaltyCards===', error);
       };
 
@@ -236,13 +236,13 @@ const AddLoyaltyCard = props => {
   const updateLoyaltyCards = () => {
     if (validate()) {
       const onSuccess = response => {
-        showMessage({ message: response?.message || LocalizedStrings.updated_successfully, type: 'success' });
+        showMessage({ message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.updated_successfully, type: 'success' });
         console.log('response createLoyaltyCards===', response?.data);
         getLoyaltyCards();
       };
       const onError = error => {
         setIsLoading(false);
-        showMessage({ message: error?.message, type: 'danger' });
+        showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' });
         console.log('Error createLoyaltyCards===', error);
       };
 

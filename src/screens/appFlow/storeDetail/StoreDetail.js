@@ -101,7 +101,7 @@ export default StoreDetailList = (props) => {
         const onSuccess = async (response) => {
             setIsLoading(false);
             console.log('response favourite===', response);
-            showMessage({ message: response?.message, type: 'success' })
+            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' })
 
             setIsLiked(!isLiked)
 
@@ -161,7 +161,7 @@ export default StoreDetailList = (props) => {
             setIsLoading(false);
             console.log('Error favourite===', error);
 
-            showMessage({ message: response?.message, type: 'danger' })
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;

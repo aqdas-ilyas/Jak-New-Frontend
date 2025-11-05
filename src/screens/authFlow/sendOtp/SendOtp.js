@@ -39,7 +39,7 @@ const SendOtp = (props) => {
     // *********************** OTPVerify ***********************
     const verifyOTP = () => {
         if (otpValue.length < 4) {
-            showMessage({ message: "Invalid OTP", type: "danger" });
+            showMessage({ message: LocalizedStrings.invalid_otp, type: "danger" });
             return false;
         } else {
             const onSuccess = response => {
@@ -63,7 +63,7 @@ const SendOtp = (props) => {
             const onError = error => {
                 console.log('error while verifyOTP====>', error.message);
                 setIsLoading(false)
-                showMessage({ message: error?.message, type: "danger", });
+                showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger", });
             };
 
             const method = Method.POST;
@@ -96,12 +96,12 @@ const SendOtp = (props) => {
             setIsLoading(false)
             setCountDown(60);
             setOtpValue("")
-            showMessage({ message: response?.message, type: "success", });
+            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success", });
         };
         const onError = error => {
             setIsLoading(false)
             console.log('error while ResendOTP====>', error.message);
-            showMessage({ message: error?.message, type: "danger" });
+            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
         };
         const method = Method.POST;
         const endPoint = key !== 'forget' ? routs.sendOTP : routs.forgetPassword

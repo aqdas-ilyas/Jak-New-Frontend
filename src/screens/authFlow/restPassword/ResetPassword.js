@@ -49,7 +49,7 @@ const ResetPassword = (props) => {
             const onSuccess = response => {
                 console.log('res while login====>', response);
                 setIsLoading(false)
-                showMessage({ message: response?.message, type: "success", });
+                showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success", });
                 setModalShow(true)
 
                 setTimeout(() => {
@@ -61,7 +61,7 @@ const ResetPassword = (props) => {
             const onError = error => {
                 setIsLoading(false)
                 console.log('error while login====>', error.message);
-                showMessage({ message: error?.message, type: "danger", });
+                showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger", });
             };
 
             const method = Method.PATCH;

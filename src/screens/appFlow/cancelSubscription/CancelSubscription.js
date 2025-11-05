@@ -71,7 +71,7 @@ const CancelSubscription = props => {
       getUserProfile();
       setIsLoading(false);
       setModalShow(true);
-      showMessage({message: 'Subscription Canceled!', type: 'success'});
+      showMessage({message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.subscription_canceled, type: 'success'});
 
       setTimeout(() => {
         setModalShow(false);
@@ -82,7 +82,7 @@ const CancelSubscription = props => {
     const onError = error => {
       setIsLoading(false);
       console.log('error while cancelSubscription====>', error);
-      showMessage({message: error?.message, type: 'danger'});
+      showMessage({message: LocalizedStrings[error?.message] || error?.message, type: 'danger'});
     };
 
     const method = Method.POST;

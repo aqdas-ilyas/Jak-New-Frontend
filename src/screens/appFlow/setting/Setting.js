@@ -292,7 +292,7 @@ export default Setting = props => {
     const onSuccess = response => {
       setIsLoading(false);
       console.log('response _logout===', response);
-      showMessage({ message: 'Logged Out Successfully!', type: 'danger' });
+      showMessage({ message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.logged_out_successfully, type: 'success' });
 
       props.navigation.dispatch(
         CommonActions.reset({
@@ -320,7 +320,7 @@ export default Setting = props => {
     const onError = error => {
       setIsLoading(false);
       console.log('Error _logout===', error);
-      showMessage({ message: error?.message || 'Logout failed', type: 'danger' });
+      showMessage({ message: LocalizedStrings[error?.message] || error?.message || LocalizedStrings.logout_failed, type: 'danger' });
     };
     const endPoint = routs.logout;
     const method = Method.POST;
