@@ -114,6 +114,8 @@ const SignIn = props => {
           props?.navigation?.navigate(routes.createProfile, {
             number: `${countryCode + phoneNumber}`,
           });
+        } else {
+          props.navigation.navigate(routes.tab, { screen: routes.home });
         }
         // else if (response?.act === 'incomplete-preferences') {
         //   if (!response?.data?.user?.isPreferencesSkipped) {
@@ -139,9 +141,6 @@ const SignIn = props => {
         //   props?.navigation?.navigate(routes.subscription);
         //   showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
         // }
-        else {
-          props.navigation.navigate(routes.tab, { screen: routes.home });
-        }
       };
 
       const onError = error => {
@@ -217,6 +216,8 @@ const SignIn = props => {
         props?.navigation?.navigate(routes.createProfile, {
           number: `${credentials.countryCode + credentials.phoneNumber}`,
         });
+      } else {
+        props.navigation.navigate(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
@@ -235,9 +236,6 @@ const SignIn = props => {
       //     }
       //   }
       // }
-      else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
-      }
     };
 
     const onError = error => {
@@ -287,6 +285,8 @@ const SignIn = props => {
         props?.navigation?.navigate(routes.createProfile, {
           email: credentials.email.toLowerCase(),
         });
+      } else {
+        props.navigation.navigate(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
@@ -305,9 +305,6 @@ const SignIn = props => {
       //     }
       //   }
       // }
-      else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
-      }
     };
 
     const onError = error => {
@@ -535,6 +532,8 @@ const SignIn = props => {
         props?.navigation?.navigate(routes.createProfile, {
           email: user?.email.toLowerCase(),
         });
+      } else {
+        props.navigation.navigate(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
@@ -560,9 +559,6 @@ const SignIn = props => {
       //   props?.navigation?.navigate(routes.subscription);
       //   showMessage({ message: 'You are not subscribed yet!', type: 'danger' });
       // }
-      else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
-      }
     };
 
     const onError = error => {

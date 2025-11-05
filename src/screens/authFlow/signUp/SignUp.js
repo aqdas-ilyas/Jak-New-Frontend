@@ -180,8 +180,7 @@ const SignUp = props => {
         props?.navigation?.navigate(routes.createProfile, {
           email: user?.email.toLowerCase(),
         });
-      }
-      else {
+      } else {
         props.navigation.navigate(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {

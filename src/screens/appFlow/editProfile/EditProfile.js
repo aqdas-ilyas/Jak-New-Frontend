@@ -231,116 +231,136 @@ export default EditProfile = (props) => {
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.edit_profile} />
-            <KeyboardAvoidingView 
+            <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
             >
-                <ScrollView 
-                    keyboardShouldPersistTaps={"handled"} 
-                    bounces={false} 
-                    style={{ flex: 1 }} 
+                <ScrollView
+                    keyboardShouldPersistTaps={"handled"}
+                    bounces={false}
+                    style={{ flex: 1 }}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: hp(10) }}
                 >
-                <View style={{ marginVertical: wp(5) }}>
-                    <View style={styles.imageTopView}>
-                        <View style={styles.imageView}>
-                            <Image
-                                source={Object.keys(image).length !== 0 ? image : appImages.profile1}
-                                style={[styles.imageStyle, { resizeMode: 'cover' }]}
-                                onLoadStart={() => setImageLoading(true)}
-                                onLoadEnd={() => setImageLoading(false)}
-                                onError={() => setImageLoading(false)}
-                            />
-                            {imageLoading && (
-                                <View style={styles.imageLoaderContainer}>
-                                    <ActivityIndicator
-                                        size="small"
-                                        color={colors.primaryColor}
-                                    />
-                                </View>
-                            )}
+                    <View style={{ marginVertical: wp(5) }}>
+                        <View style={styles.imageTopView}>
+                            <View style={styles.imageView}>
+                                <Image
+                                    source={Object.keys(image).length !== 0 ? image : appImages.profile1}
+                                    style={[styles.imageStyle, { resizeMode: 'cover' }]}
+                                    onLoadStart={() => setImageLoading(true)}
+                                    onLoadEnd={() => setImageLoading(false)}
+                                    onError={() => setImageLoading(false)}
+                                />
+                                {imageLoading && (
+                                    <View style={styles.imageLoaderContainer}>
+                                        <ActivityIndicator
+                                            size="small"
+                                            color={colors.primaryColor}
+                                        />
+                                    </View>
+                                )}
+                            </View>
+                            <TouchableOpacity style={styles.editIconView} onPress={() => showImagePickerOptions()}>
+                                <Image source={appIcons.edit} style={styles.editIcon} />
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.editIconView} onPress={() => showImagePickerOptions()}>
-                            <Image source={appIcons.edit} style={styles.editIcon} />
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>{LocalizedStrings.profile_picture}</Text>
-                    <View>
-                        <Input
-                            placeholder={LocalizedStrings.full_name}
-                            value={name}
-                            onChangeText={(value) => setName(value)}
-                        >
-                            {LocalizedStrings.full_name}
-                        </Input>
+                        <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>{LocalizedStrings.profile_picture}</Text>
+                        <View>
+                            <Input
+                                placeholder={LocalizedStrings.full_name}
+                                value={name}
+                                onChangeText={(value) => setName(value)}
+                            >
+                                {LocalizedStrings.full_name}
+                            </Input>
 
-                        <Input
-                            editable={false}
-                            placeholder={'12/12/2001'}
-                            value={dob}
-                            rightIcon
-                            onPressIcon={() => setShowDatePicker(true)}
-                            eyeValue={appIcons.calender1}
-                            rightIconColor={colors.primaryColor}
-                        >
-                            {LocalizedStrings.DOB}
-                        </Input>
+                            <Input
+                                editable={false}
+                                placeholder={'12/12/2001'}
+                                value={dob}
+                                rightIcon
+                                onPressIcon={() => setShowDatePicker(true)}
+                                eyeValue={appIcons.calender1}
+                                rightIconColor={colors.primaryColor}
+                            >
+                                {LocalizedStrings.DOB}
+                            </Input>
 
-                        {
-                            user && user?.isSocial ? (
-                                <CountryInput phoneNumber={phoneNumber} countryCode={countryCode ? countryCode : '966'} countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'} setValue={setPhoneNumber} setSelectedCode={setCountryCode} layout={'first'} />
-                            )
-                                : (
-                                    <View style={{ marginBottom: wp(5) }}>
-                                        <Input
-                                            placeholder={LocalizedStrings.email}
-                                            value={userEmail}
-                                            onChangeText={(value) => setEmail(value)}
-                                            leftIcon={appIcons.message}
-                                        >
-                                            {LocalizedStrings.email}
-                                        </Input>
+                            {
+                                user && user?.isSocial ? (
+                                    <View style={styles.phoneNumberContainer}>
+                                        <CountryInput
+                                            phoneNumber={phoneNumber}
+                                            countryCode={countryCode ? countryCode : '966'}
+                                            countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'}
+                                            setValue={setPhoneNumber}
+                                            setSelectedCode={setCountryCode}
+                                            layout={'first'}
+                                        />
+                                        {
+                                            user?.isNumberVerified && (
+                                                <View style={[appStyles.rowStart, { position: 'absolute', right: wp(0), top: wp(3) }]}>
+                                                    <View style={[styles.verifyButton, styles.verifiedButton]}>
+                                                        <Text style={[styles.verifyButtonText, styles.verifiedButtonText]}>
+                                                            {`✓ ${LocalizedStrings.verified}`}
+                                                        </Text>
+                                                    </View>
+                                                </View>
+                                            )
+                                        }
                                     </View>
                                 )
-                        }
-
-
-                        <FlatList
-                            data={genderArray}
-                            keyExtractor={(_, index) => index.toString()}
-                            ListHeaderComponent={
-                                <Text style={[styles.headerText]}>{LocalizedStrings.gender}</Text>
-                            }
-                            renderItem={({ item, index }) => {
-                                return (
-                                    <Pressable key={index} onPress={() => setGender(item.id)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: wp(3) }}>
-                                        <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginRight: wp(3) }]}>
-                                            <View style={[styles.dotComponentStyle, { backgroundColor: gender == item.id ? colors.primaryColor : 'transparent' }]} />
+                                    : (
+                                        <View style={{ marginBottom: wp(5) }}>
+                                            <Input
+                                                placeholder={LocalizedStrings.email}
+                                                value={userEmail}
+                                                onChangeText={(value) => setEmail(value)}
+                                                leftIcon={appIcons.message}
+                                            >
+                                                {LocalizedStrings.email}
+                                            </Input>
                                         </View>
-                                        <Text style={styles.mainDes}>{item.title}</Text>
-                                    </Pressable>
-                                )
-                            }}
-                        />
+                                    )
+                            }
 
-                        <Input
-                            placeholder={LocalizedStrings.location_Placeholder}
-                            rightIcon
-                            eyeValue={appIcons.location}
-                            rightIconColor={colors.primaryColor}
-                            value={country}
-                            onChangeText={(value) => setCountry(value)}
-                        >
-                            {LocalizedStrings.Location}
-                        </Input>
+
+                            <FlatList
+                                data={genderArray}
+                                keyExtractor={(_, index) => index.toString()}
+                                ListHeaderComponent={
+                                    <Text style={[styles.headerText]}>{LocalizedStrings.gender}</Text>
+                                }
+                                renderItem={({ item, index }) => {
+                                    return (
+                                        <Pressable key={index} onPress={() => setGender(item.id)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: wp(3) }}>
+                                            <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginRight: wp(3) }]}>
+                                                <View style={[styles.dotComponentStyle, { backgroundColor: gender == item.id ? colors.primaryColor : 'transparent' }]} />
+                                            </View>
+                                            <Text style={styles.mainDes}>{item.title}</Text>
+                                        </Pressable>
+                                    )
+                                }}
+                            />
+
+                            <Input
+                                placeholder={LocalizedStrings.location_Placeholder}
+                                rightIcon
+                                eyeValue={appIcons.location}
+                                rightIconColor={colors.primaryColor}
+                                value={country}
+                                onChangeText={(value) => setCountry(value)}
+                            >
+                                {LocalizedStrings.Location}
+                            </Input>
+                        </View>
                     </View>
-                </View>
 
-                <View style={[appStyles.ph20, appStyles.mt10]}>
-                    <Button onPress={() => updateUserProfile()}>{LocalizedStrings.save_changes}</Button>
-                </View>
+                    <View style={[appStyles.ph20, appStyles.mt10]}>
+                        <Button onPress={() => updateUserProfile()}>{LocalizedStrings.save_changes}</Button>
+                    </View>
                 </ScrollView>
             </KeyboardAvoidingView>
 
@@ -442,5 +462,29 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
         lineHeight: 24,
-    }
+    },
+    phoneNumberContainer: {
+        marginBottom: wp(5),
+        position: 'relative',
+    },
+    verifyButton: {
+        backgroundColor: colors.primaryColor,
+        paddingHorizontal: wp(3),
+        paddingVertical: wp(1.5),
+        borderRadius: wp(1.5),
+        borderWidth: 1,
+        borderColor: colors.primaryColor,
+    },
+    verifiedButton: {
+        backgroundColor: colors.successColor || '#4CAF50',
+        borderColor: colors.successColor || '#4CAF50',
+    },
+    verifyButtonText: {
+        fontSize: hp(1.2),
+        fontFamily: fontFamily.UrbanistSemiBold,
+        color: colors.fullWhite,
+    },
+    verifiedButtonText: {
+        color: colors.fullWhite,
+    },
 })
