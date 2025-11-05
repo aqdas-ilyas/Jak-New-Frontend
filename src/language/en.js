@@ -331,7 +331,7 @@ export default {
     Travel: 'Travel',
     Health: 'Health',
     Wellness: 'Wellness',
-    Discount: 'Discounts',
+    Discount: 'Discount',
     Reset: 'Reset',
     Apply: 'Apply',
     'Account Security Alert': 'Account Security Alert',

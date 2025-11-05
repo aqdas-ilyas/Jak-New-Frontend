@@ -89,6 +89,13 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             <Text style={styles.mainTitle}>
                                 {item?.['store name'].length > 20 ? item?.['store name'].slice(0, 12) + '...' : item?.['store name']}
                             </Text>
+
+                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: buttonEnable ? hp(1.2) : hp(1.6), marginLeft: wp(1) }]}>
+                                    {LocalizedStrings['Discount']} {item?.['discount %']} %
+                                </Text>
+                            </View>
+
                             <TouchableOpacity style={{ padding: wp(2) }} activeOpacity={0.8} onPress={() => IsFavourites(item)}>
                                 <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
                             </TouchableOpacity>
@@ -112,13 +119,7 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </View>
 
                             <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                                <Text style={[styles.mainDes, { fontSize: buttonEnable ? hp(1.2) : hp(1.6) }]}>
-                                    {LocalizedStrings['Discount Offer']}:
-                                </Text>
-
-                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: buttonEnable ? hp(1.2) : hp(1.6), marginLeft: wp(1) }]}>
-                                    {item?.['discount %']} %
-                                </Text>
+                                <Image source={{ uri: item?.employer?.image }} style={{ width: wp(5), height: wp(5) }} />
                             </View>
                         </View>
 

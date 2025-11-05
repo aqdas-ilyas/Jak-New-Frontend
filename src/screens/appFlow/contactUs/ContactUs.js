@@ -206,11 +206,11 @@ const ContactUs = (props) => {
                         </View>
 
                         {/* Contact Info */}
-                        <View style={styles.contactInfoContainer}>
+                        {/* <View style={styles.contactInfoContainer}>
                             <Text style={styles.contactInfoTitle}>{LocalizedStrings.reach_us_directly || "Or reach us directly:"}</Text>
                             <Text style={styles.contactInfoText}>{LocalizedStrings.email_label || "Email"}: admin@jak-app.com</Text>
                             <Text style={styles.contactInfoText}>{LocalizedStrings.phone_label || "Phone"}: +966570578852</Text>
-                        </View>
+                        </View> */}
                     </View>
                 </ScrollView>
 
