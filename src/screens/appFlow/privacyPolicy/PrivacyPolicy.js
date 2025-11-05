@@ -13,7 +13,7 @@ const PrivacyPolicy = (props) => {
     const [error, setError] = useState(false);
 
     // Google Docs URL for Privacy Policy
-    const privacyUrl = 'https://docs.google.com/document/d/1o7UAJW5lu-1msK-P9KPQJMaRb-z19MgpriQlk00FTuk/edit?tab=t.0';
+    const privacyUrl = appLanguage == 'en' ? 'https://docs.google.com/document/d/1o7UAJW5lu-1msK-P9KPQJMaRb-z19MgpriQlk00FTuk/edit?tab=t.0' : 'https://docs.google.com/document/d/1FNW05ja9X2vjHcAfVHTcgYQH8pPcmockUj76DKN_zok/edit?usp=sharing';
 
     const handleWebViewLoad = () => {
         setLoading(false);
@@ -28,8 +28,8 @@ const PrivacyPolicy = (props) => {
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4), paddingTop: Platform.OS == 'android' ? wp(5) : 0, }]}>
             <View style={{ flex: 1 }}>
-                <TouchableOpacity activeOpacity={0.9} onPress={() => props.navigation.goBack()} style={{ backgroundColor: 'white', borderRadius: 50, position: "absolute", top: wp(2.5), zIndex: 1, left: wp(1), padding: wp(2) }}>
-                    <Image source={appIcons.back} style={[styles.back, { transform: [{ rotate: appLanguage == 'en' ? '0deg' : '180deg' }] }]} />
+                <TouchableOpacity activeOpacity={0.9} onPress={() => props.navigation.goBack()} style={{ backgroundColor: 'white', borderRadius: 50, position: "absolute", top: wp(2.5), zIndex: 1, left: appLanguage == 'en' ? wp(1) : null, right: appLanguage == 'ar' ? wp(1) : null, padding: wp(2), }}>
+                    <Image source={appIcons.back} style={[styles.back]} />
                 </TouchableOpacity>
 
                 {/* Loading Indicator */}

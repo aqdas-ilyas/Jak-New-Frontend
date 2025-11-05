@@ -12,7 +12,7 @@ const TermsConditions = (props) => {
     const [error, setError] = useState(false);
 
     // Google Docs URL for Terms & Conditions
-    const termsUrl = 'https://docs.google.com/document/d/1Uc2Dk7TuWiw0eLZ-iYgUN_aYTkdBUIr-Ca88A3ncNiU/edit?tab=t.0';
+    const termsUrl = appLanguage == 'en' ? 'https://docs.google.com/document/d/1Uc2Dk7TuWiw0eLZ-iYgUN_aYTkdBUIr-Ca88A3ncNiU/edit?tab=t.0' : 'https://docs.google.com/document/d/1DxBa4Vr-7xJmLntiYQOiBVJajU5wSArR81DRcLlnf1E/edit?tab=t.0';
 
     const handleWebViewLoad = () => {
         setLoading(false);
@@ -27,8 +27,8 @@ const TermsConditions = (props) => {
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4), paddingTop: Platform.OS == 'android' ? wp(5) : 0, }]}>
             <View style={{ flex: 1 }}>
-                <TouchableOpacity activeOpacity={0.9} onPress={() => props.navigation.goBack()} style={{ backgroundColor: 'white', borderRadius: 50, position: "absolute", top: wp(2.5), zIndex: 1, left: wp(1), padding: wp(2) }}>
-                    <Image source={appIcons.back} style={[styles.back, { transform: [{ rotate: appLanguage == 'en' ? '0deg' : '180deg' }] }]} />
+                <TouchableOpacity activeOpacity={0.9} onPress={() => props.navigation.goBack()} style={{ backgroundColor: 'white', borderRadius: 50, position: "absolute", top: wp(2.5), zIndex: 1, left: appLanguage == 'en' ? wp(1) : null, right: appLanguage == 'ar' ? wp(1) : null, padding: wp(2), }}>
+                    <Image source={appIcons.back} style={[styles.back]} />
                 </TouchableOpacity>
 
                 {/* Loading Indicator */}
