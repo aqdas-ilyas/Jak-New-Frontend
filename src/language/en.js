@@ -439,6 +439,7 @@ export default {
     'Premium Version': 'Premium Version',
     'Select Category': 'Select Category',
     'All': 'All',
+    'Banks': 'Banks',
     'Loyal Cards': 'Loyalty Cards',
     
     // Phone Number Verification

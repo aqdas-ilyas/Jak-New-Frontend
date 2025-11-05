@@ -91,8 +91,8 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </Text>
 
                             <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: buttonEnable ? hp(1.2) : hp(1.6), marginLeft: wp(1) }]}>
-                                    {LocalizedStrings['Discount']} {item?.['discount %']} %
+                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: buttonEnable ? hp(1.4) : hp(1.6), marginLeft: wp(1) }]}>
+                                   {item?.['discount %']} %
                                 </Text>
                             </View>
 

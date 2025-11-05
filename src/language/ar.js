@@ -453,6 +453,7 @@ export default {
   'Premium Version': 'النسخة المميزة',
   'Select Category': 'اختر الفئة',
   All: 'الجميع',
+  'Banks': 'البنوك',
   'Loyal Cards': 'بطاقات الولاء',
 
   // Phone Number Verification

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Platform, SafeAreaView, Text, FlatList, TouchableOpacity, Pressable, StatusBar, RefreshControl } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Text, FlatList, TouchableOpacity, Pressable, StatusBar, RefreshControl, Image } from "react-native";
 import { hp, routes, wp } from "../../../services/constants";
 import appStyles from "../../../services/utilities/appStyles";
 import { appIcons, colors, fontFamily } from "../../../services";
@@ -24,6 +24,8 @@ export default Offer = (props) => {
     const [refreshing, setRefreshing] = useState(false)
     const [myOfferFilterArray, setMyOfferFilterArray] = useState('')
     const [checkboxes, setCheckboxes] = useState([]);
+    const [banks, setBanks] = useState([]);
+    const [selectedBank, setSelectedBank] = useState(null);
     const refreshCounterRef = useRef(0);
 
     useEffect(() => {
@@ -46,6 +48,41 @@ export default Offer = (props) => {
             setCheckboxes(updatedCheckboxes);
         }
     }, [checkboxes.length]);
+
+    // Debug: Log banks array changes
+    useEffect(() => {
+        console.log('Banks array updated:', banks.length, banks);
+    }, [banks]);
+
+    // Extract unique banks from offers
+    const extractBanks = (offers) => {
+        if (!offers || offers.length === 0) {
+            setBanks([]);
+            return;
+        }
+
+        const bankMap = new Map();
+        offers.forEach((offer) => {
+            if (offer?.employer && offer?.employer?._id) {
+                const bankId = offer.employer._id;
+                const bankName = appLanguage === 'ar'
+                    ? (offer.employer.nameArabic || offer.employer.name || offer.employer.nameEnglish)
+                    : (offer.employer.nameEnglish || offer.employer.name || offer.employer.nameArabic);
+
+                if (!bankMap.has(bankId)) {
+                    bankMap.set(bankId, {
+                        id: bankId,
+                        name: bankName,
+                        employer: offer.employer
+                    });
+                }
+            }
+        });
+
+        const uniqueBanks = Array.from(bankMap.values());
+        console.log('Extracted banks:', uniqueBanks.length, uniqueBanks);
+        setBanks(uniqueBanks);
+    };
 
     const getMyOfferCategory = () => {
         const onSuccess = (response) => {
@@ -91,8 +128,12 @@ export default Offer = (props) => {
 
             if (response?.data?.data && response?.data?.data.length > 0) {
                 dispatch(saveMyOffer(response?.data?.data));
+                // Always extract banks from ALL offers, not filtered ones
+                extractBanks(response?.data?.data);
             } else {
                 dispatch(saveMyOffer([]));
+                setMyOfferFilterArray('')
+                setBanks([]);
             }
         };
 
@@ -168,8 +209,8 @@ export default Offer = (props) => {
         return checkedItems.map(item => LocalizedStrings[item.title]).join(',');
     }
 
-    const getMyOffersMore = () => {
-        const formattedCheckedStrings = checkboxes.find(item => item.checked)?.title;
+    const getMyOffersMore = (bankId = null) => {
+        const formattedCheckedStrings = checkboxes.find(item => item.checked && item.title !== LocalizedStrings.Banks)?.title;
 
         const onSuccess = (response) => {
             console.log('response getMyOffers Home===', response?.data);
@@ -177,7 +218,12 @@ export default Offer = (props) => {
             dispatch(saveCategoryOffers(response?.data?.data))
 
             if (response?.data?.data.length > 0) {
-                setMyOfferFilterArray(response?.data?.data)
+                setMyOfferFilterArray(response?.data?.data);
+
+                // Extract banks from category filtered offers when category is selected
+                if (formattedCheckedStrings && !bankId) {
+                    extractBanks(response?.data?.data);
+                }
             } else {
                 showMessage({ message: LocalizedStrings.no_offers_found, type: 'danger' })
             }
@@ -191,7 +237,11 @@ export default Offer = (props) => {
         // let endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
         let endPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
 
-        if (formattedCheckedStrings) {
+        // If bank is selected, filter by employer/bank
+        if (bankId) {
+            endPoint += `&employer=${bankId}`;
+        } else if (formattedCheckedStrings) {
+            // Otherwise filter by category
             endPoint += `&category=${formattedCheckedStrings}`;
         }
 
@@ -203,11 +253,21 @@ export default Offer = (props) => {
     };
 
     useEffect(() => {
+        const allChecked = checkboxes.find(cb => cb.checked && cb.title === LocalizedStrings.All);
+
         const updatedCheckboxes = checkboxes.filter((checkbox) => checkbox.checked && checkbox.title !== LocalizedStrings.All);
         if (updatedCheckboxes.length > 0) {
+            // If a category is selected, reset bank selection and call API
+            setSelectedBank(null);
+            setMyOfferFilterArray('');
             getMyOffersMore()
-        } else {
-            setMyOfferFilterArray('')
+        } else if (allChecked) {
+            // If "All" is selected, extract banks from all offers and reset bank selection
+            setSelectedBank(null);
+            setMyOfferFilterArray('');
+            if (myOffer && myOffer.length > 0) {
+                extractBanks(myOffer);
+            }
         }
     }, [checkboxes]);
 
@@ -218,6 +278,43 @@ export default Offer = (props) => {
                 : { ...checkbox, checked: false }
         );
         setCheckboxes(updatedCheckboxes);
+
+        // Reset bank selection when category changes
+        setSelectedBank(null);
+    };
+
+    const handleBankSelect = (bank) => {
+        // If "All" bank is selected (bank is null or special "all" identifier)
+        if (!bank || bank.id === 'all') {
+            setSelectedBank(null);
+            setMyOfferFilterArray('');
+            return;
+        }
+
+        setSelectedBank(bank.id);
+
+        // Check if a category is selected (not "All")
+        const selectedCategory = checkboxes.find(cb =>
+            cb.checked &&
+            cb.title !== LocalizedStrings.All
+        );
+
+        // If a category is selected, filter from CategoriesOffers (category filtered offers)
+        // Otherwise, filter from all offers (myOffer) or call API
+        if (selectedCategory && CategoriesOffers?.length > 0) {
+            // Filter category offers by selected bank
+            const filteredOffers = CategoriesOffers.filter(offer =>
+                offer?.employer?._id === bank.id
+            );
+            setMyOfferFilterArray(filteredOffers);
+
+            if (filteredOffers.length === 0) {
+                showMessage({ message: LocalizedStrings.no_offers_found, type: 'danger' });
+            }
+        } else {
+            // If "All" is selected, call API to get offers filtered by bank/employer
+            getMyOffersMore(bank.id);
+        }
     };
 
     const onRefresh = () => {
@@ -269,8 +366,12 @@ export default Offer = (props) => {
 
             if (response?.data?.data && response?.data?.data.length > 0) {
                 dispatch(saveMyOffer(response?.data?.data));
+                // Always extract banks from ALL offers
+                extractBanks(response?.data?.data);
             } else {
                 dispatch(saveMyOffer([]));
+                setMyOfferFilterArray('')
+                setBanks([]);
             }
 
             checkAndSetRefreshing();
@@ -341,8 +442,77 @@ export default Offer = (props) => {
                         />
                     </View>
 
+                    {/* Banks List - Always visible */}
+                    {banks.length > 0 && (
+                        <View style={styles.banksContainer}>
+                            <FlatList
+                                data={[{ id: 'all', name: LocalizedStrings.All, isAll: true }, ...banks]}
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                keyExtractor={(item, index) => item.isAll ? 'bank-all' : `bank-${item.id || index}-${item.name || ''}`}
+                                removeClippedSubviews={false}
+                                initialNumToRender={banks.length + 1}
+                                maxToRenderPerBatch={banks.length + 1}
+                                windowSize={5}
+                                renderItem={({ item, index }) => {
+                                    const isSelected = item.isAll ? !selectedBank : selectedBank === item.id;
+
+                                    return (
+                                        <Pressable key={item.isAll ? 'bank-pressable-all' : `bank-pressable-${item.id || index}`} onPress={() => handleBankSelect(item.isAll ? null : item)}>
+                                            <View style={[
+                                                styles.bankView,
+                                                {
+                                                    borderColor: isSelected ? colors.primaryColor : colors.borderColor,
+                                                    borderWidth: 1,
+                                                    backgroundColor: isSelected ? colors.primaryColor + '10' : colors.fullWhite
+                                                }
+                                            ]}>
+                                                {item.isAll ? (
+                                                    <Text style={[
+                                                        styles.bankText,
+                                                        { color: isSelected ? colors.primaryColor : colors.BlackSecondary }
+                                                    ]}>
+                                                        {item.name}
+                                                    </Text>
+                                                ) : item.employer?.image ? (
+                                                    <Image
+                                                        source={{ uri: item.employer.image }}
+                                                        style={styles.bankLogo}
+                                                        resizeMode="contain"
+                                                    />
+                                                ) : (
+                                                    <Text style={[
+                                                        styles.bankText,
+                                                        { color: isSelected ? colors.primaryColor : colors.BlackSecondary }
+                                                    ]}>
+                                                        {item.name}
+                                                    </Text>
+                                                )}
+                                            </View>
+                                        </Pressable>
+                                    );
+                                }}
+                            />
+                        </View>
+                    )}
+
                     <FlatList
-                        data={myOfferFilterArray?.length > 0 ? myOfferFilterArray : myOffer}
+                        data={
+                            selectedBank
+                                ? myOfferFilterArray?.length > 0 ? myOfferFilterArray : []
+                                : myOfferFilterArray?.length > 0
+                                    ? myOfferFilterArray
+                                    : (() => {
+                                        // If a category is selected, show CategoriesOffers
+                                        const selectedCategory = checkboxes.find(cb =>
+                                            cb.checked &&
+                                            cb.title !== LocalizedStrings.All
+                                        );
+                                        return selectedCategory && CategoriesOffers?.length > 0
+                                            ? CategoriesOffers
+                                            : myOffer;
+                                    })()
+                        }
                         showsVerticalScrollIndicator={false}
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{
@@ -404,5 +574,29 @@ const styles = StyleSheet.create({
         color: colors.primaryColor,
         textAlign: "center",
         marginRight: wp(1)
+    },
+    banksContainer: {
+        marginVertical: wp(1),
+    },
+    bankView: {
+        padding: wp(3),
+        marginLeft: wp(2),
+        backgroundColor: colors.fullWhite,
+        borderRadius: wp(10),
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: "center",
+        borderColor: colors.primaryColor,
+        borderWidth: 1
+    },
+    bankText: {
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistMedium,
+        textAlign: "center",
+    },
+    bankLogo: {
+        width: wp(5),
+        height: wp(5),
+        borderRadius: wp(6),
     },
 })
