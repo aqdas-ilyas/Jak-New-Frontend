@@ -470,20 +470,22 @@ export default Offer = (props) => {
                                                 {item.isAll ? (
                                                     <Text style={[
                                                         styles.bankText,
-                                                        { color: isSelected ? colors.primaryColor : colors.BlackSecondary }
+                                                        { padding: wp(3), color: isSelected ? colors.primaryColor : colors.BlackSecondary }
                                                     ]}>
                                                         {item.name}
                                                     </Text>
                                                 ) : item.employer?.image ? (
-                                                    <Image
-                                                        source={{ uri: item.employer.image }}
-                                                        style={styles.bankLogo}
-                                                        resizeMode="contain"
-                                                    />
+                                                    <View style={{ padding: wp(1.5) }}>
+                                                        <Image
+                                                            source={{ uri: item.employer.image }}
+                                                            style={[styles.bankLogo]}
+                                                            resizeMode="contain"
+                                                        />
+                                                    </View>
                                                 ) : (
                                                     <Text style={[
                                                         styles.bankText,
-                                                        { color: isSelected ? colors.primaryColor : colors.BlackSecondary }
+                                                        { paddingHorizontal: wp(3), color: isSelected ? colors.primaryColor : colors.BlackSecondary }
                                                     ]}>
                                                         {item.name}
                                                     </Text>
@@ -579,7 +581,6 @@ const styles = StyleSheet.create({
         marginVertical: wp(1),
     },
     bankView: {
-        padding: wp(3),
         marginLeft: wp(2),
         backgroundColor: colors.fullWhite,
         borderRadius: wp(10),
@@ -595,8 +596,8 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     bankLogo: {
-        width: wp(5),
-        height: wp(5),
+        width: wp(8),
+        height: wp(8),
         borderRadius: wp(6),
     },
 })

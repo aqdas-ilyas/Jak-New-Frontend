@@ -252,7 +252,7 @@ export default StoreDetailList = (props) => {
                             <Text style={styles.mainDes}>{distance} {LocalizedStrings["km away"]}</Text>
                         )
                     } */}
-                    <Image source={{ uri: item?.employer?.image }} style={{ width: wp(5), height: wp(5) }} />
+                    <Image source={{ uri: item?.employer?.image }} style={{ width: wp(7), height: wp(7), borderRadius: wp(6) }} />
                 </View>
                 <Text style={styles.shortDes}>{item?.['offer text']}</Text>
                 <View style={styles.line} />

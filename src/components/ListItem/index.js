@@ -91,8 +91,8 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </Text>
 
                             <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: buttonEnable ? hp(1.4) : hp(1.6), marginLeft: wp(1) }]}>
-                                   {item?.['discount %']} %
+                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: hp(1.6), marginLeft: wp(1) }]}>
+                                    {item?.['discount %']} %
                                 </Text>
                             </View>
 
@@ -113,14 +113,12 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                                     {LocalizedStrings.category}:
                                 </Text> */}
 
-                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: buttonEnable ? hp(1.2) : hp(1.6), marginLeft: wp(1) }]}>
+                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: hp(1.6), marginLeft: wp(1) }]}>
                                     {item?.category}
                                 </Text>
                             </View>
 
-                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                                <Image source={{ uri: item?.employer?.image }} style={{ width: wp(5), height: wp(5) }} />
-                            </View>
+                            <Image source={{ uri: item?.employer?.image }} style={{ width: wp(7), height: wp(6), borderRadius: wp(6) }} />
                         </View>
 
                         {/* {hasCoordinates && (
