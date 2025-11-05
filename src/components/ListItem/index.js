@@ -91,14 +91,10 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </Text>
 
                             <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: hp(1.6), marginLeft: wp(1) }]}>
-                                    {item?.['discount %']} %
-                                </Text>
+                                <TouchableOpacity style={{ padding: wp(2) }} activeOpacity={0.8} onPress={() => IsFavourites(item)}>
+                                    <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
+                                </TouchableOpacity>
                             </View>
-
-                            <TouchableOpacity style={{ padding: wp(2) }} activeOpacity={0.8} onPress={() => IsFavourites(item)}>
-                                <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
-                            </TouchableOpacity>
                         </View>
                         {/* <View style={{ flexDirection: "row", alignItems: 'center', marginVertical: wp(1) }}>
                             <Image source={appIcons.location} style={styles.IconStyle} />
@@ -118,7 +114,13 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                                 </Text>
                             </View>
 
-                            <Image source={{ uri: item?.employer?.image }} style={{ width: wp(7), height: wp(6), borderRadius: wp(6) }} />
+                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: hp(1.6), marginRight: wp(2) }]}>
+                                    {item?.['discount %']} %
+                                </Text>
+
+                                <Image source={{ uri: item?.employer?.image }} style={{ width: wp(7), height: wp(6), borderRadius: wp(6) }} />
+                            </View>
                         </View>
 
                         {/* {hasCoordinates && (
