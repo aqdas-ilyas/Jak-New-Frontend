@@ -20,6 +20,7 @@ import CountryInput from '../../../components/countryPicker/CountryPicker';
 import { isPossibleNumber } from 'libphonenumber-js';
 import { decodeJWT } from '../../../common/HelpingFunc';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
+import { resolveMessage } from '../../../language/helpers';
 
 const SignUp = props => {
   const dispatch = useDispatch();
@@ -76,7 +77,7 @@ const SignUp = props => {
       const onSuccess = response => {
         setIsLoading(false);
         console.log('res while signup====>', response);
-        showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' });
+        showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: 'success' });
 
         dispatch(saveNumberLogin(true));
 
@@ -105,7 +106,7 @@ const SignUp = props => {
       const onError = error => {
         setIsLoading(false);
         console.log('error while signup====>', error);
-        showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' });
+        showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' });
       };
 
       const endPoint = routs.signUp;
@@ -146,7 +147,7 @@ const SignUp = props => {
     const onSuccess = response => {
       setIsLoading(false);
       console.log('res while handleSociallogin====>', response);
-      showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' });
+      showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: 'success' });
       dispatch(updateUser(response?.data));
       dispatch(
         setToken({
@@ -213,7 +214,7 @@ const SignUp = props => {
     const onError = error => {
       setIsLoading(false);
       console.log('error while handleSociallogin====>', error);
-      showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' });
+      showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' });
 
       if (error?.errorType == 'email-not-verify') {
         props.navigation.navigate(routes.otp, {

@@ -16,6 +16,7 @@ import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
 import { showMessage } from "react-native-flash-message";
 import { LocalizationContext } from "../../../language/LocalizationContext";
 import { saveCategoryOffers, saveForAllOffers, saveMyOffer } from "../../../store/reducers/OfferSlice";
+import { resolveMessage } from "../../../language/helpers";
 
 export default Favourite = (props) => {
     const { appLanguage, LocalizedStrings } = React.useContext(LocalizationContext);
@@ -70,7 +71,7 @@ export default Favourite = (props) => {
         const onSuccess = async (response) => {
             setIsLoading(false);
             console.log('response favourite===', response);
-            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' })
+            showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: 'success' })
 
             if (myOffer && myOffer.length > 0) {
                 const newCustomeArray = await myOffer.map((item) => {
@@ -115,7 +116,7 @@ export default Favourite = (props) => {
             setIsLoading(false);
             console.log('Is Favoirte Error favourite===', error);
 
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' })
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;

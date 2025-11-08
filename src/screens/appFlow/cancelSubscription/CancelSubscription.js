@@ -30,6 +30,7 @@ import {showMessage} from 'react-native-flash-message';
 import {Loader} from '../../../components/loader/Loader';
 import {useDispatch} from 'react-redux';
 import {updateUser} from '../../../store/reducers/userDataSlice';
+import {resolveMessage} from '../../../language/helpers';
 
 const CancelSubscription = props => {
   const {LocalizedStrings} = React.useContext(LocalizationContext);
@@ -71,7 +72,7 @@ const CancelSubscription = props => {
       getUserProfile();
       setIsLoading(false);
       setModalShow(true);
-      showMessage({message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.subscription_canceled, type: 'success'});
+      showMessage({message: resolveMessage(LocalizedStrings, response?.message, LocalizedStrings.subscription_canceled), type: 'success'});
 
       setTimeout(() => {
         setModalShow(false);
@@ -82,7 +83,7 @@ const CancelSubscription = props => {
     const onError = error => {
       setIsLoading(false);
       console.log('error while cancelSubscription====>', error);
-      showMessage({message: LocalizedStrings[error?.message] || error?.message, type: 'danger'});
+      showMessage({message: resolveMessage(LocalizedStrings, error?.message), type: 'danger'});
     };
 
     const method = Method.POST;

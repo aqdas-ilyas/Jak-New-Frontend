@@ -13,6 +13,7 @@ import { saveCategoryOffers, saveMyOffer } from "../../../store/reducers/OfferSl
 import { showMessage } from "react-native-flash-message";
 import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
 import { Input } from "../../../components/input";
+import { resolveMessage } from "../../../language/helpers";
 
 export default Offer = (props) => {
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
@@ -155,7 +156,7 @@ export default Offer = (props) => {
         const onSuccess = (response) => {
             setIsLoading(false);
             console.log('response favourite===', response);
-            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' })
+            showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: 'success' })
 
             if (myOffer && myOffer.length > 0) {
                 const newCustomeArray = myOffer.map((item) => {
@@ -193,7 +194,7 @@ export default Offer = (props) => {
         const onError = error => {
             setIsLoading(false);
             console.log('Error favourite===', error);
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message || LocalizedStrings.failed_to_update_favorite, type: 'danger' })
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message, LocalizedStrings.failed_to_update_favorite), type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;
@@ -470,7 +471,7 @@ export default Offer = (props) => {
                                                 {item.isAll ? (
                                                     <Text style={[
                                                         styles.bankText,
-                                                        { padding: wp(3), color: isSelected ? colors.primaryColor : colors.BlackSecondary }
+                                                        { paddingHorizontal: wp(3), paddingVertical: appLanguage == 'en' ? wp(3) : wp(1), color: isSelected ? colors.primaryColor : colors.BlackSecondary }
                                                     ]}>
                                                         {item.name}
                                                     </Text>

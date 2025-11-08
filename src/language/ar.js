@@ -556,5 +556,7 @@ export default {
   "Message": "رسالة",
   "Review the message details above": "راجع تفاصيل الرسالة أعلاه",
   "NEW MESSAGE FROM JAK APP": "رسالة جديدة من تطبيق JAK",
-  "MESSAGE:": "الرسالة:"
+  "MESSAGE:": "الرسالة:",
+  'Number': 'رقم',
+  'No Card Found!': 'لم يتم العثور على بطاقة!',
 };

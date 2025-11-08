@@ -22,6 +22,7 @@ import CountryInput from '../../../components/countryPicker/CountryPicker';
 import { isPossibleNumber } from 'libphonenumber-js';
 import { decodeJWT } from '../../../common/HelpingFunc';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import { resolveMessage } from '../../../language/helpers';
 
 const SignIn = props => {
   const dispatch = useDispatch();
@@ -84,7 +85,7 @@ const SignIn = props => {
       const onSuccess = response => {
         setIsLoading(false);
         console.log('res while login====>', response);
-        showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' });
+        showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: 'success' });
         dispatch(updateUser(response?.data));
         dispatch(
           setToken({
@@ -146,7 +147,7 @@ const SignIn = props => {
       const onError = error => {
         setIsLoading(false);
         console.log('error while login====>', error);
-        showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' });
+        showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' });
 
         if (error?.errorType == 'number-not-verify') {
           props.navigation.navigate(routes.otp, {
@@ -498,7 +499,7 @@ const SignIn = props => {
     const onSuccess = response => {
       setIsLoading(false);
       console.log('res while handleSociallogin====>', response);
-      showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' });
+      showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: 'success' });
       dispatch(updateUser(response?.data));
       dispatch(
         setToken({
@@ -564,7 +565,7 @@ const SignIn = props => {
     const onError = error => {
       setIsLoading(false);
       console.log('error while handleSociallogin====>', error);
-      showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' });
+      showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' });
 
       if (error?.errorType == 'email-not-verify') {
         props.navigation.navigate(routes.otp, {

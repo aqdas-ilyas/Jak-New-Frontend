@@ -52,6 +52,7 @@ import {
   saveTotalMyOfferPagesCount,
 } from '../../../store/reducers/OfferSlice';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { resolveMessage } from '../../../language/helpers';
 
 export default Setting = props => {
   const dispatch = useDispatch();
@@ -292,35 +293,37 @@ export default Setting = props => {
     const onSuccess = response => {
       setIsLoading(false);
       console.log('response _logout===', response);
-      showMessage({ message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.logged_out_successfully, type: 'success' });
-
-      props.navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: routes.auth, params: { screen: routes.welcome } }],
-        })
-      );
+      showMessage({ message: resolveMessage(LocalizedStrings, response?.message, LocalizedStrings.logged_out_successfully), type: 'success' });
 
       setTimeout(async () => {
-        dispatch(logout());
-        await GoogleSignin.revokeAccess();
-        await GoogleSignin.signOut();
-        dispatch(saveFavourite(null));
-        dispatch(saveMyOffer(null));
-        dispatch(saveForAllOffers(null));
-        dispatch(saveMyOfferPageNo(1));
-        dispatch(saveTotalMyOfferPagesCount(1));
-        dispatch(saveCategoryOffers(null));
-        dispatch(saveSearchOfferArray(null));
-        dispatch(saveTotalCategoryMyOfferPagesCount(1));
-        dispatch(saveCategoryMyOfferPageNo(1));
+        props.navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: routes.auth, params: { screen: routes.welcome } }],
+          })
+        );
+
+        setTimeout(async () => {
+          dispatch(logout());
+          await GoogleSignin.revokeAccess();
+          await GoogleSignin.signOut();
+          dispatch(saveFavourite(null));
+          dispatch(saveMyOffer(null));
+          dispatch(saveForAllOffers(null));
+          dispatch(saveMyOfferPageNo(1));
+          dispatch(saveTotalMyOfferPagesCount(1));
+          dispatch(saveCategoryOffers(null));
+          dispatch(saveSearchOfferArray(null));
+          dispatch(saveTotalCategoryMyOfferPagesCount(1));
+          dispatch(saveCategoryMyOfferPageNo(1));
+        }, 1000);
       }, 1000);
     };
 
     const onError = error => {
       setIsLoading(false);
       console.log('Error _logout===', error);
-      showMessage({ message: LocalizedStrings[error?.message] || error?.message || LocalizedStrings.logout_failed, type: 'danger' });
+      showMessage({ message: resolveMessage(LocalizedStrings, error?.message, LocalizedStrings.logout_failed), type: 'danger' });
     };
     const endPoint = routs.logout;
     const method = Method.POST;
@@ -328,7 +331,7 @@ export default Setting = props => {
       device: { id: getDeviceId(), deviceToken: 'fcmToken' },
     };
 
-    setIsLoading(true);
+    // setIsLoading(true);
     callApi(method, endPoint, bodyParams, onSuccess, onError);
   };
 

@@ -13,6 +13,7 @@ import { getDeviceId } from 'react-native-device-info'
 import routs from '../../../api/routs'
 import { callApi, Method } from '../../../api/apiCaller'
 import { Loader } from '../../../components/loader/Loader'
+import { resolveMessage } from '../../../language/helpers';
 
 const ResetPassword = (props) => {
     const { number, otp } = props?.route?.params ?? {}
@@ -49,7 +50,7 @@ const ResetPassword = (props) => {
             const onSuccess = response => {
                 console.log('res while login====>', response);
                 setIsLoading(false)
-                showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success", });
+                showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: "success", });
                 setModalShow(true)
 
                 setTimeout(() => {
@@ -61,7 +62,7 @@ const ResetPassword = (props) => {
             const onError = error => {
                 setIsLoading(false)
                 console.log('error while login====>', error.message);
-                showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger", });
+                showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger", });
             };
 
             const method = Method.PATCH;

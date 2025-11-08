@@ -55,7 +55,7 @@ const AddLoyaltyCard = (props) => {
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(item, index) => item?._id || item?.id || index.toString()}
                 ListEmptyComponent={
-                    <Text style={styles.imageText}>No Card Found!</Text>
+                    <Text style={styles.imageText}>{LocalizedStrings['No Card Found!']}</Text>
                 }
                 renderItem={({ item, index }) => {
                     const imageKey = item?._id || item?.id || index.toString();

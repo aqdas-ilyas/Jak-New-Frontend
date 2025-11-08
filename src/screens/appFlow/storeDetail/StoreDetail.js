@@ -21,6 +21,7 @@ import routs from "../../../api/routs";
 import { callApi, Method } from "../../../api/apiCaller";
 import { Loader } from "../../../components/loader/Loader";
 import { saveCategoryOffers, saveForAllOffers, saveMyOffer, saveSearchOfferArray } from "../../../store/reducers/OfferSlice";
+import { resolveMessage } from "../../../language/helpers";
 
 // const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
 // const GEOCODING_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
@@ -101,7 +102,7 @@ export default StoreDetailList = (props) => {
         const onSuccess = async (response) => {
             setIsLoading(false);
             console.log('response favourite===', response);
-            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' })
+            showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: 'success' })
 
             setIsLiked(!isLiked)
 
@@ -161,7 +162,7 @@ export default StoreDetailList = (props) => {
             setIsLoading(false);
             console.log('Error favourite===', error);
 
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' })
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;

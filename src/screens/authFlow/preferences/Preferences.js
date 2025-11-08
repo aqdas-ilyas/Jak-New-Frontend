@@ -17,6 +17,7 @@ import { getDeviceId } from 'react-native-device-info'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from '../../../store/reducers/userDataSlice'
 import CheckBox from '@react-native-community/checkbox';
+import { resolveMessage } from '../../../language/helpers';
 
 const Preferences = (props) => {
     const dispatch = useDispatch()
@@ -99,7 +100,11 @@ const Preferences = (props) => {
         const onSuccess = response => {
             setIsLoading(false)
             console.log('res while createPreference====>', response);
-            props?.route?.params?.key === 'settings' ? showMessage({ message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.preferences_updated, type: "success" }) : showMessage({ message: LocalizedStrings[response?.message] || response?.message || LocalizedStrings.preferences_created, type: "success" })
+            const fallbackMessage = props?.route?.params?.key === 'settings'
+                ? LocalizedStrings.preferences_updated
+                : LocalizedStrings.preferences_created;
+
+            showMessage({ message: resolveMessage(LocalizedStrings, response?.message, fallbackMessage), type: "success" })
             props?.route?.params?.key === 'settings' ? null : setModalShow(true)
 
             dispatch(updateUser(response?.data))
@@ -131,7 +136,7 @@ const Preferences = (props) => {
         const onError = error => {
             setIsLoading(false)
             console.log('error while createPreference====>', error);
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger" });
         };
 
         const endPoint = routs.createPreferences

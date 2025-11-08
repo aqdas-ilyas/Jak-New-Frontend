@@ -61,7 +61,7 @@ const CountryInput = (props) => {
                 defaultCode={'SA'} // Set default country code
                 value={''} // Set current phone number value
                 layout={props.layout}
-                placeholder='Number'
+                placeholder={LocalizedStrings['Number']}
                 disabled={props.disabled}
                 textInputProps={{
                     placeholderTextColor: colors.grey,

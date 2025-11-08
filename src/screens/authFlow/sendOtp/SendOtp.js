@@ -15,6 +15,7 @@ import { Loader } from '../../../components/loader/Loader'
 import { getDeviceId } from 'react-native-device-info'
 import { useDispatch } from 'react-redux'
 import { updateUser, setToken } from '../../../store/reducers/userDataSlice'
+import { resolveMessage } from '../../../language/helpers';
 
 const SendOtp = (props) => {
     const { number, email, key } = props?.route?.params ?? {}
@@ -63,7 +64,7 @@ const SendOtp = (props) => {
             const onError = error => {
                 console.log('error while verifyOTP====>', error.message);
                 setIsLoading(false)
-                showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger", });
+                showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger", });
             };
 
             const method = Method.POST;
@@ -96,12 +97,12 @@ const SendOtp = (props) => {
             setIsLoading(false)
             setCountDown(60);
             setOtpValue("")
-            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success", });
+            showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: "success", });
         };
         const onError = error => {
             setIsLoading(false)
             console.log('error while ResendOTP====>', error.message);
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger" });
         };
         const method = Method.POST;
         const endPoint = key !== 'forget' ? routs.sendOTP : routs.forgetPassword

@@ -14,6 +14,7 @@ import routs from '../../../api/routs'
 import { _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods'
 import CountryInput from '../../../components/countryPicker/CountryPicker'
 import { isPossibleNumber } from 'libphonenumber-js'
+import { resolveMessage } from '../../../language/helpers';
 
 const ForgetPassword = (props) => {
     const { appLanguage, LocalizedStrings } = useContext(LocalizationContext);
@@ -49,14 +50,14 @@ const ForgetPassword = (props) => {
             const onSuccess = response => {
                 console.log('res while validateEmail====>', response);
                 setIsLoading(false)
-                showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success" });
+                showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: "success" });
 
                 props.navigation.navigate(routes.otp, { number: `${countryCode + phoneNumber}`, key: 'forget', })
             };
             const onError = error => {
                 setIsLoading(false)
                 console.log('error while validateEmail====>', error.message);
-                showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
+                showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger" });
             };
             const method = Method.POST;
             const endPoint = routs.forgetPassword

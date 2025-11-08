@@ -22,6 +22,7 @@ import { showMessage } from 'react-native-flash-message';
 import { getDeviceId } from 'react-native-device-info';
 import { _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
 import { CodeField, Cursor } from "react-native-confirmation-code-field";
+import { resolveMessage } from '../../../language/helpers';
 
 const CreateProfile = (props) => {
     const { number, email } = props?.route?.params ?? {}
@@ -237,7 +238,7 @@ const CreateProfile = (props) => {
         const onError = error => {
             setIsLoading(false);
             console.log('error while UpdateProfile====>', error);
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' })
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' })
         };
 
         const method = Method.POST;
@@ -315,7 +316,7 @@ const CreateProfile = (props) => {
             setIsResendingOTP(false)
             setIsLoading(false)
             console.log('error while sendOTP====>', error.message);
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger" });
         };
         const method = Method.POST;
         const endPoint = routs.verifyNumber
@@ -373,7 +374,7 @@ const CreateProfile = (props) => {
             console.log('error while verifyOTP====>', error.message);
             setIsVerifyingOTP(false)
             setIsLoading(false)
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger", });
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger", });
         };
 
         const method = Method.POST;

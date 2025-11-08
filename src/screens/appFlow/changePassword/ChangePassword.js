@@ -11,6 +11,7 @@ import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
 import { getDeviceId } from 'react-native-device-info'
 import { Loader } from '../../../components/loader/Loader'
+import { resolveMessage } from '../../../language/helpers';
 
 const ChangePassword = (props) => {
     const { appLanguage, LocalizedStrings, setAppLanguage } = React.useContext(LocalizationContext);
@@ -52,13 +53,13 @@ const ChangePassword = (props) => {
             const onSuccess = response => {
                 console.log('res while changePassword====>', response);
                 setIsLoading(false)
-                showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success", });
+                showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: "success", });
             };
 
             const onError = error => {
                 setIsLoading(false)
                 console.log('error while changePassword====>', error);
-                showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger", });
+                showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger", });
             };
 
             const method = Method.PATCH;

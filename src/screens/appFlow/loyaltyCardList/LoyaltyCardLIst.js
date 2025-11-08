@@ -59,7 +59,7 @@ const LoyalyCardList = (props) => {
                 showsVerticalScrollIndicator={false}
                 keyExtractor={item => item.id}
                 ListEmptyComponent={
-                    <Text style={styles.imageText}>No Card Found!</Text>
+                    <Text style={styles.imageText}>{LocalizedStrings['No Card Found!']}</Text>
                 }
                 renderItem={({ item, index }) => {
                     return (

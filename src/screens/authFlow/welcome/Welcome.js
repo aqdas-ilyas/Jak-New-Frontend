@@ -20,6 +20,7 @@ import { showMessage } from 'react-native-flash-message'
 import { useFocusEffect } from '@react-navigation/native'
 import appleAuth from '@invertase/react-native-apple-authentication'
 import { decodeJWT } from '../../../common/HelpingFunc'
+import { resolveMessage } from '../../../language/helpers';
 
 const Welcome = (props) => {
     const dispatch = useDispatch()
@@ -87,7 +88,7 @@ const Welcome = (props) => {
         const onSuccess = response => {
             setIsLoading(false)
             console.log('res while handleSociallogin====>', response);
-            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: "success" });
+            showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: "success" });
             dispatch(updateUser(response?.data))
             dispatch(setToken({
                 token: response?.data?.token,
@@ -145,7 +146,7 @@ const Welcome = (props) => {
         const onError = error => {
             setIsLoading(false)
             console.log('error while handleSociallogin====>', error);
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: "danger" });
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: "danger" });
 
             if (error?.errorType == 'email-not-verify') {
                 props.navigation.navigate(routes.otp, { email: user?.email.toLowerCase(), key: 'auth' })

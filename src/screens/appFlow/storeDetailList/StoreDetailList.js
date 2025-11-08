@@ -16,6 +16,7 @@ import { callApi, Method } from "../../../api/apiCaller";
 import { Loader } from "../../../components/loader/Loader";
 import { saveCategoryMyOfferPageNo, saveCategoryOffers, saveMyOffer, saveTotalCategoryMyOfferPagesCount } from "../../../store/reducers/OfferSlice";
 import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
+import { resolveMessage } from "../../../language/helpers";
 
 export default StoreDetailList = (props) => {
     const { item, category } = props?.route?.params
@@ -129,7 +130,7 @@ export default StoreDetailList = (props) => {
         const onSuccess = async (response) => {
             setIsLoading(false);
             console.log('response favourite===', response);
-            showMessage({ message: LocalizedStrings[response?.message] || response?.message, type: 'success' })
+            showMessage({ message: resolveMessage(LocalizedStrings, response?.message), type: 'success' })
 
             if (myOffer && myOffer.length > 0) {
                 const newCustomeArray = await myOffer.map((item) => {
@@ -175,7 +176,7 @@ export default StoreDetailList = (props) => {
             setIsLoading(false);
             console.log('Error favourite===', error);
 
-            showMessage({ message: LocalizedStrings[error?.message] || error?.message, type: 'danger' })
+            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;
