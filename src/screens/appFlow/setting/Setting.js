@@ -10,7 +10,6 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
-  I18nManager,
   ActivityIndicator,
   StatusBar,
 } from 'react-native';
@@ -29,7 +28,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import LogoHeader from '../../../components/logoHeader/LogoHeader';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { LocalizationContext } from '../../../language/LocalizationContext';
-import RNRestart from 'react-native-restart'; // Import package from node modules
+import { useRTL } from '../../../language/useRTL';
 import { logout, updateUser, saveBiometricEnabled } from '../../../store/reducers/userDataSlice';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { useDispatch, useSelector } from 'react-redux';
@@ -60,11 +59,12 @@ export default Setting = props => {
   const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false);
   const { appLanguage, LocalizedStrings, setAppLanguage } =
     React.useContext(LocalizationContext);
+  const { isRTL, rtlStyles } = useRTL();
   const [subscriptionObj, setSubscriptionObj] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const [toggle, setToggle] = useState(user?.isNotification);
-  const [language, setLanguage] = useState(appLanguage === 'ar' ? true : false);
+  const [language, setLanguage] = useState(isRTL);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
 
@@ -335,6 +335,10 @@ export default Setting = props => {
     callApi(method, endPoint, bodyParams, onSuccess, onError);
   };
 
+  useEffect(() => {
+    setLanguage(isRTL);
+  }, [isRTL]);
+
   const onChangeLng = async lng => {
     dispatch(saveFavourite(null));
     dispatch(saveMyOffer(null));
@@ -346,19 +350,8 @@ export default Setting = props => {
     dispatch(saveTotalCategoryMyOfferPagesCount(1));
     dispatch(saveCategoryMyOfferPageNo(1));
 
-    setLanguage(lng);
-    if (lng === 'en') {
-      I18nManager.forceRTL(false);
-      setAppLanguage(lng);
-      RNRestart.Restart();
-      return;
-    }
-    if (lng === 'ar') {
-      I18nManager.forceRTL(true);
-      setAppLanguage(lng);
-      RNRestart.Restart();
-      return;
-    }
+    setLanguage(lng === 'ar');
+    setAppLanguage(lng);
   };
 
   const UpdateProfile = e => {
@@ -423,7 +416,7 @@ export default Setting = props => {
           <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>
             {user && Object.values(user).length > 0 && user?.name}
           </Text>
-          <Text style={styles.mainDes}>
+          <Text style={[styles.mainDes]}>
             {user && Object.values(user).length > 0 && user?.email
               ? user?.email
               : `+${user?.number}`}
@@ -464,14 +457,12 @@ export default Setting = props => {
             ) : (
               <View style={{ marginLeft: wp(3), alignItems: 'flex-start' }}>
                 <Text
-                  style={[
-                    {
-                      fontSize: hp(2),
-                      fontFamily: fontFamily.UrbanistSemiBold,
-                      color: colors.BlackSecondary,
-                      textAlign: 'left',
-                    },
-                  ]}>
+                  style={{
+                    fontSize: hp(2),
+                    fontFamily: fontFamily.UrbanistSemiBold,
+                    color: colors.BlackSecondary,
+                    textAlign: isRTL ? 'right' : 'left',
+                  }}>
                   Not Subscribed Yet!
                 </Text>
               </View>
@@ -498,20 +489,19 @@ export default Setting = props => {
                   onPress={item.onpress}
                   style={[
                     appStyles.rowBtw,
+                    rtlStyles.rowBetween,
                     { marginTop: index > 0 ? wp(6) : wp(3) },
                   ]}>
-                  <Text style={[styles.mainText]}>
+                  <Text style={[styles.mainText, rtlStyles.textAlign, rtlStyles.writingDirection]}>
                     {`${item.name}`}
                     <Text
                       style={{
-                        fontFamily:
-                          appLanguage == 'en'
-                            ? fontFamily.UrbanistBold
-                            : fontFamily.UrbanistMedium,
-                        color:
-                          appLanguage == 'en'
-                            ? colors.primaryColor
-                            : colors.descriptionColor,
+                        fontFamily: !isRTL
+                          ? fontFamily.UrbanistBold
+                          : fontFamily.UrbanistMedium,
+                        color: !isRTL
+                          ? colors.primaryColor
+                          : colors.descriptionColor,
                       }}>
                       {item.name == LocalizedStrings.change_language ? ' (En' : ''}
                     </Text>
@@ -524,14 +514,12 @@ export default Setting = props => {
                     </Text>
                     <Text
                       style={{
-                        fontFamily:
-                          appLanguage == 'ar'
-                            ? fontFamily.UrbanistBold
-                            : fontFamily.UrbanistMedium,
-                        color:
-                          appLanguage == 'ar'
-                            ? colors.primaryColor
-                            : colors.descriptionColor,
+                        fontFamily: isRTL
+                          ? fontFamily.UrbanistBold
+                          : fontFamily.UrbanistMedium,
+                        color: isRTL
+                          ? colors.primaryColor
+                          : colors.descriptionColor,
                       }}>
                       {item.name == LocalizedStrings.change_language ? 'Ar) ' : ''}
                     </Text>
@@ -557,7 +545,7 @@ export default Setting = props => {
                     />
                   ) : (
                     <AntDesign
-                      name={appLanguage == 'en' ? 'right' : 'left'}
+                      name={!isRTL ? 'right' : 'left'}
                       color={colors.BlackSecondary}
                       size={wp(4)}
                     />
@@ -569,12 +557,12 @@ export default Setting = props => {
 
           {/* Biometric Authentication Section */}
           {biometricAvailable && (
-            <View style={styles.biometricSection}>
-              <View style={styles.biometricTextContainer}>
-                <Text style={styles.biometricTitle}>
+            <View style={[styles.biometricSection, rtlStyles.rowBetween]}>
+              <View style={[styles.biometricTextContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+                <Text style={[styles.biometricTitle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
                   🔐 {LocalizedStrings.biometric_login || 'Biometric Login'}
                 </Text>
-                <Text style={styles.biometricDescription}>
+                <Text style={[styles.biometricDescription, rtlStyles.textAlign, rtlStyles.writingDirection]}>
                   {LocalizedStrings.biometric_description || 'Use your fingerprint or face to quickly and securely access your account'}
                 </Text>
               </View>
@@ -629,13 +617,11 @@ const styles = StyleSheet.create({
     fontSize: hp(1.6),
     fontFamily: fontFamily.UrbanistSemiBold,
     color: colors.BlackSecondary,
-    textAlign: 'left',
   },
   packageText: {
     fontSize: hp(1.6),
     fontFamily: fontFamily.UrbanistSemiBold,
     color: colors.descriptionColor,
-    textAlign: 'left',
   },
   imageContainer: {
     alignSelf: 'center',
@@ -677,7 +663,6 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistMedium,
     color: colors.BlackSecondary,
     lineHeight: 24,
-    textAlign: 'left',
   },
   dotComponentActiveStyle: {
     width: wp(5),
@@ -694,8 +679,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   biometricSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: hp(2.5),
     paddingTop: hp(2),
@@ -703,7 +686,6 @@ const styles = StyleSheet.create({
     borderTopColor: colors.borderColor,
   },
   biometricLeftSection: {
-    flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },

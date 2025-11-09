@@ -5,6 +5,7 @@ import appStyles from '../../../services/utilities/appStyles'
 import Header from '../../../components/header'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { LocalizationContext } from '../../../language/LocalizationContext'
+import { useRTL } from '../../../language/useRTL';
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
 import { Loader } from '../../../components/loader/Loader'
@@ -15,6 +16,7 @@ import CallModal from '../../../components/modal'
 
 const Subscription = (props) => {
     const { appLanguage, LocalizedStrings } = React.useContext(LocalizationContext);
+    const { isRTL } = useRTL();
     const dispatch = useDispatch()
     const user = useSelector(state => state.user.user.user)
 
@@ -111,8 +113,8 @@ const Subscription = (props) => {
                         return (
                             <View key={index}>
                                 <TouchableOpacity activeOpacity={0.9} onPress={() => CreateSubscriptions(item)} style={styles.Item}>
-                                    <Text style={[styles.mainDes, { marginTop: wp(5) }]}>{item.type == 'Jak Mobile App Free' ? LocalizedStrings['Free Version'] : item.type == 'Jak Mobile App Premium' ? LocalizedStrings['Plus Version'] : LocalizedStrings['Premium Version']}</Text>
-                                    <Text style={styles.mainTitle}>{item.price == 0 ? LocalizedStrings['Free'] : `$${item?.price}`} {appLanguage === 'ar' ? 'ريال' : 'SAR'} {item.price > 0 && <Text style={styles.Duration}> / {item.duration}</Text>} </Text>
+                                    <Text style={[styles.mainDes, { marginTop: wp(5), textAlign: isRTL ? 'right' : 'left' }]}>{item.type == 'Jak Mobile App Free' ? LocalizedStrings['Free Version'] : item.type == 'Jak Mobile App Premium' ? LocalizedStrings['Plus Version'] : LocalizedStrings['Premium Version']}</Text>
+                                    <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{item.price == 0 ? LocalizedStrings['Free'] : `$${item?.price}`} {appLanguage === 'ar' ? 'ريال' : 'SAR'} {item.price > 0 && <Text style={styles.Duration}> / {item.duration}</Text>} </Text>
                                     <View style={styles.line} />
                                     <FlatList
                                         data={index == 0 ? list : index == 1 ? list1 : list2}
@@ -120,9 +122,9 @@ const Subscription = (props) => {
                                         keyExtractor={item => item.id}
                                         renderItem={({ item, index }) => {
                                             return (
-                                                <View key={index} style={{ flexDirection: "row", marginTop: wp(5), alignItems: "center", marginHorizontal: wp(5) }}>
+                                                <View key={index} style={{ flexDirection: isRTL ? 'row-reverse' : "row", marginTop: wp(5), alignItems: "center", marginHorizontal: wp(5) }}>
                                                     <AntDesign name='check' size={wp(5)} color={colors.BlackSecondary} />
-                                                    <Text style={[styles.mainDes, { marginHorizontal: wp(5) }]}>{item.desc}</Text>
+                                                    <Text style={[styles.mainDes, { marginHorizontal: wp(5), textAlign: isRTL ? 'right' : 'left' }]}>{item.desc}</Text>
                                                 </View>
                                             )
                                         }}

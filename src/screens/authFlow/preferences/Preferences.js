@@ -8,6 +8,7 @@ import Header from '../../../components/header'
 import { Input } from '../../../components/input'
 import CallModal from '../../../components/modal'
 import { LocalizationContext } from '../../../language/LocalizationContext'
+import { useRTL } from '../../../language/useRTL';
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect from React Navigation
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
@@ -23,6 +24,7 @@ const Preferences = (props) => {
     const dispatch = useDispatch()
     const user = useSelector(state => state.user.user.user)
     const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const { isRTL } = useRTL();
 
     const [employeeArray, setEmployeeArray] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -175,14 +177,13 @@ const Preferences = (props) => {
         const isSelected = selectedItems.includes(item._id);
         return (
             <View key={item._id}>
-                <TouchableOpacity activeOpacity={0.9} onPress={() => handleToggle(item)} style={styles.Item}>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <Image source={{ uri: item.image }} style={styles.Icon} />
-                        <Text style={[styles.mainDes]}>{item.name}</Text>
+                <TouchableOpacity activeOpacity={0.9} onPress={() => handleToggle(item)} style={[styles.Item, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                    <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: "center" }}>
+                        <Image source={{ uri: item.image }} style={[styles.Icon, { marginLeft: isRTL ? wp(2) : 0, marginRight: isRTL ? 0 : wp(2) }]} />
+                        <Text style={[styles.mainDes, { marginLeft: isRTL ? 0 : wp(4), marginRight: isRTL ? wp(4) : 0, textAlign: isRTL ? 'right' : 'left' }]}>{item.name}</Text>
                     </View>
                     <CheckBox
                         value={isSelected}
-                        // onValueChange={() => handleToggle(item)}
                         boxType='square'
                         onFillColor={colors.primaryColor}
                         onCheckColor='white'
@@ -207,12 +208,12 @@ const Preferences = (props) => {
             />
 
             <ScrollView style={{ flex: 1 }}>
-                <Text style={styles.mainTitle}>{LocalizedStrings.PreferenceDes}</Text>
+                <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.PreferenceDes}</Text>
                 <FlatList
                     data={employeeArray}
                     keyExtractor={(item) => item.name}
                     ListHeaderComponent={
-                        <Text style={[styles.titleStyle, { marginBottom: wp(2) }]}>{LocalizedStrings.select_your_bank}</Text>
+                        <Text style={[styles.titleStyle, { marginBottom: wp(2), textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.select_your_bank}</Text>
                     }
                     nestedScrollEnabled
                     showsVerticalScrollIndicator={false}
@@ -257,7 +258,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         marginTop: wp(5),
-        flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         padding: wp(3)
@@ -299,5 +299,6 @@ const styles = StyleSheet.create({
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
+        textAlign: 'left'
     },
 })

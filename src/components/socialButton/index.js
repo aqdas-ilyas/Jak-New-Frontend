@@ -1,10 +1,12 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import { appIcons, colors, fontFamily, hp, wp } from '../../services'
+import { colors, fontFamily, hp, wp } from '../../services'
 import appStyles from '../../services/utilities/appStyles'
+import { useRTL } from '../../language/useRTL';
 
 const SocialButton = props => {
     const { style, disable, containerStyle, onPress, imgSrc } = props
+    const { rtlStyles, isRTL } = useRTL();
 
     return (
         <View style={[appStyles.mb15]}>
@@ -18,9 +20,15 @@ const SocialButton = props => {
                         borderColor: colors.borderColor
                     }}
                 onPress={onPress}>
-                <Image source={imgSrc} style={styles.Icon} />
+                <Image
+                    source={imgSrc}
+                    style={[
+                        styles.Icon,
+                        { [isRTL ? 'right' : 'left']: wp(3) }
+                    ]}
+                />
                 <View>
-                    <Text style={{ ...styles.label, ...style, color: colors.BlackSecondary }}>
+                    <Text style={{ ...styles.label, ...style, ...rtlStyles.writingDirection, color: colors.BlackSecondary, textAlign: 'center' }}>
                         {props.children}
                     </Text>
                 </View>
@@ -47,7 +55,6 @@ const styles = StyleSheet.create({
         width: hp(3),
         height: hp(3),
         position: "absolute",
-        left: wp(3)
     }
 })
 

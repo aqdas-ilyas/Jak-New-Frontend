@@ -1,27 +1,38 @@
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { appIcons, appImages, colors, fontFamily, hp, routes, wp } from '../../services'
-import { useNavigation } from '@react-navigation/native'
+import React from 'react';
+import { Image, Platform, StyleSheet, View } from 'react-native';
+import { appIcons, wp } from '../../services';
+import { useRTL } from '../../language/useRTL';
 
 export default function LogoHeader() {
-    const navigation = useNavigation()
+    const { isRTL } = useRTL();
+
     return (
-        <View style={{ paddingTop: Platform.OS == 'android' ? wp(10) : 0, marginTop: -wp(2), flexDirection: "row", justifyContent: 'space-between', alignItems: "center" }}>
-            <Image source={appIcons.appLogo} style={styles.logo} />
-            {/* <TouchableOpacity onPress={() => navigation.navigate(routes.notification)}>
-                <Image source={appIcons.notification} style={styles.right} />
-            </TouchableOpacity> */}
+        <View
+            style={[
+                styles.container,
+                {
+                    flexDirection: isRTL ? 'row-reverse' : 'row',
+                    alignSelf: isRTL ? 'flex-end' : 'flex-start'
+                }
+            ]}>
+            <Image
+                source={appIcons.appLogo}
+                style={[styles.logo, { marginLeft: isRTL ? wp(2) : 0, marginRight: isRTL ? 0 : wp(2) }]}
+            />
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        paddingTop: Platform.OS === 'android' ? wp(10) : 0,
+        marginTop: -wp(2),
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
     logo: {
         width: wp(20),
         height: wp(15),
+        resizeMode: 'contain',
     },
-    right: {
-        width: wp(8),
-        height: wp(8),
-    },
-})
+});

@@ -11,12 +11,13 @@ import Button from "../../../components/button";
 import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 import { LocalizationContext } from "../../../language/LocalizationContext";
+import { useRTL } from '../../../language/useRTL';
 import { useDispatch, useSelector } from "react-redux";
 import { isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js'
 import { _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
 import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
-import { setToken, updateUser } from '../../../store/reducers/userDataSlice';
+import { updateUser } from '../../../store/reducers/userDataSlice';
 import { getDeviceId } from 'react-native-device-info';
 import { Loader } from '../../../components/loader/Loader';
 import { showMessage } from 'react-native-flash-message';
@@ -26,6 +27,7 @@ export default EditProfile = (props) => {
     const dispatch = useDispatch()
     const user = useSelector(state => state.user.user.user)
     const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const { isRTL } = useRTL();
     const genderArray = [
         { id: 1, title: LocalizedStrings.Male },
         { id: 2, title: LocalizedStrings.Female },
@@ -244,7 +246,7 @@ export default EditProfile = (props) => {
                     contentContainerStyle={{ paddingBottom: hp(10) }}
                 >
                     <View style={{ marginVertical: wp(5) }}>
-                        <View style={styles.imageTopView}>
+                        <View style={[styles.imageTopView]}>
                             <View style={styles.imageView}>
                                 <Image
                                     source={Object.keys(image).length !== 0 ? image : appImages.profile1}
@@ -297,11 +299,18 @@ export default EditProfile = (props) => {
                                             countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'}
                                             setValue={setPhoneNumber}
                                             setSelectedCode={setCountryCode}
-                                            layout={'first'}
+                                            layout={'second'}
                                         />
                                         {
                                             user?.isNumberVerified && (
-                                                <View style={[appStyles.rowStart, { position: 'absolute', right: wp(0), top: wp(3) }]}>
+                                                <View style={[
+                                                    {
+                                                        flexDirection: isRTL ? 'row-reverse' : 'row',
+                                                        position: 'absolute',
+                                                        [isRTL ? 'left' : 'right']: wp(0),
+                                                        top: wp(3)
+                                                    }
+                                                ]}>
                                                     <View style={[styles.verifyButton, styles.verifiedButton]}>
                                                         <Text style={[styles.verifyButtonText, styles.verifiedButtonText]}>
                                                             {`✓ ${LocalizedStrings.verified}`}
@@ -331,12 +340,12 @@ export default EditProfile = (props) => {
                                 data={genderArray}
                                 keyExtractor={(_, index) => index.toString()}
                                 ListHeaderComponent={
-                                    <Text style={[styles.headerText]}>{LocalizedStrings.gender}</Text>
+                                    <Text style={[styles.headerText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.gender}</Text>
                                 }
                                 renderItem={({ item, index }) => {
                                     return (
-                                        <Pressable key={index} onPress={() => setGender(item.id)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: wp(3) }}>
-                                            <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginRight: wp(3) }]}>
+                                        <Pressable key={index} onPress={() => setGender(item.id)} style={{ flexDirection: isRTL ? 'row-reverse' : "row", alignItems: "center", paddingVertical: wp(3) }}>
+                                            <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginRight: isRTL ? 0 : wp(3), marginLeft: isRTL ? wp(3) : 0 }]}>
                                                 <View style={[styles.dotComponentStyle, { backgroundColor: gender == item.id ? colors.primaryColor : 'transparent' }]} />
                                             </View>
                                             <Text style={styles.mainDes}>{item.title}</Text>
@@ -394,7 +403,8 @@ const styles = StyleSheet.create({
     imageTopView: {
         marginTop: heightPixel(4),
         alignSelf: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: "center"
     },
     imageView: {
         width: wp(25),

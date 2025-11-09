@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Alert, BackHandler, Platform, I18nManager } from 'react-native'
+import { View, Text, Image, StyleSheet, SafeAreaView, StatusBar, TouchableOpacity, Alert, BackHandler, Platform } from 'react-native'
 import { colors, hp, fontFamily, wp, routes } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
 import Button from '../../../components/button';
 import SocialButton from '../../../components/socialButton'
 import { LocalizationContext } from '../../../language/LocalizationContext'
-import RNRestart from 'react-native-restart'; // Import package from node modules
+import { useRTL } from '../../../language/useRTL';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin'
 import { googleLoginData } from '../../../services/helpingMethods'
@@ -26,24 +26,17 @@ const Welcome = (props) => {
     const dispatch = useDispatch()
     const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false);
     const { appLanguage, LocalizedStrings, setAppLanguage } = useContext(LocalizationContext);
+    const { rtlStyles, isRTL } = useRTL();
     const [isLoading, setIsLoading] = useState(false)
 
     // Language Change
-    const [language, setLanguage] = useState(appLanguage === 'ar' ? true : false);
+    const [language, setLanguage] = useState(appLanguage === 'ar');
+    useEffect(() => {
+        setLanguage(appLanguage === 'ar');
+    }, [appLanguage]);
     const onChangeLng = async lng => {
-        setLanguage(lng);
-        if (lng === 'en') {
-            setAppLanguage(lng);
-            I18nManager.forceRTL(false);
-            RNRestart.Restart();
-            return;
-        }
-        if (lng === 'ar') {
-            setAppLanguage(lng);
-            I18nManager.forceRTL(true);
-            RNRestart.Restart();
-            return;
-        }
+        setLanguage(lng === 'ar');
+        setAppLanguage(lng);
     };
 
     useFocusEffect(() => {
@@ -218,7 +211,7 @@ const Welcome = (props) => {
     }
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { flex: 1, justifyContent: 'space-between' }]}>
+        <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { flex: 1, justifyContent: 'space-between' }]}>
             <Loader loading={isLoading} />
             <StatusBar translucent backgroundColor="transparent" barStyle={'dark-content'} />
 
@@ -251,10 +244,10 @@ const Welcome = (props) => {
                 <View style={[appStyles.ph20, appStyles.mb20]}>
                     <Button skip onPress={() => props.navigation.navigate(routes.register)}>{LocalizedStrings['Sign Up']}</Button>
                 </View>
-                <View style={appStyles.rowCenter}>
-                    <Text onPress={() => props.navigation.navigate(routes.privacyPolicy)} style={styles.bottomText}>{LocalizedStrings['Privacy Policy']}</Text>
+                <View style={[styles.linkRow, rtlStyles.row]}>
+                    <Text onPress={() => props.navigation.navigate(routes.privacyPolicy)} style={[styles.bottomText, rtlStyles.writingDirection]}>{LocalizedStrings['Privacy Policy']}</Text>
                     <View style={[{ backgroundColor: colors.descriptionColor, borderRadius: 50, padding: wp(0.5), marginHorizontal: wp(2) }]} />
-                    <Text onPress={() => props.navigation.navigate(routes.termsConditions)} style={styles.bottomText}>{LocalizedStrings['Terms of Service']}</Text>
+                    <Text onPress={() => props.navigation.navigate(routes.termsConditions)} style={[styles.bottomText, rtlStyles.writingDirection]}>{LocalizedStrings['Terms of Service']}</Text>
                 </View>
             </View>
 
@@ -317,6 +310,10 @@ const styles = StyleSheet.create({
     bottomSection: {
         width: '100%',
         paddingBottom: wp(3),
+    },
+    linkRow: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     imageLogo: {
         width: wp(60),

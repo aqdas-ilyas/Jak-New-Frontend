@@ -15,7 +15,7 @@ import { showMessage } from 'react-native-flash-message'
 
 export default function Splash(props) {
     const dispatch = useDispatch()
-    const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const { LocalizedStrings, isRTL } = React.useContext(LocalizationContext);
     const [isLoading, setIsLoading] = useState(true);
     const [apiCompleted, setApiCompleted] = useState(false);
     const [biometricChecked, setBiometricChecked] = useState(false);
@@ -256,10 +256,10 @@ export default function Splash(props) {
                     </View>
                 )} */}
 
-                <View style={styles.bottomContainer}>
-                    <Text style={styles.welcomeText}>{LocalizedStrings['Welcome to']}</Text>
-                    <Text style={styles.logoText}>{LocalizedStrings['Jak App']}</Text>
-                    <Text style={styles.promotionText}>{LocalizedStrings['Your one stop app for your promotions.']}</Text>
+                <View style={[styles.bottomContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+                    <Text style={[styles.welcomeText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Welcome to']}</Text>
+                    <Text style={[styles.logoText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Jak App']}</Text>
+                    <Text style={[styles.promotionText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Your one stop app for your promotions.']}</Text>
                 </View>
             </ImageBackground>
         </>

@@ -8,6 +8,7 @@ import Header from '../../../components/header'
 import { Input } from '../../../components/input'
 import CallModal from '../../../components/modal'
 import { LocalizationContext } from '../../../language/LocalizationContext'
+import { useRTL } from '../../../language/useRTL';
 import { showMessage } from 'react-native-flash-message'
 import { getDeviceId } from 'react-native-device-info'
 import routs from '../../../api/routs'
@@ -18,6 +19,7 @@ import { resolveMessage } from '../../../language/helpers';
 const ResetPassword = (props) => {
     const { number, otp } = props?.route?.params ?? {}
     const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const { isRTL } = useRTL();
 
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(true)
@@ -84,8 +86,8 @@ const ResetPassword = (props) => {
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} />
             <View style={{ flex: 1 }}>
-                <Text style={styles.mainTitle}>{LocalizedStrings['Secure Your Account']}</Text>
-                <Text style={styles.mainDes}>{LocalizedStrings.resetDesc}</Text>
+                <Text style={[styles.mainTitle, isRTL ? styles.textRight : styles.textLeft]}>{LocalizedStrings['Secure Your Account']}</Text>
+                <Text style={[styles.mainDes, isRTL ? styles.textRight : styles.textLeft]}>{LocalizedStrings.resetDesc}</Text>
                 <Input
                     placeholder={LocalizedStrings.password}
                     secureTextEntry={showPassword}
@@ -133,13 +135,17 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistBold,
         color: '#1D191C',
         marginTop: wp(5),
-        textAlign: 'left'
     },
     mainDes: {
         fontSize: hp(1.8),
         fontFamily: fontFamily.UrbanistRegular,
         color: colors.descriptionColor,
         marginTop: wp(5),
+    },
+    textLeft: {
         textAlign: 'left'
+    },
+    textRight: {
+        textAlign: 'right'
     },
 })

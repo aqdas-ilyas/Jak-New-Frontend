@@ -53,6 +53,7 @@ export default StoreDetailList = (props) => {
     const CategoriesOffers = useSelector(state => state.offer.CategoriesOffers)
     const searchOfferArray = useSelector(state => state.offer.searchOfferArray)
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const isRTL = appLanguage === 'ar';
     const [isLoading, setIsLoading] = useState(false)
     const [isLiked, setIsLiked] = useState(item?.isLiked)
     const [coordinates, setCoordinates] = useState(null);
@@ -243,8 +244,8 @@ export default StoreDetailList = (props) => {
             <ScrollView showsVerticalScrollIndicator={false} style={appStyles.mt30}>
                 <Image source={{ uri: item.logo }} style={styles.imageStyle} />
 
-                <View style={{ marginVertical: wp(5), flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <Text style={styles.mainTitle}>
+                <View style={{ marginVertical: wp(5), flexDirection: isRTL ? "row-reverse" : "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
                         {/* {LocalizedStrings["The Emporium Mall"]} */}
                         {item?.['store name']}
                     </Text>
@@ -255,30 +256,30 @@ export default StoreDetailList = (props) => {
                     } */}
                     <Image source={{ uri: item?.employer?.image }} style={{ width: wp(7), height: wp(7), borderRadius: wp(6) }} />
                 </View>
-                <Text style={styles.shortDes}>{item?.['offer text']}</Text>
+                <Text style={[styles.shortDes, { textAlign: isRTL ? 'right' : 'left' }]}>{item?.['offer text']}</Text>
                 <View style={styles.line} />
 
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <View style={{ width: wp(35) }}>
-                        <Text style={[styles.mainTitle]}>{LocalizedStrings.Discount}</Text>
-                        <Text onPress={() => Linking.openURL(item?.['offer link'])} style={[styles.shortDes, { textDecorationLine: 'underline', color: '#2036F8' }]}>{item?.['discount %'] ? item?.['discount %'] : 0}%</Text>
+                <View style={{ flexDirection: isRTL ? "row-reverse" : "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <View style={{ width: wp(35), alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
+                        <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.Discount}</Text>
+                        <Text onPress={() => Linking.openURL(item?.['offer link'])} style={[styles.shortDes, { textDecorationLine: 'underline', color: '#2036F8', textAlign: isRTL ? 'right' : 'left' }]}>{item?.['discount %'] ? item?.['discount %'] : 0}%</Text>
                     </View>
 
-                    <View style={{ width: wp(35) }}>
-                        <Text style={styles.mainTitle}>{LocalizedStrings["Expiry Date"]}</Text>
-                        <Text style={styles.shortDes}>{item?.["expiry date"]}</Text>
+                    <View style={{ width: wp(35), alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
+                        <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings["Expiry Date"]}</Text>
+                        <Text style={[styles.shortDes, { textAlign: isRTL ? 'right' : 'left' }]}>{item?.["expiry date"]}</Text>
                         {/* <Text style={styles.shortDes}>{moment(item?.["expiry date"]).format('DD/MM/YYYY')}</Text> */}
                     </View>
 
-                    <View style={{ width: wp(50) }}>
-                        <Text style={[styles.mainTitle]}>{LocalizedStrings.category}</Text>
-                        <Text style={styles.shortDes}>{item?.category}</Text>
+                    <View style={{ width: wp(50), alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
+                        <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.category}</Text>
+                        <Text style={[styles.shortDes, { textAlign: isRTL ? 'right' : 'left' }]}>{item?.category}</Text>
                     </View>
                 </View>
 
-                <View style={{ flexDirection: "row", alignItems: 'center', marginVertical: wp(4) }}>
+                <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center', marginVertical: wp(4) }}>
                     {/* <Image source={appIcons.location} style={styles.IconStyle} /> */}
-                    <Text style={[styles.locationText]}>
+                    <Text style={[styles.locationText, { textAlign: isRTL ? 'right' : 'left' }]}>
                         {item?.['terms and conditions']}
                     </Text>
                 </View>

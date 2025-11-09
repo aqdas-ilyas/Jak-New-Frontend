@@ -4,6 +4,7 @@ import { appIcons, appImages, colors, fontFamily, hp, routes, wp } from '../../s
 import { useNavigation } from '@react-navigation/native'
 import Button from '../button'
 import { LocalizationContext } from '../../language/LocalizationContext'
+import { useRTL } from '../../language/useRTL';
 import appStyles from '../../services/utilities/appStyles'
 
 // const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
@@ -28,6 +29,7 @@ import appStyles from '../../services/utilities/appStyles'
 
 export default function ListItem({ buttonEnable, search, item, isLiked, IsFavourites }) {
     const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const { isRTL } = useRTL();
     const navigation = useNavigation()
     // const [hasCoordinates, setHasCoordinates] = useState(false);
     // const [coordinates, setCoordinates] = useState(null);
@@ -77,20 +79,25 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
     return (
         <View key={item?._id}>
             <TouchableOpacity activeOpacity={1} style={styles.itemContainer} onPress={() => navigation.navigate(routes.storeDetail, { item })}>
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center' }}>
                     <Image
                         // source={appImages.itemCon}
                         resizeMode='contain'
                         source={{ uri: item?.logo }}
-                        style={styles.imageStyle}
+                        style={[styles.imageStyle, isRTL ? { marginLeft: wp(3) } : { marginRight: wp(3) }]}
                     />
-                    <View style={{ width: buttonEnable ? wp(65) : search ? wp(65) : wp(62), marginLeft: wp(3), justifyContent: "space-evenly" }}>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                            <Text style={styles.mainTitle}>
+                    <View style={{
+                        width: buttonEnable ? wp(65) : search ? wp(65) : wp(62),
+                        marginLeft: isRTL ? 0 : wp(3),
+                        marginRight: isRTL ? wp(3) : 0,
+                        justifyContent: "space-evenly"
+                    }}>
+                        <View style={{ flexDirection: isRTL ? "row-reverse" : "row", justifyContent: "space-between", alignItems: "center" }}>
+                            <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
                                 {item?.['store name'].length > 20 ? item?.['store name'].slice(0, 12) + '...' : item?.['store name']}
                             </Text>
 
-                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                            <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center' }}>
                                 <TouchableOpacity style={{ padding: wp(2) }} activeOpacity={0.8} onPress={() => IsFavourites(item)}>
                                     <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
                                 </TouchableOpacity>
@@ -103,19 +110,37 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </Text>
                         </View> */}
 
-                        <View style={appStyles.rowBtw}>
-                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                        <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center', justifyContent: 'space-between' }}>
+                            <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center' }}>
                                 {/* <Text style={[styles.mainDes, { fontSize: buttonEnable ? hp(1.2) : hp(1.6) }]}>
                                     {LocalizedStrings.category}:
                                 </Text> */}
 
-                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: hp(1.6), marginLeft: wp(1) }]}>
+                                <Text style={[styles.mainDes, {
+                                    fontFamily: fontFamily.UrbanistMedium,
+                                    color: colors.primaryColor,
+                                    fontSize: hp(1.6),
+                                    marginLeft: isRTL ? 0 : wp(1),
+                                    marginRight: isRTL ? wp(1) : 0,
+                                    textAlign: isRTL ? 'right' : 'left'
+                                }]}>
                                     {item?.category}
                                 </Text>
                             </View>
 
-                            <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                                <Text style={[styles.mainDes, { fontFamily: fontFamily.UrbanistMedium, color: colors.primaryColor, fontSize: hp(1.6), marginRight: wp(2) }]}>
+                            <View style={{
+                                flexDirection: isRTL ? "row-reverse" : "row",
+                                alignItems: 'center',
+                                marginRight: wp(2)
+                            }}>
+                                <Text style={[styles.mainDes, {
+                                    fontFamily: fontFamily.UrbanistMedium,
+                                    color: colors.primaryColor,
+                                    fontSize: hp(1.6),
+                                    marginRight: isRTL ? 0 : wp(2),
+                                    marginLeft: isRTL ? wp(2) : 0,
+                                    textAlign: isRTL ? 'left' : 'right'
+                                }]}>
                                     {item?.['discount %']} %
                                 </Text>
 

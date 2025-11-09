@@ -17,6 +17,7 @@ import { saveCategoryOffers, saveMyOffer, saveSearchOfferArray } from "../../../
 import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
 import { showMessage } from "react-native-flash-message";
 import { resolveMessage } from "../../../language/helpers";
+import { useRTL } from "../../../language/useRTL";
 
 export default Search = (props) => {
     // const { discount, location, category } = props?.route?.params
@@ -27,6 +28,7 @@ export default Search = (props) => {
     const searchOfferArray = useSelector(state => state.offer.searchOfferArray)
     const CategoriesOffers = useSelector(state => state.offer.CategoriesOffers)
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const { rtlStyles } = useRTL();
     const [modalShow, setModalShow] = useState(false)
     const [search, setSearch] = useState('')
     const [searchArray, setSearchArray] = useState([])
@@ -214,12 +216,12 @@ export default Search = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+        <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { margin: wp(4) }]}>
             <Loader loading={isLoadingFull} />
 
-            <View style={{ paddingTop: Platform.OS == 'android' ? wp(6) : 0, flexDirection: "row", alignItems: "center" }}>
+            <View style={[{ paddingTop: Platform.OS == 'android' ? wp(6) : 0, alignItems: "center" }, rtlStyles.row]}>
                 <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                    <Image source={appIcons.back} style={[styles.back, { transform: [{ rotate: appLanguage == 'en' ? '0deg' : '180deg' }] }]} />
+                    <Image source={appIcons.back} style={[styles.back, rtlStyles.iconRotation]} />
                 </TouchableOpacity>
 
                 <Input
@@ -236,8 +238,8 @@ export default Search = (props) => {
                         borderWidth: 1,
                         backgroundColor: colors.primaryColorOpacity,
                         width: wp(81),
-                        marginLeft: wp(5),
-                        marginTop: -wp(10)
+                        marginTop: -wp(10),
+                        marginHorizontal: wp(5)
                     }}
                     inputStyle={{
                         backgroundColor: colors.primaryColorOpacity
@@ -255,9 +257,9 @@ export default Search = (props) => {
                         keyExtractor={(item, index) => index}
                         showsVerticalScrollIndicator={false}
                         ListHeaderComponent={
-                            <View style={{ paddingTop: wp(2), paddingBottom: wp(5), borderBottomColor: colors.borderColor, borderBottomWidth: 1, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: 'space-between', marginVertical: wp(5) }}>
-                                <Text style={[styles.resultText, { fontFamily: fontFamily.UrbanistSemiBold, color: colors.fullBlack, }]}>{LocalizedStrings.Recent}</Text>
-                                <Text onPress={() => AllSearchHistoryClear()} style={styles.resultNumber}>{LocalizedStrings["Clear All"]}</Text>
+                            <View style={{ paddingTop: wp(2), paddingBottom: wp(5), borderBottomColor: colors.borderColor, borderBottomWidth: 1, flex: 1, alignItems: "center", justifyContent: 'space-between', marginVertical: wp(5), flexDirection: rtlStyles.rowBetween.flexDirection }}>
+                                <Text style={[styles.resultText, rtlStyles.textAlign, rtlStyles.writingDirection, { fontFamily: fontFamily.UrbanistSemiBold, color: colors.fullBlack }]}>{LocalizedStrings.Recent}</Text>
+                                <Text onPress={() => AllSearchHistoryClear()} style={[styles.resultNumber, rtlStyles.textAlign]}>{LocalizedStrings["Clear All"]}</Text>
                             </View>
                         }
                         ListEmptyComponent={
@@ -285,9 +287,9 @@ export default Search = (props) => {
                             keyExtractor={(item, index) => index}
                             showsVerticalScrollIndicator={false}
                             ListHeaderComponent={
-                                <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: 'space-between', marginVertical: wp(5) }}>
-                                    <Text style={[styles.resultText, { fontFamily: fontFamily.UrbanistSemiBold, color: colors.fullBlack, }]}>{LocalizedStrings["Result for"]} <Text style={{ fontFamily: fontFamily.UrbanistBold, color: colors.primaryColor, }}>“{search}”</Text></Text>
-                                    <Text style={styles.resultNumber}>{searchArray && searchArray.length}</Text>
+                                <View style={{ flex: 1, alignItems: "center", justifyContent: 'space-between', marginVertical: wp(5), flexDirection: rtlStyles.rowBetween.flexDirection }}>
+                                    <Text style={[styles.resultText, rtlStyles.textAlign, rtlStyles.writingDirection, { fontFamily: fontFamily.UrbanistSemiBold, color: colors.fullBlack }]}>{LocalizedStrings["Result for"]} <Text style={{ fontFamily: fontFamily.UrbanistBold, color: colors.primaryColor }}>“{search}”</Text></Text>
+                                    <Text style={[styles.resultNumber, rtlStyles.textAlign]}>{searchArray && searchArray.length}</Text>
                                 </View>
                             }
                             ListEmptyComponent={

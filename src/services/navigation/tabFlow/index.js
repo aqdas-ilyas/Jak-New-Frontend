@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Image, View, TouchableOpacity, Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { appIcons, colors, fontFamily } from '../../utilities';
@@ -9,20 +9,22 @@ import { OfferNavigation } from '../offerFlow';
 import { SettingNavigation } from '../profileFlow';
 import { WalletNavigation } from '../walletFlow';
 import { LocalizationContext } from '../../../language/LocalizationContext';
+import { useRTL } from '../../../language/useRTL';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 const TabButton = props => {
-  const { appLanguage } = React.useContext(LocalizationContext);
+  const { isRTL, rtlStyles } = useRTL();
   const { item, onPress, accessibilityState } = props;
   const focused = accessibilityState.selected;
 
   return (
     <TouchableOpacity disabled={item.disabled} onPress={() => [onPress()]} activeOpacity={1} style={[styles.container,]}>
-      <View style={[styles.btn]}>
+      <View style={[styles.btn, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <View style={{ alignItems: 'center' }}>
           <Image source={focused ? item.iconfill : item.iconUnfill} style={[styles.tabIcon, { tintColor: focused ? colors.primaryColor : colors.inActiveText }]} />
-          <Text style={[styles.bottomText, { marginTop: appLanguage == 'en' ? wp(2) : 0, color: focused ? colors.primaryColor : colors.inActiveText }]}>{item.route}</Text>
+          <Text style={[styles.bottomText, rtlStyles.writingDirection, { marginTop: isRTL ? 0 : wp(2), color: focused ? colors.primaryColor : colors.inActiveText }]}>{item.route}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -31,8 +33,10 @@ const TabButton = props => {
 
 export function TabNavigation() {
   const { LocalizedStrings } = React.useContext(LocalizationContext);
+  const { isRTL } = useRTL();
+  const navigation = useNavigation();
 
-  const tabArray = [
+  const baseTabs = [
     // {
     //   route: LocalizedStrings.home,
     //   iconfill: appIcons.homeFill,
@@ -75,10 +79,22 @@ export function TabNavigation() {
       color: colors.theme,
       disabled: false,
     },
-  ];
+  ]
+
+  const tabArray = React.useMemo(() => {
+    return isRTL ? [...baseTabs].reverse() : baseTabs;
+  }, [isRTL, baseTabs]);
+
+  useEffect(() => {
+    const homeRouteName = LocalizedStrings.home;
+    if (homeRouteName) {
+      navigation.navigate(homeRouteName);
+    }
+  }, [navigation, LocalizedStrings.home]);
 
   return (
     <Tab.Navigator
+      initialRouteName={LocalizedStrings.home}
       screenOptions={{
         headerShown: false,
         tabBarStyle: styles.barStyle,

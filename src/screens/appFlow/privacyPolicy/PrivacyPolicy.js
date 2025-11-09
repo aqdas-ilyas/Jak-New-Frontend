@@ -5,10 +5,12 @@ import { colors, hp, fontFamily, wp, appIcons } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
 import Header from '../../../components/header';
 import { LocalizationContext } from '../../../language/LocalizationContext';
+import { useRTL } from '../../../language/useRTL';
 import { Image } from 'react-native';
 
 const PrivacyPolicy = (props) => {
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const { isRTL, rtlStyles } = useRTL();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
@@ -26,9 +28,9 @@ const PrivacyPolicy = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4), paddingTop: Platform.OS == 'android' ? wp(5) : 0, }]}>
+        <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { margin: wp(4), paddingTop: Platform.OS == 'android' ? wp(5) : 0 }]}>
             <View style={{ flex: 1 }}>
-                <TouchableOpacity activeOpacity={0.9} onPress={() => props.navigation.goBack()} style={{ backgroundColor: 'white', borderRadius: 50, position: "absolute", top: wp(2.5), zIndex: 1, left: appLanguage == 'en' ? wp(1) : null, right: appLanguage == 'ar' ? wp(1) : null, padding: wp(2), }}>
+                <TouchableOpacity activeOpacity={0.9} onPress={() => props.navigation.goBack()} style={{ backgroundColor: 'white', borderRadius: 50, position: "absolute", top: wp(2.5), zIndex: 1, left: wp(1), padding: wp(2), }}>
                     <Image source={appIcons.back} style={[styles.back]} />
                 </TouchableOpacity>
 
@@ -36,14 +38,14 @@ const PrivacyPolicy = (props) => {
                 {loading && (
                     <View style={styles.loadingContainer}>
                         <ActivityIndicator size="large" color={colors.primaryColor} />
-                        <Text style={styles.loadingText}>{LocalizedStrings.loading}</Text>
+                        <Text style={[styles.loadingText, rtlStyles.textAlign]}>{LocalizedStrings.loading}</Text>
                     </View>
                 )}
 
                 {/* Error Message */}
                 {error && (
                     <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>{LocalizedStrings.error_loading_document}</Text>
+                        <Text style={[styles.errorText, rtlStyles.textAlign]}>{LocalizedStrings.error_loading_document}</Text>
                         <TouchableOpacity
                             style={styles.retryButton}
                             onPress={() => {

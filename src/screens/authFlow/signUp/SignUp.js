@@ -7,6 +7,7 @@ import Button from '../../../components/button';
 import Header from '../../../components/header';
 import { Input } from '../../../components/input';
 import { LocalizationContext } from '../../../language/LocalizationContext';
+import { useRTL } from '../../../language/useRTL';
 import { showMessage } from 'react-native-flash-message';
 import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
@@ -26,6 +27,7 @@ const SignUp = props => {
   const dispatch = useDispatch();
   const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false);
   const { appLanguage, LocalizedStrings } = useContext(LocalizationContext);
+  const { rtlStyles, isRTL } = useRTL();
 
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
@@ -287,7 +289,7 @@ const SignUp = props => {
   }
 
   return (
-    <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+    <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
       <Header leftIcon onleftIconPress={() => props.navigation.goBack()} />
       <ScrollView
@@ -295,7 +297,7 @@ const SignUp = props => {
         bounces={false}
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}>
-        <Text style={styles.mainTitle}>
+        <Text style={[styles.mainTitle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
           {LocalizedStrings['Create Your Account']}
         </Text>
 
@@ -306,7 +308,7 @@ const SignUp = props => {
             countryAbbreviationCode={countryAbbreviationCode}
             setValue={setPhoneNumber}
             setSelectedCode={setCountryCode}
-            layout={'first'}
+            layout={'second'}
           />
 
           <Input
@@ -332,15 +334,13 @@ const SignUp = props => {
           </Input>
         </View>
 
-        <View style={[appStyles.rowCenter, appStyles.mt20]}>
-          <Text style={styles.dontAccountTextStyle}>
-            {' '}
+        <View style={[rtlStyles.row, appStyles.jcCenter, appStyles.mt20]}>
+          <Text style={[styles.dontAccountTextStyle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
             {LocalizedStrings['Already have an account?']}{' '}
           </Text>
           <TouchableOpacity
             onPress={() => props.navigation.navigate(routes.login)}>
-            <Text style={styles.dontAccountSignUpTextStyle}>
-              {' '}
+            <Text style={[styles.dontAccountSignUpTextStyle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
               {LocalizedStrings['Login']}
             </Text>
           </TouchableOpacity>
@@ -348,7 +348,8 @@ const SignUp = props => {
 
         <View
           style={[
-            appStyles.rowCenter,
+            rtlStyles.row,
+            styles.socialRow,
             { marginTop: wp(10), marginBottom: wp(5) },
           ]}>
           <View style={styles.line} />
@@ -357,11 +358,14 @@ const SignUp = props => {
           </Text>
           <View style={styles.line} />
         </View>
-        <View style={[appStyles.row, appStyles.jcCenter]}>
+        <View style={[rtlStyles.row, styles.socialRow]}>
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => googleLoginClicked()}
-            style={[styles.socialLoginTopView, { marginRight: wp(5) }]}>
+            style={[
+              styles.socialLoginTopView,
+              isRTL ? { marginStart: wp(5) } : { marginEnd: wp(5) },
+            ]}>
             <Image source={appIcons.google} style={styles.socialIconStyle} />
           </TouchableOpacity>
           {/* <TouchableOpacity style={styles.socialLoginTopView}>
@@ -394,7 +398,6 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistBold,
     color: '#1D191C',
     marginTop: wp(5),
-    textAlign: 'left',
   },
   forgotPassword: {
     fontSize: hp(1.6),
@@ -405,7 +408,7 @@ const styles = StyleSheet.create({
     fontSize: hp(1.6),
     fontFamily: fontFamily.UrbanistMedium,
     color: colors.BlackSecondary,
-    marginLeft: wp(1.5),
+    marginStart: wp(1.5),
   },
   dontAccountTextStyle: {
     fontSize: hp(1.6),
@@ -428,6 +431,10 @@ const styles = StyleSheet.create({
     width: wp(8),
     height: wp(8),
     resizeMode: 'contain',
+  },
+  socialRow: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   orTextStyle: {
     textAlign: 'center',

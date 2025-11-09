@@ -9,6 +9,7 @@ import { Input } from '../../../components/input'
 import { ImageProfileSelectandUpload, ImageProfileCameraUpload, uploadProfileImageOnS3 } from '../../../common/HelpingFunc';
 import CountryInput from '../../../components/countryPicker/CountryPicker'
 import { LocalizationContext } from '../../../language/LocalizationContext'
+import { useRTL } from '../../../language/useRTL';
 import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 import routs from '../../../api/routs';
@@ -29,6 +30,7 @@ const CreateProfile = (props) => {
     const dispatch = useDispatch()
     const user = useSelector(state => state.user.user.user);
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const { isRTL } = useRTL();
 
     const genderArray = [
         { id: 1, title: LocalizedStrings.Male },
@@ -438,7 +440,7 @@ const CreateProfile = (props) => {
                                 <Image source={appIcons.edit} style={styles.editIcon} />
                             </TouchableOpacity>
                         </View>
-                        <Text style={[styles.mainTitle, { marginVertical: wp(2) }]}>{LocalizedStrings.profile_picture}</Text>
+                        <Text style={[styles.mainTitle, { marginVertical: wp(2), textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.profile_picture}</Text>
                         <View>
                             <Input
                                 placeholder={LocalizedStrings.full_name}
@@ -486,14 +488,17 @@ const CreateProfile = (props) => {
                                             countryAbbreviationCode={countryAbbreviationCode ? countryAbbreviationCode : 'SA'}
                                             setValue={phoneInputDisabled ? () => { } : setPhoneNumber}
                                             setSelectedCode={phoneInputDisabled ? () => { } : setCountryCode}
-                                            layout={'first'}
+                                            layout={'second'}
                                             disabled={phoneInputDisabled}
                                         />
-                                        <View style={[appStyles.rowStart, {
-                                            position: 'absolute',
-                                            right: wp(0),
-                                            top: wp(3),
-                                        }]}>
+                                        <View style={[
+                                            { flexDirection: isRTL ? 'row-reverse' : 'row' },
+                                            {
+                                                position: 'absolute',
+                                                [isRTL ? 'left' : 'right']: wp(0),
+                                                top: wp(3),
+                                            }
+                                        ]}>
                                             {isNumberVerified && (
                                                 <TouchableOpacity
                                                     style={styles.changeNumberButton}
@@ -520,15 +525,18 @@ const CreateProfile = (props) => {
                                 data={genderArray}
                                 keyExtractor={(_, index) => index.toString()}
                                 ListHeaderComponent={
-                                    <Text style={[styles.headerText]}>{LocalizedStrings.gender}</Text>
+                                    <Text style={[styles.headerText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.gender}</Text>
                                 }
                                 renderItem={({ item, index }) => {
                                     return (
-                                        <Pressable key={index} onPress={() => setGender(item.id)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: wp(3) }}>
-                                            <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginRight: wp(3) }]}>
+                                        <Pressable
+                                            key={index}
+                                            onPress={() => setGender(item.id)}
+                                            style={{ flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: "center", paddingVertical: wp(3) }}>
+                                            <View style={[styles.dotComponentActiveStyle, { borderWidth: 2, marginHorizontal: wp(3) }]}>
                                                 <View style={[styles.dotComponentStyle, { backgroundColor: gender == item.id ? colors.primaryColor : 'transparent' }]} />
                                             </View>
-                                            <Text style={styles.mainDes}>{item.title}</Text>
+                                            <Text style={[styles.mainDes, { textAlign: isRTL ? 'right' : 'left' }]}>{item.title}</Text>
                                         </Pressable>
                                     )
                                 }}
@@ -679,7 +687,7 @@ const styles = StyleSheet.create({
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistMedium,
         color: colors.BlackSecondary,
-        textAlign: "center",
+        textAlign: "left",
         lineHeight: 24
     },
     imageTopView: {
@@ -743,7 +751,7 @@ const styles = StyleSheet.create({
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
-        textAlign: "center",
+        textAlign: "left",
         lineHeight: 24,
     },
     headerText: {
@@ -755,6 +763,12 @@ const styles = StyleSheet.create({
     phoneNumberContainer: {
         marginBottom: wp(5),
         position: 'relative',
+    },
+    textLeft: {
+        textAlign: 'left',
+    },
+    textRight: {
+        textAlign: 'right',
     },
     changeNumberButton: {
         marginHorizontal: wp(2),

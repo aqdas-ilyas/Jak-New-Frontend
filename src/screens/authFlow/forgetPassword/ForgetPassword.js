@@ -7,6 +7,7 @@ import Button from '../../../components/button';
 import Header from '../../../components/header'
 import { Input } from '../../../components/input'
 import { LocalizationContext } from '../../../language/LocalizationContext'
+import { useRTL } from '../../../language/useRTL';
 import { showMessage } from 'react-native-flash-message'
 import { Loader } from '../../../components/loader/Loader'
 import { callApi, Method } from '../../../api/apiCaller'
@@ -18,6 +19,7 @@ import { resolveMessage } from '../../../language/helpers';
 
 const ForgetPassword = (props) => {
     const { appLanguage, LocalizedStrings } = useContext(LocalizationContext);
+    const { rtlStyles } = useRTL();
     const [email, setEmail] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -77,12 +79,12 @@ const ForgetPassword = (props) => {
     }
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+        <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { margin: wp(4) }]}>
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} />
             <View style={{ flex: 1 }}>
-                <Text style={styles.mainTitle}>{LocalizedStrings['Reset Your Password']}</Text>
-                <Text style={styles.mainDes}>{LocalizedStrings.forgetDesc}</Text>
+                <Text style={[styles.mainTitle, rtlStyles.textAlign, rtlStyles.writingDirection]}>{LocalizedStrings['Reset Your Password']}</Text>
+                <Text style={[styles.mainDes, rtlStyles.textAlign, rtlStyles.writingDirection]}>{LocalizedStrings.forgetDesc}</Text>
                 {/* <Input
                     placeholder={LocalizedStrings.email}
                     value={email}
@@ -98,7 +100,7 @@ const ForgetPassword = (props) => {
                     countryAbbreviationCode={countryAbbreviationCode}
                     setValue={setPhoneNumber}
                     setSelectedCode={setCountryCode}
-                    layout={'first'}
+                    layout={'second'}
                 />
 
                 <View style={[appStyles.ph20, appStyles.mt5]}>
@@ -117,13 +119,11 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistBold,
         color: '#1D191C',
         marginTop: wp(5),
-        textAlign: "left"
     },
     mainDes: {
         fontSize: hp(1.8),
         fontFamily: fontFamily.UrbanistRegular,
         color: colors.descriptionColor,
         marginTop: wp(5),
-        textAlign: "left"
     },
 })

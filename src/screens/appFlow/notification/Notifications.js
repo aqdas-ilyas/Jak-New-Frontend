@@ -7,12 +7,14 @@ import appStyles from "../../../services/utilities/appStyles";
 import { colors, fontFamily } from "../../../services";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { LocalizationContext } from "../../../language/LocalizationContext";
+import { useRTL } from "../../../language/useRTL";
 import routs from "../../../api/routs";
 import { callApi, Method } from "../../../api/apiCaller";
 import { Loader } from "../../../components/loader/Loader";
 
 export default Notification = (props) => {
-    const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const { isRTL, rtlStyles } = useRTL();
     const [isLoading, setIsLoading] = useState(false)
     const [notificationArray, setNotificationsArray] = useState(false)
 
@@ -61,7 +63,7 @@ export default Notification = (props) => {
     }, [])
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+        <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { margin: wp(4) }]}>
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.Notification} />
 
@@ -77,8 +79,8 @@ export default Notification = (props) => {
                 renderItem={({ item, index }) => {
                     return (
                         <View key={index}>
-                            <View style={{ flexDirection: "row", alignItems: "center", marginVertical: index > 0 ? wp(3) : 0 }}>
-                                <Text style={styles.shortDes}>{item.date}</Text>
+                            <View style={[{ alignItems: "center", marginVertical: index > 0 ? wp(3) : 0 }, rtlStyles.row]}>
+                                <Text style={[styles.shortDes, rtlStyles.textAlign]}>{item.date}</Text>
                                 {item.date != '' && <View style={styles.line} />}
                             </View>
 
@@ -88,19 +90,19 @@ export default Notification = (props) => {
                                 keyExtractor={(item) => item.key}
                                 renderItem={({ item, index }) => {
                                     return (
-                                        <View key={index} style={{ flexDirection: "row", alignItems: "flex-start", marginTop: wp(5) }}>
+                                        <View key={index} style={[{ alignItems: "flex-start", marginTop: wp(5) }, rtlStyles.row]}>
                                             <View style={styles.ImageCircle}>
                                                 <Image source={item.imgSRC} style={styles.ImageStyle} />
                                             </View>
                                             <View style={{ marginLeft: wp(3), width: wp(75) }}>
-                                                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: wp(72), marginBottom: wp(2) }}>
-                                                    <Text style={styles.mainTitle}>{item.title}</Text>
-                                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                                <View style={[{ justifyContent: "space-between", alignItems: "center", width: wp(72), marginBottom: wp(2) }, rtlStyles.rowBetween]}>
+                                                    <Text style={[styles.mainTitle, rtlStyles.textAlign]}>{item.title}</Text>
+                                                    <View style={[{ alignItems: "center" }, rtlStyles.row]}>
                                                         {index < 1 && <Text style={{ fontSize: Platform.OS == 'android' ? hp(1.4) : hp(1), color: colors.primaryColor, marginRight: wp(5) }}>{"\u2B24"}</Text>}
-                                                        <AntDesign name={appLanguage == 'en' ? 'right' : 'left'} color={colors.BlackSecondary} size={wp(4)} />
+                                                        <AntDesign name={isRTL ? 'left' : 'right'} color={colors.BlackSecondary} size={wp(4)} />
                                                     </View>
                                                 </View>
-                                                <Text style={styles.shortDes}>{item.desc}</Text>
+                                                <Text style={[styles.shortDes, rtlStyles.textAlign]}>{item.desc}</Text>
                                                 <Text style={styles.timeText}>09:41 AM</Text>
                                             </View>
                                         </View>
@@ -121,14 +123,12 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
         lineHeight: 28,
-        textAlign: 'left'
     },
     shortDes: {
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistRegular,
         color: colors.descriptionColor,
         lineHeight: 24,
-        textAlign: 'left'
     },
     timeText: {
         fontSize: hp(1.2),

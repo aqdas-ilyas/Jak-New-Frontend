@@ -1,12 +1,12 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Text, StyleSheet, View, TextInput, Image, TouchableOpacity, ScrollView, Pressable, Platform } from 'react-native';
-import { LocalizationContext } from '../../language/LocalizationContext';
+import { useRTL } from '../../language/useRTL';
 import { appIcons, appImages, colors, fontFamily, heightPixel, hp, widthPixel, wp } from '../../services';
 import appStyles from '../../services/utilities/appStyles';
 import CheckBox from '@react-native-community/checkbox';
 
 export const Input = props => {
-    const { appLanguage } = React.useContext(LocalizationContext);
+    const { isRTL, rtlStyles } = useRTL();
     const [borderColor, setBorderColor] = useState(false)
 
     const onFocus = () => {
@@ -24,27 +24,40 @@ export const Input = props => {
 
     return (
         <View style={[styles.formInput, props.WholeContainer, { paddingTop: 15 }]}>
-            <View style={[appStyles.rowBtw]}>
-                <View style={[appStyles.row]}>
+            <View style={[appStyles.rowBtw, rtlStyles.rowBetween]}>
+                <View style={[appStyles.row, rtlStyles.row]}>
                     <Text style={[styles.titleStyle]}>{props.children}</Text>
                     {props.star &&
-                        <Text style={{ color: colors.errorColor, paddingLeft: 3 }}>*</Text>
+                        <Text style={{ color: colors.errorColor, paddingStart: 3 }}>*</Text>
                     }
                 </View>
-                <Text onPress={props.onrightTextPress} style={[styles.rightTitleStyle]}>{props.rghtText}</Text>
+                <Text onPress={props.onrightTextPress} style={[styles.rightTitleStyle, rtlStyles.textAlign]}>{props.rghtText}</Text>
             </View>
             {
                 !props?.hideInput && (
-                    <TouchableOpacity disabled={props.touchable ? false : true} activeOpacity={0.5} onPress={() => props.onPressIcon()} style={[styles.input, props.shadow && styles.shadow, props.containerStyle]} >
+                    <TouchableOpacity
+                        disabled={props.touchable ? false : true}
+                        activeOpacity={0.5}
+                        onPress={() => props.onPressIcon()}
+                        style={[styles.input, rtlStyles.rowBetween, props.shadow && styles.shadow, props.containerStyle]}
+                    >
                         {props.leftIcon && <Image source={props.leftIcon} style={[styles.icon, props.leftIconStyle]} />}
                         {
                             props.checkBoxes
                                 ? (
-                                    <Text style={[styles.inputTextStyle, { textAlign: 'left' }]}>{getMultipleText().length > 50 ? `${getMultipleText().slice(0, 50)}...` : getMultipleText()}</Text>
+                                    <Text style={[styles.inputTextStyle, rtlStyles.oppositeTextAlign]}>
+                                        {getMultipleText().length > 50 ? `${getMultipleText().slice(0, 50)}...` : getMultipleText()}
+                                    </Text>
                                 )
                                 : (
                                     <TextInput
-                                        style={[styles.inputTextStyle, props.inputStyle, { textAlign: appLanguage == 'en' ? 'left' : 'right', marginLeft: wp(2) }]}
+                                        style={[
+                                            styles.inputTextStyle,
+                                            props.inputStyle,
+                                            rtlStyles.textAlign,
+                                            rtlStyles.writingDirection,
+                                            { marginHorizontal: wp(2) }
+                                        ]}
                                         selectionColor={colors.grey}
                                         value={props.value}
                                         onFocus={onFocus}
@@ -140,7 +153,7 @@ export const Input = props => {
             <View>
                 {props.errorText && props.errorText ? (
                     <View style={appStyles.pt5}>
-                        <Text style={[styles.errorText]} >{props.errorText}</Text>
+                        <Text style={[styles.errorText, rtlStyles.textAlign]} >{props.errorText}</Text>
                     </View>
                 ) : null}
             </View>

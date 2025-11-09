@@ -8,6 +8,7 @@ import Header from '../../../components/header';
 import { Input } from '../../../components/input';
 import CheckBox from '@react-native-community/checkbox';
 import { LocalizationContext } from '../../../language/LocalizationContext';
+import { useRTL } from '../../../language/useRTL';
 import { showMessage } from 'react-native-flash-message';
 import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
@@ -37,6 +38,7 @@ const SignIn = props => {
     appleEmail: null,
   });
   const { appLanguage, LocalizedStrings, setAppLanguage } = useContext(LocalizationContext);
+  const { rtlStyles, isRTL } = useRTL();
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('966');
@@ -639,7 +641,7 @@ const SignIn = props => {
   }
 
   return (
-    <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+    <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
       <StatusBar barStyle={'dark-content'} backgroundColor="#fff" />
 
@@ -650,11 +652,11 @@ const SignIn = props => {
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}>
         {LocalizedStrings['Welcome Back!'] && (
-          <Text style={styles.mainTitle}>
+          <Text style={[styles.mainTitle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
             {LocalizedStrings['Welcome Back!']}
           </Text>
         )}
-        <Text style={styles.mainDes}>
+        <Text style={[styles.mainDes, rtlStyles.textAlign, rtlStyles.writingDirection]}>
           {LocalizedStrings['Login and manage your Jak Mobile App account.']}
         </Text>
         <View>
@@ -665,7 +667,7 @@ const SignIn = props => {
             countryAbbreviationCode={countryAbbreviationCode}
             setValue={setPhoneNumber}
             setSelectedCode={setCountryCode}
-            layout={'first'}
+            layout={'second'}
           />
 
           <Input
@@ -680,8 +682,8 @@ const SignIn = props => {
           </Input>
         </View>
 
-        <View style={[appStyles.rowBtw, { marginVertical: wp(5) }]}>
-          <View style={[appStyles.row, { paddingLeft: wp(1) }]}>
+        <View style={[rtlStyles.rowBetween, { marginVertical: wp(5) }]}>
+          <View style={[rtlStyles.row, { paddingStart: wp(1) }]}>
             <CheckBox
               disabled={false}
               onFillColor={colors.primaryColor}
@@ -697,26 +699,26 @@ const SignIn = props => {
                 false: colors.placeholderColor,
               }} // Change tint colors if needed
             />
-            <Text style={styles.rememberMe}>
+            <Text style={[styles.rememberMe, rtlStyles.writingDirection]}>
               {LocalizedStrings.remember_me}
             </Text>
           </View>
 
           <TouchableOpacity
             onPress={() => props.navigation.navigate(routes.forgotPassword)}>
-            <Text style={styles.forgotPassword}>
+            <Text style={[styles.forgotPassword, rtlStyles.textAlign, rtlStyles.writingDirection]}>
               {LocalizedStrings['Forgot Password?']}
             </Text>
           </TouchableOpacity>
         </View>
 
-        <View style={[appStyles.rowCenter, appStyles.mt10]}>
-          <Text style={styles.dontAccountTextStyle}>
+        <View style={[rtlStyles.row, appStyles.jcCenter, appStyles.mt10]}>
+          <Text style={[styles.dontAccountTextStyle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
             {LocalizedStrings['Don’t have an account?']}{' '}
           </Text>
           <TouchableOpacity
             onPress={() => props.navigation.navigate(routes.register)}>
-            <Text style={styles.dontAccountSignUpTextStyle}>
+            <Text style={[styles.dontAccountSignUpTextStyle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
               {LocalizedStrings['SIGN UP']}
             </Text>
           </TouchableOpacity>
@@ -724,7 +726,8 @@ const SignIn = props => {
 
         <View
           style={[
-            appStyles.rowCenter,
+            rtlStyles.row,
+            styles.socialRow,
             { marginTop: wp(10), marginBottom: wp(5) },
           ]}>
           <View style={styles.line} />
@@ -733,11 +736,14 @@ const SignIn = props => {
           </Text>
           <View style={styles.line} />
         </View>
-        <View style={[appStyles.row, appStyles.jcCenter]}>
+        <View style={[rtlStyles.row, styles.socialRow]}>
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => googleLoginClicked()}
-            style={[styles.socialLoginTopView, { marginRight: wp(5) }]}>
+            style={[
+              styles.socialLoginTopView,
+              isRTL ? { marginStart: wp(5) } : { marginEnd: wp(5) },
+            ]}>
             <Image source={appIcons.google} style={styles.socialIconStyle} />
           </TouchableOpacity>
           {/* <TouchableOpacity activeOpacity={0.8} style={styles.socialLoginTopView}>
@@ -808,33 +814,29 @@ const styles = StyleSheet.create({
     fontSize: hp(1.4),
     fontFamily: fontFamily.UrbanistSemiBold,
     color: colors.BlackSecondary,
-    textAlign: 'left',
   },
   mainTitle: {
     fontSize: hp(2.4),
     fontFamily: fontFamily.UrbanistBold,
     color: colors.BlackSecondary,
     marginTop: wp(5),
-    textAlign: 'left',
   },
   mainDes: {
     fontSize: hp(1.8),
     fontFamily: fontFamily.UrbanistRegular,
     color: colors.descriptionColor,
     marginTop: wp(5),
-    textAlign: 'left',
   },
   forgotPassword: {
     fontSize: hp(1.6),
     fontFamily: fontFamily.UrbanistSemiBold,
     color: colors.primaryColor,
-    textAlign: 'left',
   },
   rememberMe: {
     fontSize: hp(1.6),
     fontFamily: fontFamily.UrbanistMedium,
     color: colors.BlackSecondary,
-    marginLeft: wp(1.5),
+    marginStart: wp(1.5),
   },
   dontAccountTextStyle: {
     fontSize: hp(1.6),
@@ -857,6 +859,10 @@ const styles = StyleSheet.create({
     width: wp(8),
     height: wp(8),
     resizeMode: 'contain',
+  },
+  socialRow: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   orTextStyle: {
     textAlign: 'center',

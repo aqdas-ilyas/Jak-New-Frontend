@@ -1,44 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, I18nManager } from 'react-native'
-import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel } from '../../../services'
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native'
+import { colors, hp, fontFamily, wp } from '../../../services'
 import appStyles from '../../../services/utilities/appStyles'
 import Header from '../../../components/header'
 import Button from '../../../components/button'
-import string from '../../../language/LocalizedString'
 import { LocalizationContext } from '../../../language/LocalizationContext'
-import RNRestart from 'react-native-restart'; // Import package from node modules
+import { useRTL } from '../../../language/useRTL';
 
 const ChangeLanguage = (props) => {
     const { appLanguage, LocalizedStrings, setAppLanguage } = React.useContext(LocalizationContext);
-    const [value, setValue] = useState(appLanguage == 'ar' ? 1 : 0)
+    const { rtlStyles } = useRTL();
+    const [selectedLanguage, setSelectedLanguage] = useState(appLanguage);
+
+    useEffect(() => {
+        setSelectedLanguage(appLanguage);
+    }, [appLanguage]);
 
     const languageArray = [
-        { id: 1, name: LocalizedStrings.english },
-        { id: 2, name: LocalizedStrings.arabic },
-    ]
+        { id: 'en', name: LocalizedStrings.english, code: 'en' },
+        { id: 'ar', name: LocalizedStrings.arabic, code: 'ar' },
+    ];
 
     const onChangeLng = async (lng) => {
-        if (lng === 'en') {
-            I18nManager.forceRTL(false)
-            setValue(0)
-            setAppLanguage(lng)
-            RNRestart.Restart()
-            return;
-        }
-        if (lng === 'ar') {
-            I18nManager.forceRTL(true)
-            setValue(1)
-            setAppLanguage(lng)
-            RNRestart.Restart()
-            return;
-        }
+        setSelectedLanguage(lng);
+        setAppLanguage(lng);
     }
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }, rtlStyles.writingDirection]}>
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.change_language} />
             <View style={{ flex: 1 }}>
-                <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>{LocalizedStrings.change_language_description}</Text>
+                <Text style={[styles.mainDes, rtlStyles.textAlign, { marginVertical: wp(5) }]}>{LocalizedStrings.change_language_description}</Text>
 
                 <View>
                     <FlatList
@@ -47,10 +39,19 @@ const ChangeLanguage = (props) => {
                         keyExtractor={item => item.id}
                         renderItem={({ item, index }) => {
                             return (
-                                <TouchableOpacity key={index} onPress={() => [onChangeLng(item.name == 'Arabic' ? 'ar' : 'en')]} activeOpacity={0.5} style={{ flexDirection: appLanguage == 'en' ? "row" : 'row-reverse', justifyContent: "space-between", alignItems: "center", marginTop: wp(4) }}>
-                                    <Text style={[styles.languageText]}>{item.name}</Text>
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => onChangeLng(item.code)}
+                                    activeOpacity={0.5}
+                                    style={{
+                                        flexDirection: selectedLanguage === 'ar' ? 'row-reverse' : 'row',
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        marginTop: wp(4)
+                                    }}>
+                                    <Text style={[styles.languageText, rtlStyles.textAlign, rtlStyles.writingDirection]}>{item.name}</Text>
                                     <View style={[styles.dotComponentActiveStyle, { borderWidth: 1 }]}>
-                                        <View style={[styles.dotComponentStyle, { backgroundColor: value == index ? colors.primaryColor : 'transparent' }]} />
+                                        <View style={[styles.dotComponentStyle, { backgroundColor: selectedLanguage === item.code ? colors.primaryColor : 'transparent' }]} />
                                     </View>
                                 </TouchableOpacity>
                             )

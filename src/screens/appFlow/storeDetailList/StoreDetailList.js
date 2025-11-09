@@ -9,6 +9,7 @@ import Header from "../../../components/header";
 import { colors } from "../../../services";
 import ListItem from "../../../components/ListItem";
 import { LocalizationContext } from "../../../language/LocalizationContext";
+import { useRTL } from "../../../language/useRTL";
 import { useDispatch, useSelector } from "react-redux";
 import { showMessage } from "react-native-flash-message";
 import routs from "../../../api/routs";
@@ -21,6 +22,7 @@ import { resolveMessage } from "../../../language/helpers";
 export default StoreDetailList = (props) => {
     const { item, category } = props?.route?.params
     const { appLanguage, LocalizedStrings } = React.useContext(LocalizationContext);
+    const { rtlStyles } = useRTL();
 
     const mapRef = useRef();
     const navigation = useNavigation()
@@ -229,7 +231,7 @@ export default StoreDetailList = (props) => {
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: Platform.OS == 'android' ? wp(6) : 0, }}>
                     <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                        <Image source={appIcons.back} style={[styles.back, { transform: [{ rotate: appLanguage == 'en' ? '0deg' : '180deg' }] }]} />
+                        <Image source={appIcons.back} style={[styles.back, rtlStyles.iconRotation]} />
                     </TouchableOpacity>
 
                     <TouchableOpacity activeOpacity={1} onPress={() => props.navigation.navigate(routes.search)}>

@@ -8,6 +8,7 @@ import Header from '../../../components/header'
 import { CodeField, Cursor } from "react-native-confirmation-code-field"
 import BackgroundTimer from 'react-native-background-timer';
 import { LocalizationContext } from '../../../language/LocalizationContext'
+import { useRTL } from '../../../language/useRTL';
 import { showMessage } from 'react-native-flash-message'
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
@@ -21,6 +22,7 @@ const SendOtp = (props) => {
     const { number, email, key } = props?.route?.params ?? {}
     const dispatch = useDispatch()
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const { isRTL } = useRTL();
     const [otpValue, setOtpValue] = useState('')
     const [seconds, setCountDown] = useState(60);
     const [isLoading, setIsLoading] = useState(false)
@@ -125,9 +127,15 @@ const SendOtp = (props) => {
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={key === 'delete' ? LocalizedStrings.delete_account : ''} />
             <View style={{ flex: 1 }}>
-                {key !== 'delete' && <Text style={styles.mainTitle}>{LocalizedStrings.enter_otp_code}</Text>}
+                {key !== 'delete' && (
+                    <Text style={[styles.mainTitle, isRTL ? styles.textRight : styles.textLeft]}>
+                        {LocalizedStrings.enter_otp_code}
+                    </Text>
+                )}
 
-                <Text style={styles.mainDes}>{email ? LocalizedStrings.otp_des1 : LocalizedStrings.otp_des2}</Text>
+                <Text style={[styles.mainDes, isRTL ? styles.textRight : styles.textLeft]}>
+                    {email ? LocalizedStrings.otp_des1 : LocalizedStrings.otp_des2}
+                </Text>
                 <View style={{ width: '100%', justifyContent: 'center', alignSelf: 'center', marginTop: hp(5) }}>
                     <CodeField
                         value={otpValue}
@@ -157,7 +165,12 @@ const SendOtp = (props) => {
                     </Text>
                     {' '}{LocalizedStrings.seconds}
                 </Text>
-                <Text disabled={seconds != 0 ? true : false} onPress={() => ResendOTP()} style={styles.resendText}>{LocalizedStrings.resend_code}</Text>
+                <Text
+                    disabled={seconds != 0 ? true : false}
+                    onPress={() => ResendOTP()}
+                    style={styles.resendText}>
+                    {LocalizedStrings.resend_code}
+                </Text>
             </View>
 
             <View style={[appStyles.ph20, appStyles.mb5]}>
@@ -175,14 +188,12 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistBold,
         color: '#1D191C',
         marginTop: wp(5),
-        textAlign: 'left'
     },
     mainDes: {
         fontSize: hp(1.8),
         fontFamily: fontFamily.UrbanistRegular,
         color: colors.descriptionColor,
         marginTop: wp(5),
-        textAlign: 'left'
     },
     cell: {
         width: wp(17),
@@ -216,5 +227,11 @@ const styles = StyleSheet.create({
         color: colors.descriptionColor,
         marginTop: wp(5),
         textAlign: "center"
+    },
+    textLeft: {
+        textAlign: 'left'
+    },
+    textRight: {
+        textAlign: 'right'
     }
 })

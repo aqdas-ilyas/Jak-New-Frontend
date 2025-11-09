@@ -5,6 +5,7 @@ import appStyles from "../../../services/utilities/appStyles";
 import { appIcons, colors, fontFamily } from "../../../services";
 import ListItem from "../../../components/ListItem";
 import { LocalizationContext } from "../../../language/LocalizationContext";
+import { useRTL } from "../../../language/useRTL";
 import routs from "../../../api/routs";
 import { callApi, Method } from "../../../api/apiCaller";
 import { Loader } from "../../../components/loader/Loader";
@@ -17,6 +18,7 @@ import { resolveMessage } from "../../../language/helpers";
 
 export default Offer = (props) => {
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const { isRTL, rtlStyles } = useRTL();
     const dispatch = useDispatch()
     const favorite = useSelector(state => state.favorite.favorite)
     const myOffer = useSelector(state => state.offer.myOffer)
@@ -395,7 +397,7 @@ export default Offer = (props) => {
                 backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
                 translucent={Platform.OS === 'android'}
             />
-            <SafeAreaView style={[appStyles.safeContainer, { paddingTop: Platform.OS === 'android' ? wp(10) : 0, margin: wp(4) }]}>
+            <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { paddingTop: Platform.OS === 'android' ? wp(10) : 0, margin: wp(4) }]}>
                 <Loader loading={isLoading} />
 
                 <View style={styles.tabTopView}>
@@ -423,18 +425,37 @@ export default Offer = (props) => {
                         </TouchableOpacity>
                     </View>
 
-                    <View>
+                    <View style={{ alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
                         <FlatList
                             data={checkboxes}
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index.toString()}
+                            contentContainerStyle={{
+                                flexDirection: isRTL ? 'row-reverse' : 'row'
+                            }}
                             renderItem={({ item, index }) => {
                                 return (
                                     item.title != null && (
-                                        <Pressable key={index} onPress={() => handleCheckboxChange(item.id)} style={{ flexDirection: "row", alignItems: "center" }}>
-                                            <View style={[styles.filterView, { borderColor: item.checked ? colors.primaryColor : colors.borderColor, borderWidth: 1 }]}>
-                                                <Text style={[styles.filterText]}>{item.title}</Text>
+                                        <Pressable
+                                            key={index}
+                                            onPress={() => handleCheckboxChange(item.id)}
+                                            style={{
+                                                flexDirection: isRTL ? "row-reverse" : "row",
+                                                alignItems: "center",
+                                                marginHorizontal: wp(1),
+                                                alignSelf: isRTL ? 'flex-end' : 'flex-start'
+                                            }}>
+                                            <View
+                                                style={[
+                                                    styles.filterView,
+                                                    {
+                                                        borderColor: item.checked ? colors.primaryColor : colors.borderColor,
+                                                        borderWidth: 1,
+                                                        flexDirection: isRTL ? "row-reverse" : "row"
+                                                    }
+                                                ]}>
+                                                <Text style={[styles.filterText, { textAlign: isRTL ? 'right' : 'left' }]}>{item.title}</Text>
                                             </View>
                                         </Pressable>
                                     )
@@ -445,11 +466,14 @@ export default Offer = (props) => {
 
                     {/* Banks List - Always visible */}
                     {banks.length > 0 && (
-                        <View style={styles.banksContainer}>
+                        <View style={[styles.banksContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
                             <FlatList
                                 data={[{ id: 'all', name: LocalizedStrings.All, isAll: true }, ...banks]}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{
+                                    flexDirection: isRTL ? 'row-reverse' : 'row'
+                                }}
                                 keyExtractor={(item, index) => item.isAll ? 'bank-all' : `bank-${item.id || index}-${item.name || ''}`}
                                 removeClippedSubviews={false}
                                 initialNumToRender={banks.length + 1}
@@ -459,19 +483,29 @@ export default Offer = (props) => {
                                     const isSelected = item.isAll ? !selectedBank : selectedBank === item.id;
 
                                     return (
-                                        <Pressable key={item.isAll ? 'bank-pressable-all' : `bank-pressable-${item.id || index}`} onPress={() => handleBankSelect(item.isAll ? null : item)}>
+                                        <Pressable
+                                            key={item.isAll ? 'bank-pressable-all' : `bank-pressable-${item.id || index}`}
+                                            onPress={() => handleBankSelect(item.isAll ? null : item)}
+                                            style={{ alignSelf: isRTL ? 'flex-end' : 'flex-start' }}>
                                             <View style={[
                                                 styles.bankView,
                                                 {
+                                                    flexDirection: isRTL ? 'row-reverse' : 'row',
                                                     borderColor: isSelected ? colors.primaryColor : colors.borderColor,
                                                     borderWidth: 1,
-                                                    backgroundColor: isSelected ? colors.primaryColor + '10' : colors.fullWhite
+                                                    backgroundColor: isSelected ? colors.primaryColor + '10' : colors.fullWhite,
+                                                    marginHorizontal: wp(1)
                                                 }
                                             ]}>
                                                 {item.isAll ? (
                                                     <Text style={[
                                                         styles.bankText,
-                                                        { paddingHorizontal: wp(3), paddingVertical: appLanguage == 'en' ? wp(3) : wp(1), color: isSelected ? colors.primaryColor : colors.BlackSecondary }
+                                                        {
+                                                            paddingHorizontal: wp(3),
+                                                            paddingVertical: isRTL ? wp(1) : wp(3),
+                                                            color: isSelected ? colors.primaryColor : colors.BlackSecondary,
+                                                            textAlign: isRTL ? 'right' : 'left'
+                                                        }
                                                     ]}>
                                                         {item.name}
                                                     </Text>
@@ -486,7 +520,11 @@ export default Offer = (props) => {
                                                 ) : (
                                                     <Text style={[
                                                         styles.bankText,
-                                                        { paddingHorizontal: wp(3), color: isSelected ? colors.primaryColor : colors.BlackSecondary }
+                                                        {
+                                                            paddingHorizontal: wp(3),
+                                                            color: isSelected ? colors.primaryColor : colors.BlackSecondary,
+                                                            textAlign: isRTL ? 'right' : 'left'
+                                                        }
                                                     ]}>
                                                         {item.name}
                                                     </Text>
@@ -562,10 +600,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: wp(3),
         height: wp(10),
         marginVertical: wp(5),
-        marginLeft: wp(2),
         backgroundColor: colors.fullWhite,
         borderRadius: wp(10),
-        flexDirection: "row",
         alignItems: 'center',
         justifyContent: "space-between",
         borderColor: colors.primaryColor,
@@ -582,10 +618,8 @@ const styles = StyleSheet.create({
         marginVertical: wp(1),
     },
     bankView: {
-        marginLeft: wp(2),
         backgroundColor: colors.fullWhite,
         borderRadius: wp(10),
-        flexDirection: "row",
         alignItems: 'center',
         justifyContent: "center",
         borderColor: colors.primaryColor,

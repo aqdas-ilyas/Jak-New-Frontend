@@ -4,10 +4,12 @@ import { View, Image, StyleSheet, Text } from 'react-native';
 import { appIcons, colors, fontFamily, hp, wp } from '../../services';
 import PhoneInput from "react-native-phone-number-input";
 import { LocalizationContext } from '../../language/LocalizationContext';
+import { useRTL } from '../../language/useRTL';
 import appStyles from '../../services/utilities/appStyles';
 
 const CountryInput = (props) => {
-    const { appLanguage, LocalizedStrings } = React.useContext(LocalizationContext);
+    const { LocalizedStrings } = React.useContext(LocalizationContext);
+    const { isRTL, rtlStyles, layoutDirection } = useRTL();
     const phoneInput = useRef(null);
 
     // useEffect(() => {
@@ -21,19 +23,20 @@ const CountryInput = (props) => {
 
     return (
         <View style={{ marginVertical: hp(1) }}>
-            <View style={appStyles.rowBtw}>
-                <Text style={[styles.titleStyle]}>{LocalizedStrings.phone_Number}</Text>
-                <Text onPress={props.onrightTextPress} style={[styles.rightTitleStyle]}>{props.rghtText}</Text>
+            <View style={[appStyles.rowBtw, rtlStyles.rowBetween]}>
+                <Text style={[styles.titleStyle, rtlStyles.textAlign, rtlStyles.writingDirection]}>{LocalizedStrings.phone_Number}</Text>
+                <Text onPress={props.onrightTextPress} style={[styles.rightTitleStyle, rtlStyles.textAlign]}>{props.rghtText}</Text>
             </View>
             <PhoneInput
-                containerStyle={[styles.inputBox, { width: '100%' }]}
+                containerStyle={[styles.inputBox, rtlStyles.rowBetween, { width: '100%' }]}
                 textInputStyle={{
                     height: hp(6),
                     fontFamily: fontFamily.UrbanistMedium,
                     fontSize: hp(1.6),
                     color: colors.BlackSecondary,
                     backgroundColor: props.disabled ? '#E0E0E0' : '#FAFAFA',
-                    textAlign: appLanguage == 'en' ? 'left' : 'right',
+                    textAlign: layoutDirection.textAlign,
+                    writingDirection: layoutDirection.writingDirection,
                 }}
                 codeTextStyle={{
                     fontFamily: fontFamily.UrbanistMedium,
@@ -51,7 +54,7 @@ const CountryInput = (props) => {
                     flex: 2,
                     backgroundColor: props.disabled ? '#E0E0E0' : '#FAFAFA',
                     height: hp(6),
-                    marginLeft: wp(3),
+                    marginStart: wp(3),
                     borderRadius: 10,
                 }}
                 renderDropdownImage={

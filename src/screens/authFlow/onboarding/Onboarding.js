@@ -1,13 +1,13 @@
-import React, {useRef, useState, useCallback} from 'react';
-import {View, Text, ImageBackground, StyleSheet, Platform} from 'react-native';
-import {SwiperFlatList} from 'react-native-swiper-flatlist';
-import {useDispatch} from 'react-redux';
-import {colors, hp, fontFamily, wp, routes} from '../../../services';
-import {appImages} from '../../../services/utilities/assets';
+import React, { useRef, useState, useCallback } from 'react';
+import { View, Text, ImageBackground, StyleSheet, Platform } from 'react-native';
+import { SwiperFlatList } from 'react-native-swiper-flatlist';
+import { useDispatch } from 'react-redux';
+import { colors, hp, fontFamily, wp, routes } from '../../../services';
+import { appImages } from '../../../services/utilities/assets';
 import appStyles from '../../../services/utilities/appStyles';
 import Button from '../../../components/button';
-import {LocalizationContext} from '../../../language/LocalizationContext';
-import {saveSplash} from '../../../store/reducers/userDataSlice';
+import { LocalizationContext } from '../../../language/LocalizationContext';
+import { saveSplash } from '../../../store/reducers/userDataSlice';
 
 // Move to a separate constants file for reusability
 const ONBOARDING_DATA = [
@@ -28,11 +28,11 @@ const ONBOARDING_DATA = [
   },
 ];
 
-const Onboarding = ({navigation}) => {
-  const {appLanguage, LocalizedStrings} = React.useContext(LocalizationContext);
+const Onboarding = ({ navigation }) => {
+  const { appLanguage, LocalizedStrings } = React.useContext(LocalizationContext);
+  const isRTL = appLanguage === 'ar';
   const swiperRef = useRef(null);
   const dispatch = useDispatch();
-  const isRTL = appLanguage === 'ar';
 
   // Initialize swiper index based on language direction
   const initialIndex = isRTL ? ONBOARDING_DATA.length - 1 : 0;
@@ -42,7 +42,7 @@ const Onboarding = ({navigation}) => {
   const onButtonPress = useCallback(() => {
     if (paginationIndex < ONBOARDING_DATA.length - 1) {
       try {
-        swiperRef.current?.scrollToIndex({index: paginationIndex + 1});
+        swiperRef.current?.scrollToIndex({ index: paginationIndex + 1 });
         setPaginationIndex(paginationIndex + 1);
       } catch (error) {
         console.warn('Failed to scroll to index:', error);
@@ -62,15 +62,15 @@ const Onboarding = ({navigation}) => {
   // Dynamic title width based on index and language
   const getTitleWidth = index => {
     const widths = {
-      0: {en: wp(48), ar: wp(35)},
-      1: {en: wp(35), ar: wp(45)},
-      2: {en: wp(40), ar: Platform.OS === 'android' ? wp(35) : wp(38)},
+      0: { en: wp(48), ar: wp(35) },
+      1: { en: wp(35), ar: wp(45) },
+      2: { en: wp(40), ar: Platform.OS === 'android' ? wp(35) : wp(38) },
     };
     return widths[index][appLanguage] || wp(40);
   };
 
   // Custom pagination dots
-  const DotComponent = ({paginationIndex}) => (
+  const DotComponent = ({ paginationIndex }) => (
     <View style={[appStyles.rowCenter, styles.paginationContainer]}>
       {ONBOARDING_DATA.map((_, index) => (
         <View
@@ -102,27 +102,28 @@ const Onboarding = ({navigation}) => {
         ref={swiperRef}
         data={ONBOARDING_DATA}
         initialScrollIndex={initialIndex}
-        onChangeIndex={({index}) => setPaginationIndex(index)}
+        onChangeIndex={({ index }) => setPaginationIndex(index)}
         showPagination
         PaginationComponent={DotComponent}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <View style={styles.swiperTopView}>
             <ImageBackground source={item.image} style={styles.imageStyle}>
               <Text
                 style={[
                   styles.titleStyle,
                   {
-                    alignSelf: isRTL ? 'flex-end' : 'flex-start',
-                    textAlign: isRTL ? 'right' : 'left',
+                    alignSelf: 'flex-start',
+                    textAlign: 'left',
                     width: getTitleWidth(index),
                     marginHorizontal: wp(5),
+                    fontSize: isRTL ? hp(3) : hp(4),
                   },
                 ]}>
                 {LocalizedStrings[item.titleKey]}
               </Text>
             </ImageBackground>
             <View style={styles.contentContainer}>
-              <Text style={styles.subtitleStyle}>
+              <Text style={[styles.subtitleStyle, { textAlign: isRTL ? 'right' : 'left' }]}>
                 {LocalizedStrings[item.subtitleKey]}
               </Text>
             </View>
@@ -139,9 +140,9 @@ const Onboarding = ({navigation}) => {
           }>
           {
             LocalizedStrings[
-              paginationIndex === ONBOARDING_DATA.length - 1
-                ? 'Get Started'
-                : 'next'
+            paginationIndex === ONBOARDING_DATA.length - 1
+              ? 'Get Started'
+              : 'next'
             ]
           }
         </Button>
@@ -169,7 +170,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   titleStyle: {
-    fontSize: hp(4),
     fontFamily: fontFamily.UrbanistBold,
     color: colors.fullBlack,
     marginBottom: -wp(5),
@@ -178,7 +178,6 @@ const styles = StyleSheet.create({
     fontSize: hp(1.6),
     fontFamily: fontFamily.UrbanistRegular,
     color: colors.descriptionColor,
-    textAlign: 'left',
     marginTop: hp(4),
   },
   contentContainer: {

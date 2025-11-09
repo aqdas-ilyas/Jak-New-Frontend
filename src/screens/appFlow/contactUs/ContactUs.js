@@ -176,7 +176,7 @@ const ContactUs = (props) => {
                                     countryAbbreviationCode="SA"
                                     setValue={setPhoneNumber}
                                     setSelectedCode={setCountryCode}
-                                    layout="first"
+                                    layout="second"
                                 >
                                     {LocalizedStrings.phone_number || "Phone Number"}
                                 </CountryInput>
