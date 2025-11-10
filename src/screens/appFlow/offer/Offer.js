@@ -52,10 +52,10 @@ export default Offer = (props) => {
         }
     }, [checkboxes.length]);
 
-    // Debug: Log banks array changes
-    useEffect(() => {
-        console.log('Banks array updated:', banks.length, banks);
-    }, [banks]);
+    // // Debug: Log banks array changes
+    // useEffect(() => {
+    //     console.log('Banks array updated:', banks.length, banks);
+    // }, [banks]);
 
     // Extract unique banks from offers
     const extractBanks = (offers) => {
@@ -83,7 +83,7 @@ export default Offer = (props) => {
         });
 
         const uniqueBanks = Array.from(bankMap.values());
-        console.log('Extracted banks:', uniqueBanks.length, uniqueBanks);
+        // console.log('Extracted banks:', uniqueBanks.length, uniqueBanks);
         setBanks(uniqueBanks);
     };
 
@@ -145,8 +145,8 @@ export default Offer = (props) => {
             console.log('Error getMyOffers===', error);
         };
 
-        // const endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
-        const endPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        const endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        // const endPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
         const method = Method.GET;
         const bodyParams = {};
 
@@ -170,12 +170,16 @@ export default Offer = (props) => {
                     }
                     return item;
                 });
+
+                console.log('new-CustomeArray: ', newCustomeArray)
                 dispatch(saveMyOffer(newCustomeArray));
 
                 const toggledItem = newCustomeArray.find((item) => item._id === id);
                 const newCustomeFavoriteID = toggledItem?.isLiked
                     ? [...favorite, toggledItem]
-                    : favorite.filter((item) => item._id !== id);
+                    : favorite ? favorite.filter((item) => item._id !== id) : [];
+
+                console.log('new-CustomeFavoriteID: ', newCustomeFavoriteID)
                 dispatch(saveFavourite(newCustomeFavoriteID));
             }
 
@@ -189,6 +193,8 @@ export default Offer = (props) => {
                     }
                     return item;
                 });
+
+                console.log('new-CustomeCategoryOffersArray: ', newCustomeCategoryOffersArray)
                 dispatch(saveCategoryOffers(newCustomeCategoryOffersArray));
             }
         };
@@ -196,7 +202,7 @@ export default Offer = (props) => {
         const onError = error => {
             setIsLoading(false);
             console.log('Error favourite===', error);
-            showMessage({ message: resolveMessage(LocalizedStrings, error?.message, LocalizedStrings.failed_to_update_favorite), type: 'danger' })
+            // showMessage({ message: resolveMessage(LocalizedStrings, error?.message, LocalizedStrings.failed_to_update_favorite), type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;
@@ -237,8 +243,8 @@ export default Offer = (props) => {
             setIsLoading(false);
         };
 
-        // let endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
-        let endPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        let endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        // let endPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
 
         // If bank is selected, filter by employer/bank
         if (bankId) {
@@ -385,8 +391,8 @@ export default Offer = (props) => {
             checkAndSetRefreshing();
         };
 
-        // const offersEndPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
-        const offersEndPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        const offersEndPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
+        // const offersEndPoint = routs.getMyOffers + `?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
         callApi(Method.GET, offersEndPoint, {}, onOffersSuccess, onOffersError);
     };
 

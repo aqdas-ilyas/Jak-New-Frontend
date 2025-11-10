@@ -93,7 +93,7 @@ export default Search = (props) => {
         const method = Method.GET;
         const bodyParams = {};
 
-        setIsLoadingFull(true);
+        // setIsLoadingFull(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     };
 
@@ -204,7 +204,7 @@ export default Search = (props) => {
             setIsLoadingFull(false);
             console.log('Error favourite===', error);
 
-            showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' })
+            // showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' })
         };
 
         const endPoint = routs.favourite + `/${id}`;
