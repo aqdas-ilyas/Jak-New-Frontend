@@ -612,7 +612,7 @@ const CreateProfile = (props) => {
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>{LocalizedStrings.verify_phone_number}</Text>
                             <Text style={styles.modalSubtitle}>
-                                {LocalizedStrings.enter_4_digit_code_sent_to} +{countryCode}{phoneNumber}
+                                {LocalizedStrings.enter_4_digit_code_sent_to} {countryCode}{phoneNumber}
                             </Text>
                         </View>
 

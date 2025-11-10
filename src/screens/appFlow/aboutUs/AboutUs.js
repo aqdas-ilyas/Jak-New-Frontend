@@ -4,8 +4,10 @@ import { colors, hp, fontFamily, wp } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
 import Header from '../../../components/header';
 import { LocalizationContext } from '../../../language/LocalizationContext';
+import { useRTL } from '../../../language/useRTL';
 
 const AboutUs = (props) => {
+    const { isRTL } = useRTL();
     const { LocalizedStrings } = React.useContext(LocalizationContext);
 
     const aboutUsList = [
@@ -52,8 +54,8 @@ const AboutUs = (props) => {
                 >
                     {aboutUsList.map((item, index) => (
                         <View key={index} style={styles.section}>
-                            <Text style={styles.mainTitle}>{item.title}</Text>
-                            <Text style={styles.mainDesc}>{item.desc}</Text>
+                            <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{item.title}</Text>
+                            <Text style={[styles.mainDesc, { textAlign: isRTL ? 'right' : 'left' }]}>{item.desc}</Text>
                         </View>
                     ))}
                 </ScrollView>
