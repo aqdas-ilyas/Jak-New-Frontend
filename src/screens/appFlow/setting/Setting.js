@@ -29,7 +29,7 @@ import LogoHeader from '../../../components/logoHeader/LogoHeader';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { LocalizationContext } from '../../../language/LocalizationContext';
 import { useRTL } from '../../../language/useRTL';
-import { logout, updateUser, saveBiometricEnabled } from '../../../store/reducers/userDataSlice';
+import { logout, updateUser, saveBiometricEnabled, saveLoginRemember } from '../../../store/reducers/userDataSlice';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { useDispatch, useSelector } from 'react-redux';
 import routs from '../../../api/routs';
@@ -175,6 +175,7 @@ export default Setting = props => {
         console.log('Biometric result - Success:', success, 'Error:', error);
 
         if (success) {
+          dispatch(saveLoginRemember(true));
           dispatch(saveBiometricEnabled(true));
           updateBiometricSetting(true);
           showMessage({
@@ -557,7 +558,7 @@ export default Setting = props => {
 
           {/* Biometric Authentication Section */}
           {biometricAvailable && (
-            <View style={[styles.biometricSection, rtlStyles.rowBetween]}>
+            <View style={[styles.biometricSection, rtlStyles.row, { justifyContent: "space-between" }]}>
               <View style={[styles.biometricTextContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
                 <Text style={[styles.biometricTitle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
                   🔐 {LocalizedStrings.biometric_login || 'Biometric Login'}
@@ -679,14 +680,14 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   biometricSection: {
-    alignItems: 'center',
+    // alignItems: 'center',
     marginVertical: hp(2.5),
     paddingTop: hp(2),
     borderTopWidth: 1,
     borderTopColor: colors.borderColor,
   },
   biometricLeftSection: {
-    alignItems: 'center',
+    // alignItems: 'center',
     flex: 1,
   },
   biometricTextContainer: {
@@ -706,7 +707,7 @@ const styles = StyleSheet.create({
     lineHeight: hp(2),
   },
   biometricToggleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
 });

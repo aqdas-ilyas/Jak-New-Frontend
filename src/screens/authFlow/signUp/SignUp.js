@@ -157,7 +157,7 @@ const SignUp = props => {
           refreshToken: response?.data?.refreshToken,
         }),
       );
-      dispatch(saveLoginRemember(true));
+      // dispatch(saveLoginRemember(true));
 
       // Save credentials for biometric login if biometric is enabled
       if (biometricEnabled) {
