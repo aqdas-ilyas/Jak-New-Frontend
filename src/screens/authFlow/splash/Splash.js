@@ -173,65 +173,65 @@ export default function Splash(props) {
         }
     }
 
-    useEffect(() => {
-        // Migrate state to ensure new properties exist
-        dispatch(migrateState());
+    // useEffect(() => {
+    //     // Migrate state to ensure new properties exist
+    //     dispatch(migrateState());
 
-        dispatch(saveMyOffer(null));
-        dispatch(saveTotalMyOfferPagesCount(1));
-        dispatch(saveMyOfferPageNo(1));
+    //     dispatch(saveMyOffer(null));
+    //     dispatch(saveTotalMyOfferPagesCount(1));
+    //     dispatch(saveMyOfferPageNo(1));
 
-        // If user is logged in, get fresh profile data
-        if (islogin && user) {
-            console.log("*********** Getting fresh user profile *************");
-            getUserProfile();
-        } else {
-            setApiCompleted(true);
-        }
+    //     // If user is logged in, get fresh profile data
+    //     if (islogin && user) {
+    //         console.log("*********** Getting fresh user profile *************");
+    //         getUserProfile();
+    //     } else {
+    //         setApiCompleted(true);
+    //     }
 
-        // Minimum splash time
-        const minSplashTime = setTimeout(() => {
-            setIsLoading(false);
-        }, 1500);
+    //     // Minimum splash time
+    //     const minSplashTime = setTimeout(() => {
+    //         setIsLoading(false);
+    //     }, 1500);
 
-        return () => clearTimeout(minSplashTime);
-    }, [])
+    //     return () => clearTimeout(minSplashTime);
+    // }, [])
 
-    // Handle navigation after API completion and minimum splash time
-    useEffect(() => {
-        if (!isLoading && apiCompleted && biometricChecked) {
-            console.log("*********** Starting navigation *************");
-            console.log("Navigation conditions - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
+    // // Handle navigation after API completion and minimum splash time
+    // useEffect(() => {
+    //     if (!isLoading && apiCompleted && biometricChecked) {
+    //         console.log("*********** Starting navigation *************");
+    //         console.log("Navigation conditions - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
 
-            // Small delay to ensure smooth transition and Redux state update
-            setTimeout(() => {
-                // Get fresh user data from Redux after API call
-                const currentUser = user;
-                console.log("*********** Current user for navigation *************", currentUser);
-                navigateBasedOnUserState(currentUser);
-            }, 500);
-        } else {
-            console.log("Navigation blocked - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
-        }
-    }, [isLoading, apiCompleted, biometricChecked, user]);
+    //         // Small delay to ensure smooth transition and Redux state update
+    //         setTimeout(() => {
+    //             // Get fresh user data from Redux after API call
+    //             const currentUser = user;
+    //             console.log("*********** Current user for navigation *************", currentUser);
+    //             navigateBasedOnUserState(currentUser);
+    //         }, 500);
+    //     } else {
+    //         console.log("Navigation blocked - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
+    //     }
+    // }, [isLoading, apiCompleted, biometricChecked, user]);
 
-    // Check biometric authentication - mandatory for logged in users, optional for logged out users
-    useEffect(() => {
-        // Only run biometric check once when conditions are met and not already in progress
-        if (islogin && biometricEnabled && apiCompleted && !biometricChecked && !biometricInProgress) {
-            // User is logged in and biometric is enabled - MANDATORY biometric check
-            console.log('Logged in user - MANDATORY biometric check');
-            checkBiometricAuth();
-        } else if (!islogin && biometricEnabled && !biometricChecked && !biometricInProgress) {
-            // User is not logged in but biometric is enabled - OPTIONAL biometric check
-            console.log('Not logged in user - OPTIONAL biometric check');
-            checkBiometricAuth();
-        } else if (!biometricEnabled) {
-            // If biometric is disabled, skip biometric check
-            console.log('Skipping biometric check - biometricEnabled:', biometricEnabled, 'islogin:', islogin);
-            setBiometricChecked(true);
-        }
-    }, [islogin, biometricEnabled, apiCompleted, biometricChecked, biometricInProgress]);
+    // // Check biometric authentication - mandatory for logged in users, optional for logged out users
+    // useEffect(() => {
+    //     // Only run biometric check once when conditions are met and not already in progress
+    //     if (islogin && biometricEnabled && apiCompleted && !biometricChecked && !biometricInProgress) {
+    //         // User is logged in and biometric is enabled - MANDATORY biometric check
+    //         console.log('Logged in user - MANDATORY biometric check');
+    //         checkBiometricAuth();
+    //     } else if (!islogin && biometricEnabled && !biometricChecked && !biometricInProgress) {
+    //         // User is not logged in but biometric is enabled - OPTIONAL biometric check
+    //         console.log('Not logged in user - OPTIONAL biometric check');
+    //         checkBiometricAuth();
+    //     } else if (!biometricEnabled) {
+    //         // If biometric is disabled, skip biometric check
+    //         console.log('Skipping biometric check - biometricEnabled:', biometricEnabled, 'islogin:', islogin);
+    //         setBiometricChecked(true);
+    //     }
+    // }, [islogin, biometricEnabled, apiCompleted, biometricChecked, biometricInProgress]);
 
     return (
         <>
@@ -270,7 +270,8 @@ const styles = StyleSheet.create({
     backgroundImage: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        height: hp(100),
     },
     imageLogo: {
         width: wp(60),
