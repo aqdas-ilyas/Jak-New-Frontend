@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
   checbox: {
     height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
     width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
-    marginHorizontal: wp(2),
+    marginRight: wp(2),
   },
   biometricButton: {
     flexDirection: 'row',

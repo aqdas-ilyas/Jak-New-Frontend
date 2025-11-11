@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { routes } from '../../constants';
 import * as Auth from '../../../screens/authFlow';
 import * as App from '../../../screens/appFlow';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors } from '../../utilities';
+import { wp } from '../../constants';
 
 const AuthStack = createNativeStackNavigator();
 
 export const AuthNavigation = () => {
+  const insets = useSafeAreaInsets();
+  const contentStyle = useMemo(() => ({
+    backgroundColor: colors.fullWhite,
+    paddingBottom: insets.bottom > 0 ? insets.bottom : wp(5),
+  }), [insets.bottom]);
+
   return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
+    <AuthStack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false, contentStyle }}>
       <AuthStack.Screen name={routes.splash} component={Auth.Splash} />
       <AuthStack.Screen name={routes.onboard} component={Auth.Onboarding} />
       <AuthStack.Screen name={routes.welcome} component={Auth.Welcome} />

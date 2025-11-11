@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, Image, View, TouchableOpacity, Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { appIcons, colors, fontFamily } from '../../utilities';
@@ -11,6 +11,7 @@ import { WalletNavigation } from '../walletFlow';
 import { LocalizationContext } from '../../../language/LocalizationContext';
 import { useRTL } from '../../../language/useRTL';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,6 +36,7 @@ export function TabNavigation() {
   const { LocalizedStrings } = React.useContext(LocalizationContext);
   const { isRTL } = useRTL();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const baseTabs = [
     // {
@@ -81,9 +83,21 @@ export function TabNavigation() {
     },
   ]
 
-  const tabArray = React.useMemo(() => {
+  const tabArray = useMemo(() => {
     return isRTL ? [...baseTabs].reverse() : baseTabs;
   }, [isRTL, baseTabs]);
+
+  const tabBarDynamicStyle = useMemo(() => {
+    const bottomInset = insets.bottom || 0;
+    const extraPadding = bottomInset > 0 ? bottomInset * 0.5 : wp(3);
+    const height = hp(9) + (bottomInset > 0 ? bottomInset * 0.35 : 0);
+    return {
+      ...styles.barStyle,
+      paddingTop: Platform.OS === 'ios' ? wp(3) : wp(2),
+      paddingBottom: extraPadding,
+      height,
+    };
+  }, [insets.bottom]);
 
   useEffect(() => {
     const homeRouteName = LocalizedStrings.home;
@@ -97,8 +111,12 @@ export function TabNavigation() {
       initialRouteName={LocalizedStrings.home}
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.barStyle,
-        tabBarHideOnKeyboard: true
+        tabBarStyle: tabBarDynamicStyle,
+        tabBarHideOnKeyboard: true,
+      }}
+      sceneContainerStyle={{
+        paddingBottom: insets.bottom > 0 ? insets.bottom * 0.6 : wp(5),
+        backgroundColor: colors.fullWhite,
       }}>
       {tabArray.map((item, index) => {
         return (
@@ -121,17 +139,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.fullWhite,
     borderTopLeftRadius: wp(5),
     borderTopRightRadius: wp(5),
-    height: hp(10),
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 10,
-    paddingTop: Platform.OS == 'ios' ? wp(5) : 0,
+    paddingHorizontal: wp(4),
     shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 0,
     },
-    shadowOpacity: 0.20,
+    shadowOpacity: 0.2,
     shadowRadius: 3.84,
     elevation: 10,
     borderTopWidth: 0,

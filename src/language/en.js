@@ -13,11 +13,15 @@ export default {
   terms: 'Terms & Conditions',
   terms_of_service: 'Terms of Service',
   privacy: 'Privacy Policy',
+  and: 'and',
+  accept_terms_prefix: 'I accept the ',
+  accept_terms_privacy_error: 'Please accept the terms & conditions and privacy policy',
   about_us: 'About Us',
   terms_and_privacy: 'Terms & Privacy',
   error_loading_document: 'Failed to load document. Please check your internet connection and try again.',
   retry: 'Retry',
-
+  "Let's Get Started!": "Let's Get Started!",
+  "Let's dive into your account.": "Let's dive into your account.",
   // Biometric Authentication
   biometric_login: 'Biometric Login',
   biometric_description: 'Use your fingerprint or face to quickly and securely access your account',
