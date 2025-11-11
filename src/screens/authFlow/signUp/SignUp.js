@@ -22,6 +22,7 @@ import { isPossibleNumber } from 'libphonenumber-js';
 import { decodeJWT } from '../../../common/HelpingFunc';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { resolveMessage } from '../../../language/helpers';
+import CheckBox from '@react-native-community/checkbox';
 
 const SignUp = props => {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ const SignUp = props => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('966');
   const [countryAbbreviationCode, setCountryAbbrivaitionCode] = useState('SA');
+  const [acceptPolicies, setAcceptPolicies] = useState(false);
 
   // Fetch and set the State's
   const fetchCountryAbbrivaition = async code => {
@@ -70,6 +72,15 @@ const SignUp = props => {
 
     if (password !== confirmPassword) {
       showMessage({ message: LocalizedStrings.password_not_matched, type: 'danger' });
+      return false;
+    }
+    if (!acceptPolicies) {
+      showMessage({
+        message:
+          LocalizedStrings.accept_terms_privacy_error ||
+          'Please accept the terms & conditions and privacy policy',
+        type: 'danger',
+      });
       return false;
     }
     return true;
@@ -334,6 +345,33 @@ const SignUp = props => {
           </Input>
         </View>
 
+        <View style={[styles.termsRow, rtlStyles.row, { marginTop: wp(4) }]}>
+          <CheckBox
+            value={acceptPolicies}
+            onValueChange={setAcceptPolicies}
+            boxType="square"
+            onFillColor={colors.primaryColor}
+            onCheckColor="white"
+            onTintColor={colors.primaryColor}
+            tintColors={{ true: colors.primaryColor, false: colors.placeholderColor }}
+            style={styles.checbox}
+          />
+          <Text style={[styles.termsText, rtlStyles.textAlign, rtlStyles.writingDirection]}>
+            {(LocalizedStrings.accept_terms_prefix || 'I accept the ')}
+            <Text
+              style={styles.linkText}
+              onPress={() => props.navigation.navigate(routes.termsConditions)}>
+              {LocalizedStrings.terms || 'Terms & Conditions'}
+            </Text>
+            {` ${LocalizedStrings.and || 'and'} `}
+            <Text
+              style={styles.linkText}
+              onPress={() => props.navigation.navigate(routes.privacyPolicy)}>
+              {LocalizedStrings.privacy || 'Privacy Policy'}
+            </Text>
+          </Text>
+        </View>
+
         <View style={[rtlStyles.row, appStyles.jcCenter, appStyles.mt20]}>
           <Text style={[styles.dontAccountTextStyle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
             {LocalizedStrings['Already have an account?']}{' '}
@@ -432,6 +470,22 @@ const styles = StyleSheet.create({
     height: wp(8),
     resizeMode: 'contain',
   },
+  termsRow: {
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  termsText: {
+    flex: 1,
+    fontSize: hp(1.4),
+    fontFamily: fontFamily.UrbanistRegular,
+    color: colors.descriptionColor,
+    lineHeight: 20,
+  },
+  linkText: {
+    color: colors.primaryColor,
+    fontFamily: fontFamily.UrbanistSemiBold,
+    textDecorationLine: 'underline',
+  },
   socialRow: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -451,6 +505,7 @@ const styles = StyleSheet.create({
   checbox: {
     height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
     width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
+    marginHorizontal: wp(2),
   },
   biometricButton: {
     flexDirection: 'row',
