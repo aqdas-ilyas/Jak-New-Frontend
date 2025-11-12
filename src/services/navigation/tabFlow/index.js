@@ -90,11 +90,11 @@ export function TabNavigation() {
   const tabBarDynamicStyle = useMemo(() => {
     const bottomInset = insets.bottom || 0;
     const extraPadding = bottomInset > 0 ? bottomInset * 0.5 : wp(3);
-    const height = hp(9) + (bottomInset > 0 ? bottomInset * 0.35 : 0);
+    const height = hp(10) + (bottomInset > 0 ? bottomInset * 0.35 : 0);
     return {
       ...styles.barStyle,
       paddingTop: Platform.OS === 'ios' ? wp(3) : wp(2),
-      paddingBottom: extraPadding,
+      // paddingBottom: extraPadding,
       height,
     };
   }, [insets.bottom]);

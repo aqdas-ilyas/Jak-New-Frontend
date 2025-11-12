@@ -7,6 +7,7 @@ import FlashMessage from 'react-native-flash-message';
 import { MainNavigator } from './src/services';
 import { LocalizationProvider } from './src/language/LocalizationContext';
 import { store } from './src/store/store';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs();
@@ -14,31 +15,31 @@ LogBox.ignoreAllLogs();
 const App = () => {
   let persistor = persistStore(store);
 
-
   return (
-    <Provider store={store}>
-      <LocalizationProvider>
-        {/* <StatusBar barStyle={'dark-content'} backgroundColor='#fff' /> */}
-        <StatusBar 
-          barStyle={'dark-content'} 
-          backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
-          translucent={Platform.OS === 'android'}
-        />
-        <PersistGate loading={null} persistor={persistor}>
-          {
-            Platform.OS === 'ios' ?
-              <View style={{ flex: 1 }}>
-                <MainNavigator />
-              </View>
-              :
-              <SafeAreaView style={{ flex: 1 }}>
-                <MainNavigator />
-              </SafeAreaView>
-          }
-          <FlashMessage position='bottom' />
-        </PersistGate>
-      </LocalizationProvider>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <LocalizationProvider>
+          {/* <StatusBar barStyle={'dark-content'} backgroundColor='#fff' /> */}
+          <StatusBar
+            barStyle={'dark-content'}
+            backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
+            translucent={Platform.OS === 'android'}
+          />
+          <PersistGate loading={null} persistor={persistor}>
+            {
+              Platform.OS === 'ios' ?
+                <View style={{ flex: 1 }}>
+                  <MainNavigator />
+                </View>
+                :
+                <SafeAreaView style={{ flex: 1 }}>
+                  <MainNavigator />
+                </SafeAreaView>
+            }
+          </PersistGate>
+        </LocalizationProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 };
 

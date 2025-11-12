@@ -11,9 +11,12 @@ import { colors } from '../../../services/utilities/colors'
 import { logout, updateUser, migrateState } from '../../../store/reducers/userDataSlice'
 import { saveMyOffer, saveMyOfferPageNo, saveTotalMyOfferPagesCount } from '../../../store/reducers/OfferSlice'
 import ReactNativeBiometrics from 'react-native-biometrics'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Splash(props) {
     const dispatch = useDispatch()
+    const insets = useSafeAreaInsets();
+
     const { LocalizedStrings, isRTL } = React.useContext(LocalizationContext);
     const [isLoading, setIsLoading] = useState(true);
     const [apiCompleted, setApiCompleted] = useState(false);
@@ -255,7 +258,7 @@ export default function Splash(props) {
                     </View>
                 )} */}
 
-                <View style={[styles.bottomContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+                <View style={[styles.bottomContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start', paddingBottom: insets.bottom > 0 ? insets.bottom : wp(5) }]}>
                     <Text style={[styles.welcomeText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Welcome to']}</Text>
                     <Text style={[styles.logoText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Jak App']}</Text>
                     <Text style={[styles.promotionText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Your one stop app for your promotions.']}</Text>
