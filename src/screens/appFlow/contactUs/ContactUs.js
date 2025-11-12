@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { View, Text, Image, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Linking, Alert, StatusBar, Platform } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, appIcons } from '../../../services'
 import appStyles from '../../../services/utilities/appStyles'
@@ -12,6 +12,7 @@ import routs from '../../../api/routs'
 import { showMessage } from 'react-native-flash-message'
 import CountryInput from '../../../components/countryPicker/CountryPicker'
 import { Loader } from '../../../components/loader/Loader'
+import { parsePhoneNumber } from 'libphonenumber-js'
 
 const socialButton = [
     // { id: 1, img: appIcons.facebookContact, url: 'https://facebook.com' },
@@ -24,6 +25,41 @@ const ContactUs = (props) => {
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const user = useSelector(state => state?.user?.user?.user);
 
+    const parseUserNumber = useCallback((rawNumber) => {
+        if (!rawNumber) {
+            return { dialCode: '', nationalNumber: '' };
+        }
+
+        const trimmed = `${rawNumber}`.trim();
+        if (!trimmed) {
+            return { dialCode: '', nationalNumber: '' };
+        }
+
+        const formatted = trimmed.startsWith('+') ? trimmed : `+${trimmed}`;
+
+        try {
+            const parsed = parsePhoneNumber(formatted);
+            if (parsed) {
+                return {
+                    dialCode: parsed?.countryCallingCode ? `${parsed.countryCallingCode}` : '',
+                    nationalNumber: parsed?.nationalNumber ? `${parsed.nationalNumber}` : '',
+                };
+            }
+        } catch (error) {
+            console.log('parseUserNumber error:', error);
+        }
+
+        const digitsOnly = formatted.replace(/\D/g, '');
+        if (!digitsOnly) {
+            return { dialCode: '', nationalNumber: '' };
+        }
+
+        return {
+            dialCode: digitsOnly.length > 3 ? digitsOnly.slice(0, 3) : digitsOnly,
+            nationalNumber: digitsOnly.length > 3 ? digitsOnly.slice(3) : '',
+        };
+    }, []);
+
     // Form state
     const [messageTitle, setMessageTitle] = useState('');
     const [messageBody, setMessageBody] = useState('');
@@ -34,6 +70,25 @@ const ContactUs = (props) => {
 
     // Check if user is social login
     const isSocialUser = user?.isSocial;
+
+    useEffect(() => {
+        if (!user) {
+            return;
+        }
+
+        const defaultEmail = user?.email ? `${user.email}` : '';
+        setEmail(defaultEmail);
+
+        const { dialCode, nationalNumber } = parseUserNumber(user?.number);
+
+        if (dialCode) {
+            setCountryCode(dialCode);
+        }
+
+        if (isSocialUser) {
+            setPhoneNumber(nationalNumber);
+        }
+    }, [user, isSocialUser, parseUserNumber]);
 
     const handleSubmit = () => {
         // Validation
@@ -79,11 +134,9 @@ const ContactUs = (props) => {
                 message: LocalizedStrings.message_sent_successfully || 'Message sent successfully! We will get back to you soon.',
                 type: 'success',
             });
-            // Reset form
+            // Reset form (keep contact details)
             setMessageTitle('');
             setMessageBody('');
-            setEmail('');
-            setPhoneNumber('');
         };
 
         const onError = (error) => {
@@ -177,6 +230,7 @@ const ContactUs = (props) => {
                                     setValue={setPhoneNumber}
                                     setSelectedCode={setCountryCode}
                                     layout="second"
+                                    disabled
                                 >
                                     {LocalizedStrings.phone_number || "Phone Number"}
                                 </CountryInput>
@@ -189,6 +243,7 @@ const ContactUs = (props) => {
                                     onChangeText={setEmail}
                                     keyboardType="email-address"
                                     leftIcon={appIcons.message}
+                                    editable={false}
                                 >
                                     {LocalizedStrings.email_address || "Email Address"}
                                 </Input>

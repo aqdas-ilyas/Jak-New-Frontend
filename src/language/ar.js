@@ -562,4 +562,5 @@ export default {
   "MESSAGE:": "الرسالة:",
   'Number': 'رقم',
   'No Card Found!': 'لم يتم العثور على بطاقة!',
+  'Don’t have an account?': 'ليس لديك حساب؟',
 };
