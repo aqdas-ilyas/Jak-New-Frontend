@@ -85,6 +85,7 @@ export default Setting = props => {
     {
       id: 5,
       name: LocalizedStrings.change_language,
+      onpress: () => onChangeLng(appLanguage == 'en' ? 'ar' : 'en')
       //  onpress: () => props.navigation.navigate(routes.changeLanguage)
     },
     {
@@ -486,12 +487,15 @@ export default Setting = props => {
               return (
                 <TouchableOpacity
                   key={index}
-                  activeOpacity={0.5}
+                  activeOpacity={0.8}
                   onPress={item.onpress}
                   style={[
                     appStyles.rowBtw,
                     rtlStyles.rowBetween,
-                    { paddingTop: index > 0 ? wp(6) : wp(3) },
+                    {
+                      paddingTop: index > 0 ? wp(6) : wp(3),
+                      paddingBottom: index > settingsArray.length - 2 ? wp(6) : 0
+                    },
                   ]}>
                   <Text style={[styles.mainText, rtlStyles.textAlign, rtlStyles.writingDirection]}>
                     {`${item.name}`}
@@ -681,7 +685,6 @@ const styles = StyleSheet.create({
   },
   biometricSection: {
     // alignItems: 'center',
-    marginVertical: hp(2.5),
     paddingTop: hp(2),
     borderTopWidth: 1,
     borderTopColor: colors.borderColor,
