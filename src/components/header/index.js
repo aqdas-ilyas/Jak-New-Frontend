@@ -11,7 +11,7 @@ export default function Header({ filter, leftIcon, cross, onleftIconPress, title
     return (
         <View style={[{ paddingTop: Platform.OS == 'android' ? (filter ? 0 : wp(10)) : 0 }, rtlStyles.rowBetween]}>
             {leftIcon ? (
-                <TouchableOpacity onPress={onleftIconPress}>
+                <TouchableOpacity onPress={onleftIconPress} style={{ paddingVertical: wp(1) }}>
                     <Image
                         source={cross ? appIcons.cross : appIcons.back}
                         style={[styles.back, rtlStyles.iconRotation]}

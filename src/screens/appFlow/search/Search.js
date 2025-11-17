@@ -220,7 +220,7 @@ export default Search = (props) => {
             <Loader loading={isLoadingFull} />
 
             <View style={[{ paddingTop: Platform.OS == 'android' ? wp(6) : 0, alignItems: "center" }, rtlStyles.row]}>
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={() => props.navigation.goBack()} style={{ padding: wp(2) }}>
                     <Image source={appIcons.back} style={[styles.back, rtlStyles.iconRotation]} />
                 </TouchableOpacity>
 
@@ -237,7 +237,7 @@ export default Search = (props) => {
                         borderColor: colors.primaryColor,
                         borderWidth: 1,
                         backgroundColor: colors.primaryColorOpacity,
-                        width: wp(81),
+                        width: wp(78),
                         marginTop: -wp(10),
                         marginHorizontal: wp(5)
                     }}

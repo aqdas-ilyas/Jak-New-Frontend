@@ -491,7 +491,7 @@ export default Setting = props => {
                   style={[
                     appStyles.rowBtw,
                     rtlStyles.rowBetween,
-                    { marginTop: index > 0 ? wp(6) : wp(3) },
+                    { paddingTop: index > 0 ? wp(6) : wp(3) },
                   ]}>
                   <Text style={[styles.mainText, rtlStyles.textAlign, rtlStyles.writingDirection]}>
                     {`${item.name}`}
