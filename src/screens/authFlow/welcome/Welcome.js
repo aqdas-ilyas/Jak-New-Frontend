@@ -107,7 +107,10 @@ const Welcome = (props) => {
             } else if (response?.act === 'email-unverified') {
                 props.navigation.navigate(routes.otp, { email: user?.email.toLowerCase(), key: 'auth' })
             } else if (response?.act === 'incomplete-profile') {
-                props?.navigation?.navigate(routes.createProfile, { email: user?.email.toLowerCase() });
+                props?.navigation?.navigate(routes.createProfile, {
+                    email: user?.email.toLowerCase(),
+                    userName: user?.userFirstName + ' ' + user?.userLastName
+                });
             } else {
                 props.navigation.navigate(routes.tab, { screen: routes.home })
             }

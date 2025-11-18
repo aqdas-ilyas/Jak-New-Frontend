@@ -534,7 +534,8 @@ const SignIn = props => {
       } else if (response?.act === 'incomplete-profile') {
         props?.navigation?.navigate(routes.createProfile, {
           email: user?.email.toLowerCase(),
-        });
+          userName: user?.userFirstName + ' ' + user?.userLastName
+      });
       } else {
         props.navigation.navigate(routes.tab, { screen: routes.home });
       }
@@ -660,7 +661,6 @@ const SignIn = props => {
           {LocalizedStrings['Login and manage your Jak Mobile App account.']}
         </Text>
         <View>
-
           <CountryInput
             phoneNumber={phoneNumber}
             countryCode={countryCode}

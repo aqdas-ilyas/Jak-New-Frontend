@@ -336,7 +336,7 @@ export default EditProfile = (props) => {
                             }
 
 
-                            <FlatList
+                            {/* <FlatList
                                 data={genderArray}
                                 keyExtractor={(_, index) => index.toString()}
                                 ListHeaderComponent={
@@ -352,7 +352,7 @@ export default EditProfile = (props) => {
                                         </Pressable>
                                     )
                                 }}
-                            />
+                            /> */}
 
                             <Input
                                 placeholder={LocalizedStrings.location_Placeholder}

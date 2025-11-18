@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Keyboard } from "react-native";
-import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY, emailFormat } from '../../../services'
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, Platform, SafeAreaView, Image, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Keyboard } from "react-native";
+import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, emailFormat } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
 import Button from '../../../components/button';
@@ -15,8 +15,7 @@ import moment from 'moment';
 import routs from '../../../api/routs';
 import { callApi, Method } from '../../../api/apiCaller';
 import { Loader } from '../../../components/loader/Loader';
-import { isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+import { isPossiblePhoneNumber } from 'libphonenumber-js'
 import { useDispatch, useSelector } from 'react-redux';
 import { setToken, updateUser } from '../../../store/reducers/userDataSlice';
 import { showMessage } from 'react-native-flash-message';
@@ -26,18 +25,18 @@ import { CodeField, Cursor } from "react-native-confirmation-code-field";
 import { resolveMessage } from '../../../language/helpers';
 
 const CreateProfile = (props) => {
-    const { number, email } = props?.route?.params ?? {}
-    const dispatch = useDispatch()
-    const user = useSelector(state => state.user.user.user);
+    const { userName, number, email } = props?.route?.params ?? {}
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const dispatch = useDispatch()
     const { isRTL } = useRTL();
+    const user = useSelector(state => state.user.user.user);
 
     const genderArray = [
         { id: 1, title: LocalizedStrings.Male },
         { id: 2, title: LocalizedStrings.Female },
     ]
 
-    const [name, setName] = useState('')
+    const [name, setName] = useState(userName ? userName : '')
     const [userEmail, setEmail] = useState('')
     const [image, setImage] = useState({ uri: 'https://wheelzconnect.s3.amazonaws.com/dummyUser.png' });
     const [dob, setDOB] = useState('');
@@ -142,31 +141,31 @@ const CreateProfile = (props) => {
             return false;
         }
 
-        if (dob.length < 2) {
-            showMessage({ message: LocalizedStrings.please_select_date_of_birth, type: "danger" });
-            return false;
-        }
+        // if (dob.length < 2) {
+        //     showMessage({ message: LocalizedStrings.please_select_date_of_birth, type: "danger" });
+        //     return false;
+        // }
 
-        // Validate age - must be 15 years or older
-        if (dob) {
-            const today = new Date();
-            const birthDate = moment(dob, 'DD/MM/YYYY').toDate();
-            const age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
+        // // Validate age - must be 15 years or older
+        // if (dob) {
+        //     const today = new Date();
+        //     const birthDate = moment(dob, 'DD/MM/YYYY').toDate();
+        //     const age = today.getFullYear() - birthDate.getFullYear();
+        //     const monthDiff = today.getMonth() - birthDate.getMonth();
 
-            // Check if birthday hasn't occurred this year
-            const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
-                ? age - 1
-                : age;
+        //     // Check if birthday hasn't occurred this year
+        //     const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        //         ? age - 1
+        //         : age;
 
-            if (actualAge < 15) {
-                showMessage({
-                    message: LocalizedStrings.age_validation_error || "You must be at least 15 years old to create a profile",
-                    type: "danger"
-                });
-                return false;
-            }
-        }
+        //     if (actualAge < 15) {
+        //         showMessage({
+        //             message: LocalizedStrings.age_validation_error || "You must be at least 15 years old to create a profile",
+        //             type: "danger"
+        //         });
+        //         return false;
+        //     }
+        // }
 
         if (email) {
             if (!isPossiblePhoneNumber(`+${countryCode}` + phoneNumber)) {
@@ -521,7 +520,7 @@ const CreateProfile = (props) => {
                                 )
                             }
 
-                            <FlatList
+                            {/* <FlatList
                                 data={genderArray}
                                 keyExtractor={(_, index) => index.toString()}
                                 ListHeaderComponent={
@@ -540,7 +539,7 @@ const CreateProfile = (props) => {
                                         </Pressable>
                                     )
                                 }}
-                            />
+                            /> */}
 
                             <Input
                                 placeholder={LocalizedStrings.Location}
