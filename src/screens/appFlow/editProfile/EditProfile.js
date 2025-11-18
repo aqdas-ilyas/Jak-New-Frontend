@@ -180,6 +180,10 @@ export default EditProfile = (props) => {
             setIsLoading(false);
             dispatch(updateUser({ user: response?.data?.data }))
             showMessage({ message: LocalizedStrings.profile_updated, type: "success" });
+
+            setTimeout(() => {
+                props.navigation.goBack()
+            }, 1000);
         };
 
         const onError = error => {
