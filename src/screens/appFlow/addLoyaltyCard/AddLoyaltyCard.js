@@ -45,7 +45,7 @@ const AddLoyaltyCard = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+        <SafeAreaView style={[appStyles.safeContainer, { marginHorizontal: wp(4) }]}>
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings["Add Loyalty Cards"]} addButton onPressRightTitle={() => props.navigation.navigate(routes.airArabia)} />
 

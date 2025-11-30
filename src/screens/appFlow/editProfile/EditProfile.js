@@ -199,24 +199,31 @@ export default EditProfile = (props) => {
             "dob": dob,
             "image": image?.uri,
             "gender": gender == 1 ? 'Male' : 'Female', // Female,Other
-            "location": {
-                "type": "Point",
-                coordinates: [
-                    latLng?.longitude,
-                    latLng?.latitude,
-                ],
-                address: country,
-            },
             "device": {
                 id: getDeviceId(),
                 deviceToken: "fcmToken"
             }
         }
 
+        // Location is optional - only include if provided
+        if (country && country.trim().length > 0) {
+            body.location = {
+                "type": "Point",
+                coordinates: [
+                    latLng?.longitude || 0,
+                    latLng?.latitude || 0,
+                ],
+                address: country.trim(),
+            };
+        }
+
         if (user?.isSocial) {
             body = { ...body, "number": countryCode + phoneNumber }
         } else {
-            body = { ...body, "email": userEmail }
+            // Email is optional - only include if provided
+            if (userEmail && userEmail.trim().length > 0) {
+                body = { ...body, "email": userEmail.trim() }
+            }
         }
 
         setIsLoading(true);
@@ -291,7 +298,7 @@ export default EditProfile = (props) => {
                                 eyeValue={appIcons.calender1}
                                 rightIconColor={colors.primaryColor}
                             >
-                                {LocalizedStrings.DOB}
+                                {LocalizedStrings.DOB} <Text style={{ fontSize: hp(1.2), fontFamily: fontFamily.MontserratRegular, color: colors.placeholderColor }}>(Optional)</Text>
                             </Input>
 
                             {
@@ -333,18 +340,20 @@ export default EditProfile = (props) => {
                                                 onChangeText={(value) => setEmail(value)}
                                                 leftIcon={appIcons.message}
                                             >
-                                                {LocalizedStrings.email}
+                                                {LocalizedStrings.email} <Text style={{ fontSize: hp(1.2), fontFamily: fontFamily.MontserratRegular, color: colors.placeholderColor }}>(Optional)</Text>
                                             </Input>
                                         </View>
                                     )
                             }
 
 
-                            {/* <FlatList
+                            <FlatList
                                 data={genderArray}
                                 keyExtractor={(_, index) => index.toString()}
                                 ListHeaderComponent={
-                                    <Text style={[styles.headerText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.gender}</Text>
+                                    <Text style={[styles.headerText, { textAlign: isRTL ? 'right' : 'left' }]}>
+                                        {LocalizedStrings.gender} <Text style={{ fontSize: hp(1.2), fontFamily: fontFamily.MontserratRegular, color: colors.placeholderColor }}>(Optional)</Text>
+                                    </Text>
                                 }
                                 renderItem={({ item, index }) => {
                                     return (
@@ -356,17 +365,17 @@ export default EditProfile = (props) => {
                                         </Pressable>
                                     )
                                 }}
-                            /> */}
+                            />
 
                             <Input
-                                placeholder={LocalizedStrings.location_Placeholder}
+                                placeholder={LocalizedStrings.Location}
                                 rightIcon
                                 eyeValue={appIcons.location}
                                 rightIconColor={colors.primaryColor}
                                 value={country}
                                 onChangeText={(value) => setCountry(value)}
                             >
-                                {LocalizedStrings.Location}
+                                {LocalizedStrings.Location} <Text style={{ fontSize: hp(1.2), fontFamily: fontFamily.MontserratRegular, color: colors.placeholderColor }}>(Optional)</Text>
                             </Input>
                         </View>
                     </View>

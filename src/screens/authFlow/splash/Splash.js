@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View, ActivityIndicator, StatusBar, Platform } from 'react-native'
+import React, { useEffect, useState, useRef } from 'react'
+import { Image, ImageBackground, StyleSheet, Text, View, ActivityIndicator, StatusBar, Platform, Animated, Easing } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
@@ -22,6 +22,14 @@ export default function Splash(props) {
     const [apiCompleted, setApiCompleted] = useState(false);
     const [biometricChecked, setBiometricChecked] = useState(false);
     const [biometricInProgress, setBiometricInProgress] = useState(false);
+
+    // Loading animation values
+    const loadingOpacity = useRef(new Animated.Value(0)).current;
+    const loadingTranslateY = useRef(new Animated.Value(-50)).current;
+    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const dot1Opacity = useRef(new Animated.Value(0.3)).current;
+    const dot2Opacity = useRef(new Animated.Value(0.3)).current;
+    const dot3Opacity = useRef(new Animated.Value(0.3)).current;
 
     const islogin = useSelector(state => state?.user?.isRemember)
     const numberLogin = useSelector(state => state?.user?.numberLogin)
@@ -175,6 +183,154 @@ export default function Splash(props) {
         }
     }
 
+    // Loading animations
+    useEffect(() => {
+        if (isLoading || !apiCompleted || !biometricChecked || biometricInProgress) {
+            // Slide down and fade in animation
+            Animated.parallel([
+                Animated.timing(loadingTranslateY, {
+                    toValue: 0,
+                    duration: 500,
+                    easing: Easing.out(Easing.cubic),
+                    useNativeDriver: true,
+                }),
+                Animated.timing(loadingOpacity, {
+                    toValue: 1,
+                    duration: 500,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: true,
+                }),
+            ]).start();
+
+            // Pulse animation for loader
+            const pulseAnimation = Animated.loop(
+                Animated.sequence([
+                    Animated.timing(pulseAnim, {
+                        toValue: 1.1,
+                        duration: 800,
+                        easing: Easing.inOut(Easing.ease),
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(pulseAnim, {
+                        toValue: 1,
+                        duration: 800,
+                        easing: Easing.inOut(Easing.ease),
+                        useNativeDriver: true,
+                    }),
+                ])
+            );
+            pulseAnimation.start();
+
+            // Dots animation (wave effect)
+            const dotsAnimation = Animated.loop(
+                Animated.sequence([
+                    Animated.parallel([
+                        Animated.timing(dot1Opacity, {
+                            toValue: 1,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(dot2Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(dot3Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                    ]),
+                    Animated.parallel([
+                        Animated.timing(dot1Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(dot2Opacity, {
+                            toValue: 1,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(dot3Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                    ]),
+                    Animated.parallel([
+                        Animated.timing(dot1Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(dot2Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(dot3Opacity, {
+                            toValue: 1,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                    ]),
+                    Animated.parallel([
+                        Animated.timing(dot1Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(dot2Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(dot3Opacity, {
+                            toValue: 0.3,
+                            duration: 400,
+                            easing: Easing.ease,
+                            useNativeDriver: true,
+                        }),
+                    ]),
+                ])
+            );
+            dotsAnimation.start();
+
+            return () => {
+                pulseAnimation.stop();
+                dotsAnimation.stop();
+            };
+        } else {
+            // Fade out animation when loading completes
+            Animated.parallel([
+                Animated.timing(loadingOpacity, {
+                    toValue: 0,
+                    duration: 300,
+                    easing: Easing.in(Easing.ease),
+                    useNativeDriver: true,
+                }),
+                Animated.timing(loadingTranslateY, {
+                    toValue: -50,
+                    duration: 300,
+                    easing: Easing.in(Easing.ease),
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+    }, [isLoading, apiCompleted, biometricChecked, biometricInProgress]);
+
     useEffect(() => {
         // Migrate state to ensure new properties exist
         dispatch(migrateState());
@@ -243,20 +399,37 @@ export default function Splash(props) {
                 translucent={Platform.OS === 'android'}
             />
             <ImageBackground source={appImages.splashBackground} style={styles.backgroundImage}>
-                <Image source={appIcons.appLogo} style={styles.imageLogo} />
-
-                {/* Loading indicator */}
-                {/* {(isLoading || !apiCompleted || !biometricChecked || biometricInProgress) && (
-                    <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color={colors.primaryColor} />
+                {/* Top Loading Section with Animations */}
+                <Animated.View
+                    style={[
+                        styles.topLoadingContainer,
+                        {
+                            opacity: loadingOpacity,
+                            transform: [{ translateY: loadingTranslateY }],
+                        },
+                    ]}
+                    pointerEvents={(isLoading || !apiCompleted || !biometricChecked || biometricInProgress) ? 'auto' : 'none'}
+                >
+                    <View style={styles.loadingContent}>
+                        <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                            <ActivityIndicator size="small" color={colors.primaryColor} />
+                        </Animated.View>
                         <Text style={styles.loadingText}>
                             {biometricInProgress || (!biometricChecked && biometricEnabled && islogin)
                                 ? (LocalizedStrings.biometric_app_open_prompt || 'Authenticate to open the app')
                                 : (LocalizedStrings.loading || 'Loading...')
                             }
                         </Text>
+                        {/* Animated dots */}
+                        <View style={styles.dotsContainer}>
+                            <Animated.View style={[styles.dot, { opacity: dot1Opacity }]} />
+                            <Animated.View style={[styles.dot, { opacity: dot2Opacity }]} />
+                            <Animated.View style={[styles.dot, { opacity: dot3Opacity }]} />
+                        </View>
                     </View>
-                )} */}
+                </Animated.View>
+
+                <Image source={appIcons.appLogo} style={styles.imageLogo} />
 
                 <View style={[styles.bottomContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start', paddingBottom: insets.bottom > 0 ? insets.bottom : wp(5) }]}>
                     <Text style={[styles.welcomeText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Welcome to']}</Text>
@@ -278,18 +451,50 @@ const styles = StyleSheet.create({
         width: wp(60),
         height: hp(20)
     },
-    loadingContainer: {
+    topLoadingContainer: {
         position: "absolute",
-        top: hp(45),
+        top: Platform.OS === 'android' ? hp(6) : hp(4),
+        left: wp(4),
+        right: wp(4),
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        paddingHorizontal: wp(4),
+        paddingVertical: wp(3.5),
+        backgroundColor: 'rgba(98, 89, 132, 0.85)',
+        borderRadius: wp(8),
+        shadowColor: colors.fullBlack,
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
+    },
+    loadingContent: {
+        flexDirection: 'row',
+        alignItems: "center",
+        justifyContent: "center",
     },
     loadingText: {
-        fontSize: hp(1.8),
-        fontFamily: fontFamily.UrbanistMedium,
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.fullWhite,
-        marginTop: wp(3),
+        marginLeft: wp(3),
+        marginRight: wp(2),
         textAlign: "center"
+    },
+    dotsContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: wp(2),
+    },
+    dot: {
+        width: wp(1.5),
+        height: wp(1.5),
+        borderRadius: wp(0.75),
+        backgroundColor: colors.fullWhite,
+        marginHorizontal: wp(1),
     },
     bottomContainer: {
         padding: wp(5),

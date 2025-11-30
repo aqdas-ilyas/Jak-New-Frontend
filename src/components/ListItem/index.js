@@ -98,7 +98,16 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </Text>
 
                             <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center' }}>
-                                <TouchableOpacity style={{ padding: wp(2) }} activeOpacity={0.8} onPress={() => IsFavourites(item)}>
+                                <TouchableOpacity 
+                                    style={{ 
+                                        padding: wp(2),
+                                        marginTop: -hp(0.5),
+                                        marginRight: isRTL ? 0 : wp(1.5),
+                                        marginLeft: isRTL ? wp(1.5) : 0
+                                    }} 
+                                    activeOpacity={0.8} 
+                                    onPress={() => IsFavourites(item)}
+                                >
                                     <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
                                 </TouchableOpacity>
                             </View>

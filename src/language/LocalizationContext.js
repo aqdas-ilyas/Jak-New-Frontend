@@ -4,7 +4,7 @@ import * as RNLocalize from 'react-native-localize';
 import LocalizedStrings from './LocalizedString';
 
 const APP_LANGUAGE = 'appLanguage';
-const DEFAULT_LANGUAGE = "en"
+const DEFAULT_LANGUAGE = "ar"
 
 export const LocalizationContext = createContext({
     LocalizedStrings,
@@ -24,14 +24,18 @@ export const LocalizationContext = createContext({
 });
 
 export const LocalizationProvider = ({ children }) => {
-    const [appLanguage, setAppLanguage] = useState(DEFAULT_LANGUAGE);
-    const [isRTL, setIsRTL] = useState(DEFAULT_LANGUAGE === 'ar');
+    // Initialize with null, will be set after reading from AsyncStorage
+    const [appLanguage, setAppLanguage] = useState(null);
+    const [isRTL, setIsRTL] = useState(false);
+    const [isLanguageInitialized, setIsLanguageInitialized] = useState(false);
 
-    const setLanguage = language => {
+    const setLanguage = (language, skipStorage = false) => {
         LocalizedStrings.setLanguage(language);
         setAppLanguage(language);
         setIsRTL(language === 'ar');
-        AsyncStorage.setItem(APP_LANGUAGE, language);
+        if (!skipStorage) {
+            AsyncStorage.setItem(APP_LANGUAGE, language);
+        }
     };
 
     const layoutDirection = useMemo(() => ({
@@ -45,29 +49,33 @@ export const LocalizationProvider = ({ children }) => {
     }), [isRTL]);
 
     const initializeAppLanguage = async () => {
-        const currentLanguage = await AsyncStorage.getItem(APP_LANGUAGE);
+        try {
+            const currentLanguage = await AsyncStorage.getItem(APP_LANGUAGE);
 
-        if (!currentLanguage) {
-            let localeCode = DEFAULT_LANGUAGE;
-            // const supportedLocaleCodes = LocalizedStrings.getAvailableLanguages();
-            // const phoneLocaleCodes = RNLocalize.getLocales().map(
-            //     locale => locale.languageCode,
-            // );
-            // phoneLocaleCodes.some(code => {
-            //     if (supportedLocaleCodes.includes(code)) {
-            //         localeCode = code;
-            //         return true;
-            //     }
-            // });
-            setLanguage(localeCode);
-        } else {
-            setLanguage(currentLanguage);
+            if (!currentLanguage) {
+                // Set Arabic as default language if no language is stored
+                setLanguage(DEFAULT_LANGUAGE, true);
+            } else {
+                // Use stored language preference - set without saving to storage again
+                setLanguage(currentLanguage, true);
+            }
+            setIsLanguageInitialized(true);
+        } catch (error) {
+            console.log('Error initializing language:', error);
+            // Fallback to Arabic if there's an error
+            setLanguage(DEFAULT_LANGUAGE, true);
+            setIsLanguageInitialized(true);
         }
     };
 
     useEffect(() => {
         initializeAppLanguage()
     }, [])
+
+    // Don't render children until language is initialized to prevent flash
+    if (!isLanguageInitialized || appLanguage === null) {
+        return null;
+    }
 
     return (
         <LocalizationContext.Provider

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, Platform, SafeAreaView, Image, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Keyboard } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Image, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Keyboard, FlatList, Pressable } from "react-native";
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, emailFormat } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
@@ -36,7 +36,7 @@ const CreateProfile = (props) => {
         { id: 2, title: LocalizedStrings.Female },
     ]
 
-    const [name, setName] = useState(userName ? userName : '')
+    const [name, setName] = useState((userName !== 'undefined undefined') ? userName : '')
     const [userEmail, setEmail] = useState('')
     const [image, setImage] = useState({ uri: 'https://wheelzconnect.s3.amazonaws.com/dummyUser.png' });
     const [dob, setDOB] = useState('');
@@ -173,16 +173,14 @@ const CreateProfile = (props) => {
                 return false;
             }
         } else {
-            if (!emailValue) {
+            // Email is now optional - only validate if provided
+            if (userEmail && userEmail.trim().length > 0 && !emailValue) {
                 showMessage({ message: LocalizedStrings.invalid_email, type: "danger" });
                 return false;
             }
         }
 
-        if (country.length < 2) {
-            showMessage({ message: LocalizedStrings.please_enter_valid_country, type: "danger" });
-            return false;
-        }
+        // Location is now optional - no validation needed
 
         if (!isNumberVerified && email) {
             showMessage({ message: LocalizedStrings.please_verify_your_phone_number, type: "danger" });
@@ -249,20 +247,25 @@ const CreateProfile = (props) => {
             "name": name,
             "dob": dob,
             "image": image?.uri ? image?.uri : '',
-            "gender": gender == 1 ? 'Male' : 'Female', // Female,Other
-            "location": {
-                "type": "Point",
-                coordinates: [0, 0],
-                address: country,
-            },
+            "gender": gender == 1 ? 'Male' : 'Female', // Female, Other
             "device": {
                 id: getDeviceId(),
                 deviceToken: "fcmToken"
             }
         }
 
-        if (number) {
-            body = { ...body, "email": userEmail }
+        // Location is optional - only include if provided
+        if (country && country.trim().length > 0) {
+            body.location = {
+                "type": "Point",
+                coordinates: [0, 0],
+                address: country.trim(),
+            };
+        }
+
+        // Email is optional - only include if provided
+        if (number && userEmail && userEmail.trim().length > 0) {
+            body = { ...body, "email": userEmail.trim() }
         }
 
         if (email) {
@@ -439,7 +442,7 @@ const CreateProfile = (props) => {
                                 <Image source={appIcons.edit} style={styles.editIcon} />
                             </TouchableOpacity>
                         </View>
-                        <Text style={[styles.mainTitle, { marginVertical: wp(2), textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.profile_picture}</Text>
+                        <Text style={[styles.mainTitle, { marginVertical: wp(2), textAlign: 'center' }]}>{LocalizedStrings.profile_picture}</Text>
                         <View>
                             <Input
                                 placeholder={LocalizedStrings.full_name}
@@ -459,7 +462,7 @@ const CreateProfile = (props) => {
                                 rightIconColor={colors.primaryColor}
                                 touchable
                             >
-                                {LocalizedStrings.DOB}
+                                {LocalizedStrings.DOB} <Text style={{ fontSize: hp(1.2), fontFamily: fontFamily.MontserratRegular, color: colors.placeholderColor }}>(Optional)</Text>
                             </Input>
 
                             {
@@ -472,7 +475,7 @@ const CreateProfile = (props) => {
                                             onChangeText={(value) => setEmail(value)}
                                             leftIcon={appIcons.message}
                                         >
-                                            {LocalizedStrings.email}
+                                            {LocalizedStrings.email} <Text style={{ fontSize: hp(1.2), fontFamily: fontFamily.MontserratRegular, color: colors.placeholderColor }}>(Optional)</Text>
                                         </Input>
                                     </View>
                                 )
@@ -520,11 +523,13 @@ const CreateProfile = (props) => {
                                 )
                             }
 
-                            {/* <FlatList
+                            <FlatList
                                 data={genderArray}
                                 keyExtractor={(_, index) => index.toString()}
                                 ListHeaderComponent={
-                                    <Text style={[styles.headerText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.gender}</Text>
+                                    <Text style={[styles.headerText, { textAlign: isRTL ? 'right' : 'left' }]}>
+                                        {LocalizedStrings.gender} <Text style={{ fontSize: hp(1.2), fontFamily: fontFamily.MontserratRegular, color: colors.placeholderColor }}>(Optional)</Text>
+                                    </Text>
                                 }
                                 renderItem={({ item, index }) => {
                                     return (
@@ -539,7 +544,7 @@ const CreateProfile = (props) => {
                                         </Pressable>
                                     )
                                 }}
-                            /> */}
+                            />
 
                             <Input
                                 placeholder={LocalizedStrings.Location}
@@ -549,7 +554,7 @@ const CreateProfile = (props) => {
                                 value={country}
                                 onChangeText={(text) => setCountry(text)}
                             >
-                                {LocalizedStrings.Location}
+                                {LocalizedStrings.Location} <Text style={{ fontSize: hp(1.2), fontFamily: fontFamily.MontserratRegular, color: colors.placeholderColor }}>(Optional)</Text>
                             </Input>
 
 

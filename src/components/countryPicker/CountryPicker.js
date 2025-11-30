@@ -67,7 +67,7 @@ const CountryInput = (props) => {
                 placeholder={LocalizedStrings['Number']}
                 disabled={props.disabled}
                 textInputProps={{
-                    placeholderTextColor: colors.grey,
+                    placeholderTextColor: colors.placeholderColor,
                     editable: !props.disabled
                 }}
                 onChangeText={(text) => {

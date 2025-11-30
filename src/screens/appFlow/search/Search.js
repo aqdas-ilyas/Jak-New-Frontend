@@ -42,11 +42,69 @@ export default Search = (props) => {
         dispatch(saveSearchOfferArray(null))
     }, []);
 
+    // Helper function to filter out expired offers
+    const filterExpiredOffers = (offers) => {
+        if (!offers || !Array.isArray(offers)) {
+            return [];
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+
+        return offers.filter((offer) => {
+            const expiryDateStr = offer?.['expiry date'];
+            
+            if (!expiryDateStr) {
+                // If no expiry date, include the offer
+                return true;
+            }
+
+            try {
+                // Try to parse the expiry date
+                // Handle different date formats (DD/MM/YYYY, YYYY-MM-DD, etc.)
+                let expiryDate;
+                
+                // Check if it's in DD/MM/YYYY format
+                if (expiryDateStr.includes('/')) {
+                    const parts = expiryDateStr.split('/');
+                    if (parts.length === 3) {
+                        // DD/MM/YYYY format
+                        expiryDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+                    } else {
+                        // Try default date parsing
+                        expiryDate = new Date(expiryDateStr);
+                    }
+                } else {
+                    // Try default date parsing
+                    expiryDate = new Date(expiryDateStr);
+                }
+
+                // Check if date is valid
+                if (isNaN(expiryDate.getTime())) {
+                    console.log('Invalid expiry date format:', expiryDateStr);
+                    // If date is invalid, include the offer (don't filter it out)
+                    return true;
+                }
+
+                expiryDate.setHours(0, 0, 0, 0); // Set to start of day
+
+                // Include offer if expiry date is today or in the future
+                return expiryDate >= today;
+            } catch (error) {
+                console.log('Error parsing expiry date:', expiryDateStr, error);
+                // If there's an error parsing, include the offer (don't filter it out)
+                return true;
+            }
+        });
+    };
+
     const searchOffers = (str) => {
         const onSuccess = response => {
             console.log('response searchOffers===', response?.data);
-            setSearchArray(response?.data?.data)
-            dispatch(saveSearchOfferArray(response?.data?.data))
+            // Filter out expired offers
+            const filteredOffers = filterExpiredOffers(response?.data?.data || []);
+            setSearchArray(filteredOffers)
+            dispatch(saveSearchOfferArray(filteredOffers))
 
             setIsLoading(false)
             getSearchHistory()
@@ -220,7 +278,7 @@ export default Search = (props) => {
             <Loader loading={isLoadingFull} />
 
             <View style={[{ paddingTop: Platform.OS == 'android' ? wp(6) : 0, alignItems: "center" }, rtlStyles.row]}>
-                <TouchableOpacity onPress={() => props.navigation.goBack()} style={{ padding: wp(2) }}>
+                <TouchableOpacity onPress={() => props.navigation.goBack()} style={{ paddingVertical: wp(2) }}>
                     <Image source={appIcons.back} style={[styles.back, rtlStyles.iconRotation]} />
                 </TouchableOpacity>
 
@@ -237,12 +295,14 @@ export default Search = (props) => {
                         borderColor: colors.primaryColor,
                         borderWidth: 1,
                         backgroundColor: colors.primaryColorOpacity,
-                        width: wp(78),
+                        width: wp(85),
                         marginTop: -wp(10),
-                        marginHorizontal: wp(5)
+                        marginRight: wp(5),
+                        marginLeft: wp(2),
                     }}
                     inputStyle={{
-                        backgroundColor: colors.primaryColorOpacity
+                        backgroundColor: colors.primaryColorOpacity,
+                        height: wp(11)
                     }}
                     leftIconStyle={{
                         tintColor: colors.primaryColor

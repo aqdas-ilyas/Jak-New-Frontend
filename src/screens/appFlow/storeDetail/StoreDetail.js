@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Linking } from "react-native";
+import Share from 'react-native-share';
+import RNFS from 'react-native-fs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
 import { heightPixel, hp, routes, wp } from "../../../services/constants";
 import Geolocation from '@react-native-community/geolocation';
@@ -81,23 +84,168 @@ export default StoreDetailList = (props) => {
     //     });
     // };
 
-    // const OpenMap = () => {
-    //     const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' });
-    //     const latLng = `${coordinates.lat},${coordinates.lng}`;
-    //     const label = item?.['store name'];
-    //     const url = Platform.select({
-    //         ios: `${scheme}${label}@${latLng}`,
-    //         android: `${scheme}${latLng}(${label})`,
-    //     });
+    const openGoogleMaps = () => {
+        const storeName = item?.['store name'] || '';
+        const searchQuery = encodeURIComponent(`${storeName} Saudi Arabia`);
 
-    //     Linking.canOpenURL(url).then(supported => {
-    //         if (supported) {
-    //             return Linking.openURL(url);
-    //         } else {
-    //             return Linking.openURL(url);
-    //         }
-    //     });
-    // };
+        // Try different URL schemes for Google Maps
+        const urls = {
+            ios: [
+                `comgooglemaps://?q=${searchQuery}`,
+                `maps://?q=${searchQuery}`,
+            ],
+            android: [
+                `google.navigation:q=${searchQuery}`,
+                `geo:0,0?q=${searchQuery}`,
+            ],
+        };
+
+        // Universal web URL as fallback
+        const webUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+
+        const platformUrls = Platform.OS === 'ios' ? urls.ios : urls.android;
+
+        // Try native apps first
+        const tryOpenUrl = (urlIndex = 0) => {
+            if (urlIndex < platformUrls.length) {
+                Linking.canOpenURL(platformUrls[urlIndex])
+                    .then(supported => {
+                        if (supported) {
+                            Linking.openURL(platformUrls[urlIndex]).catch(err => {
+                                console.log('Error opening native maps:', err);
+                                // Fallback to web
+                                Linking.openURL(webUrl);
+                            });
+                        } else {
+                            // Try next URL
+                            tryOpenUrl(urlIndex + 1);
+                        }
+                    })
+                    .catch(err => {
+                        console.log('Error checking URL:', err);
+                        // Fallback to web
+                        Linking.openURL(webUrl);
+                    });
+            } else {
+                // All native URLs failed, use web
+                Linking.openURL(webUrl);
+            }
+        };
+
+        tryOpenUrl(0);
+    };
+
+    const shareOffer = async () => {
+        try {
+            setIsLoading(true);
+            const storeName = item?.['store name'] || '';
+            const discount = item?.['discount %'] || 0;
+            const offerText = item?.['offer text'] || '';
+            const offerLink = item?.['offer link'] || '';
+            const category = item?.category || '';
+            const expiryDate = item?.['expiry date'] || '';
+            const storeLogo = item?.logo || '';
+
+            // Create a formatted message for sharing
+            let shareMessage = `🏪 ${storeName}\n\n`;
+
+            if (discount > 0) {
+                shareMessage += `💰 ${discount}% ${LocalizedStrings.Discount || 'Discount'}\n\n`;
+            }
+
+            if (offerText) {
+                shareMessage += `📝 ${offerText}\n\n`;
+            }
+
+            if (category) {
+                shareMessage += `🏷️ ${LocalizedStrings.category || 'Category'}: ${category}\n\n`;
+            }
+
+            if (expiryDate) {
+                shareMessage += `📅 ${LocalizedStrings["Expiry Date"] || 'Expiry Date'}: ${expiryDate}\n\n`;
+            }
+
+            shareMessage += `🔗 ${offerLink}\n\n`;
+            shareMessage += `📱 ${LocalizedStrings["For more details"] || 'For more details, visit the link above'}`;
+
+            let imageUrl = null;
+
+            // // Download image if available
+            // if (storeLogo) {
+            //     try {
+            //         const imageExtension = storeLogo.split('.').pop().split('?')[0] || 'jpg';
+            //         const imagePath = `${RNFS.CachesDirectoryPath}/store_logo_${Date.now()}.${imageExtension}`;
+
+            //         const downloadResult = await RNFS.downloadFile({
+            //             fromUrl: storeLogo,
+            //             toFile: imagePath,
+            //         }).promise;
+
+            //         if (downloadResult.statusCode === 200) {
+            //             // Check if file exists and get the correct path
+            //             const fileExists = await RNFS.exists(imagePath);
+            //             if (fileExists) {
+            //                 // For iOS, use file:// prefix, for Android use the path directly
+            //                 imageUrl = Platform.OS === 'ios' ? `file://${imagePath}` : imagePath;
+            //             }
+            //         }
+            //     } catch (imageError) {
+            //         console.log('Error downloading image:', imageError);
+            //         // Continue without image if download fails
+            //     }
+            // }
+
+            // Prepare share options
+            const shareOptions = {
+                title: storeName,
+                message: shareMessage,
+            };
+
+            // // Add image if available, otherwise add URL
+            // if (imageUrl) {
+            //     shareOptions.url = imageUrl;
+            //     shareOptions.type = 'image/jpeg';
+            //     // Include the website link in the message if we're sharing image
+            //     shareOptions.message = `${shareMessage}\n\n${offerLink}`;
+            // } else {
+            //     shareOptions.url = offerLink;
+            // }
+
+            setIsLoading(false);
+
+            const result = await Share.open(shareOptions);
+            console.log('Share result:', result);
+
+            // // Clean up downloaded image after sharing
+            // if (imageUrl) {
+            //     try {
+            //         const filePath = Platform.OS === 'ios' ? imageUrl.replace('file://', '') : imageUrl;
+            //         const fileExists = await RNFS.exists(filePath);
+            //         if (fileExists) {
+            //             await RNFS.unlink(filePath);
+            //         }
+            //     } catch (cleanupError) {
+            //         console.log('Error cleaning up image:', cleanupError);
+            //     }
+            // }
+
+            showMessage({
+                message: LocalizedStrings["Offer shared successfully"] || 'Offer shared successfully',
+                type: 'success',
+            });
+        } catch (error) {
+            setIsLoading(false);
+            console.error('Error sharing offer:', error);
+
+            // Don't show error if user dismissed the share sheet
+            if (error.message !== 'User did not share' && error.message !== 'User cancelled') {
+                showMessage({
+                    message: LocalizedStrings["Error sharing offer"] || 'Error sharing offer',
+                    type: 'danger',
+                });
+            }
+        }
+    };
 
     const IsFavourites = (id) => {
         const onSuccess = async (response) => {
@@ -239,7 +387,23 @@ export default StoreDetailList = (props) => {
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
             <Loader loading={isLoading} />
-            <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.store_detail} rightIcon={isLiked ? appIcons.heartFill : appIcons.heartUnfill} onrightIconPress={() => IsFavourites(item?._id)} />
+            <View style={[{ paddingTop: Platform.OS == 'android' ? wp(10) : 0 }, { flexDirection: isRTL ? "row-reverse" : "row", justifyContent: "space-between", alignItems: "center", marginBottom: wp(3) }]}>
+                <TouchableOpacity onPress={() => props.navigation.goBack()} style={{ paddingVertical: wp(1) }}>
+                    <Image
+                        source={appIcons.back}
+                        style={[styles.headerIcon, { transform: [{ scaleX: isRTL ? -1 : 1 }] }]}
+                    />
+                </TouchableOpacity>
+                <Text style={[styles.headerTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.store_detail}</Text>
+                <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: "center" }}>
+                    <TouchableOpacity onPress={openGoogleMaps} activeOpacity={0.7} style={{ marginRight: isRTL ? 0 : wp(4), marginLeft: isRTL ? wp(4) : 0 }}>
+                        <Image source={appIcons.navigate} style={styles.headerIcon} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => IsFavourites(item?._id)} activeOpacity={0.7}>
+                        <Image source={isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.headerIcon, { tintColor: !isLiked ? colors.BlackSecondary: null }]} />
+                    </TouchableOpacity>
+                </View>
+            </View>
 
             <ScrollView showsVerticalScrollIndicator={false} style={appStyles.mt30}>
                 <Image source={{ uri: item.logo }} style={styles.imageStyle} />
@@ -311,40 +475,33 @@ export default StoreDetailList = (props) => {
                 </TouchableOpacity> */}
             </ScrollView>
 
-            {/* {
-                coordinates ? (
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: wp(5) }}>
-                        <Button
-                            onPress={() => Linking.openURL(item?.['offer link'])}
-                            skip
-                            containerStyle={{
-                                width: wp(44),
-                            }}>
-                            {LocalizedStrings["Go to Website"]}
-                        </Button>
-                        <Button
-                            onPress={() => OpenMap()}
-                            containerStyle={{
-                                width: wp(44),
-                            }}>
-                            {LocalizedStrings["Start Navigate"]}
-                        </Button>
+            <View style={{ flexDirection: isRTL ? "row-reverse" : "row", justifyContent: "space-between", alignItems: "center", marginTop: wp(5), marginBottom: wp(2) }}>
+                <Button
+                    onPress={() => Linking.openURL(item?.['offer link'])}
+                    skip
+                    containerStyle={{
+                        width: wp(44),
+                    }}>
+                    {LocalizedStrings["Go to Website"]}
+                </Button>
+                <Button
+                    onPress={shareOffer}
+                    containerStyle={{
+                        width: wp(44),
+                    }}>
+                    <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: "center", justifyContent: "center" }}>
+                        <MaterialCommunityIcons
+                            name="share-variant"
+                            size={wp(5)}
+                            color={colors.fullWhite}
+                            style={{ marginRight: isRTL ? 0 : wp(2), marginLeft: isRTL ? wp(2) : 0 }}
+                        />
+                        <Text style={{ color: colors.fullWhite, fontFamily: fontFamily.UrbanistSemiBold, fontSize: hp(1.6) }}>
+                            {LocalizedStrings["Share"] || "Share"}
+                        </Text>
                     </View>
-                ) : (
-                    <Button
-                        onPress={() => Linking.openURL(item?.['offer link'])}
-                        skip
-                    >
-                        {LocalizedStrings["Go to Website"]}
-                    </Button>
-                )
-            } */}
-            <Button
-                onPress={() => Linking.openURL(item?.['offer link'])}
-                skip
-            >
-                {LocalizedStrings["Go to Website"]}
-            </Button>
+                </Button>
+            </View>
         </SafeAreaView>
     )
 };
@@ -427,5 +584,21 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         alignSelf: "flex-end",
         marginTop: -wp(7)
+    },
+    mapButtonIcon: {
+        width: wp(5),
+        height: wp(5),
+    },
+    headerIcon: {
+        width: wp(5),
+        height: wp(5),
+    },
+    headerTitle: {
+        fontFamily: fontFamily.UrbanistSemiBold,
+        fontSize: hp(1.8),
+        color: colors.BlackSecondary,
+        flex: 1,
+        textAlign: 'center',
+        marginHorizontal: wp(4)
     },
 });

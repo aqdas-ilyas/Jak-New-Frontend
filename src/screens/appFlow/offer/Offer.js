@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Platform, SafeAreaView, Text, FlatList, TouchableOpacity, Pressable, StatusBar, RefreshControl, Image } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Text, FlatList, TouchableOpacity, Pressable, StatusBar, RefreshControl, Image, ActivityIndicator } from "react-native";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { hp, routes, wp } from "../../../services/constants";
 import appStyles from "../../../services/utilities/appStyles";
 import { appIcons, colors, fontFamily } from "../../../services";
@@ -13,12 +14,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { saveCategoryOffers, saveMyOffer } from "../../../store/reducers/OfferSlice";
 import { showMessage } from "react-native-flash-message";
 import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
-import { Input } from "../../../components/input";
 import { resolveMessage } from "../../../language/helpers";
 
 export default Offer = (props) => {
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
     const { isRTL, rtlStyles } = useRTL();
+    const insets = useSafeAreaInsets();
     const dispatch = useDispatch()
     const favorite = useSelector(state => state.favorite.favorite)
     const myOffer = useSelector(state => state.offer.myOffer)
@@ -27,6 +28,62 @@ export default Offer = (props) => {
     const [refreshing, setRefreshing] = useState(false)
     const [myOfferFilterArray, setMyOfferFilterArray] = useState('')
     const [checkboxes, setCheckboxes] = useState([]);
+
+    // Helper function to filter out expired offers
+    const filterExpiredOffers = (offers) => {
+        if (!offers || !Array.isArray(offers)) {
+            return [];
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+
+        return offers.filter((offer) => {
+            const expiryDateStr = offer?.['expiry date'];
+
+            if (!expiryDateStr) {
+                // If no expiry date, include the offer
+                return true;
+            }
+
+            try {
+                // Try to parse the expiry date
+                // Handle different date formats (DD/MM/YYYY, YYYY-MM-DD, etc.)
+                let expiryDate;
+
+                // Check if it's in DD/MM/YYYY format
+                if (expiryDateStr.includes('/')) {
+                    const parts = expiryDateStr.split('/');
+                    if (parts.length === 3) {
+                        // DD/MM/YYYY format
+                        expiryDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+                    } else {
+                        // Try default date parsing
+                        expiryDate = new Date(expiryDateStr);
+                    }
+                } else {
+                    // Try default date parsing
+                    expiryDate = new Date(expiryDateStr);
+                }
+
+                // Check if date is valid
+                if (isNaN(expiryDate.getTime())) {
+                    console.log('Invalid expiry date format:', expiryDateStr);
+                    // If date is invalid, include the offer (don't filter it out)
+                    return true;
+                }
+
+                expiryDate.setHours(0, 0, 0, 0); // Set to start of day
+
+                // Include offer if expiry date is today or in the future
+                return expiryDate >= today;
+            } catch (error) {
+                console.log('Error parsing expiry date:', expiryDateStr, error);
+                // If there's an error parsing, include the offer (don't filter it out)
+                return true;
+            }
+        });
+    };
     const [banks, setBanks] = useState([]);
     const [selectedBank, setSelectedBank] = useState(null);
     const refreshCounterRef = useRef(0);
@@ -90,7 +147,7 @@ export default Offer = (props) => {
     const getMyOfferCategory = () => {
         const onSuccess = (response) => {
             console.log('response get Map Category Home===', response?.categories);
-            setIsLoading(false);
+            // setIsLoading(false);
 
             const categories = response?.categories;
             const uniqueCategories = Array.from(new Set(categories));
@@ -112,7 +169,7 @@ export default Offer = (props) => {
 
         const onError = error => {
             console.log('Error get Map Category Home===', error);
-            setIsLoading(false);
+            // setIsLoading(false);
         };
 
         let endPoint = routs.getMyOffers + `categories?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
@@ -127,12 +184,15 @@ export default Offer = (props) => {
     const getMyOffers = () => {
         const onSuccess = (response) => {
             console.log('response getMyOffers===', response?.data);
+            // Set loading to false immediately when response arrives
             setIsLoading(false);
 
             if (response?.data?.data && response?.data?.data.length > 0) {
-                dispatch(saveMyOffer(response?.data?.data));
+                // Filter out expired offers
+                const filteredOffers = filterExpiredOffers(response?.data?.data);
+                dispatch(saveMyOffer(filteredOffers));
                 // Always extract banks from ALL offers, not filtered ones
-                extractBanks(response?.data?.data);
+                extractBanks(filteredOffers);
             } else {
                 dispatch(saveMyOffer([]));
                 setMyOfferFilterArray('')
@@ -223,8 +283,11 @@ export default Offer = (props) => {
 
         const onSuccess = (response) => {
             console.log('response getMyOffers Home===', response?.data);
+            // Set loading to false immediately when response arrives
             setIsLoading(false);
-            dispatch(saveCategoryOffers(response?.data?.data))
+            // Filter out expired offers
+            const filteredOffers = filterExpiredOffers(response?.data?.data || []);
+            dispatch(saveCategoryOffers(filteredOffers));
 
             if (response?.data?.data.length > 0) {
                 setMyOfferFilterArray(response?.data?.data);
@@ -374,9 +437,11 @@ export default Offer = (props) => {
             console.log('response getMyOffers===', response?.data);
 
             if (response?.data?.data && response?.data?.data.length > 0) {
-                dispatch(saveMyOffer(response?.data?.data));
+                // Filter out expired offers
+                const filteredOffers = filterExpiredOffers(response?.data?.data);
+                dispatch(saveMyOffer(filteredOffers));
                 // Always extract banks from ALL offers
-                extractBanks(response?.data?.data);
+                extractBanks(filteredOffers);
             } else {
                 dispatch(saveMyOffer([]));
                 setMyOfferFilterArray('')
@@ -403,33 +468,36 @@ export default Offer = (props) => {
                 backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
                 translucent={Platform.OS === 'android'}
             />
-            <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { paddingTop: Platform.OS === 'android' ? wp(10) : 0, margin: wp(4) }]}>
-                <Loader loading={isLoading} />
+            <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { paddingTop: Platform.OS === 'android' ? wp(10) : 0, marginHorizontal: wp(4), paddingBottom: 0 }]}>
 
                 <View style={styles.tabTopView}>
-                    <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "space-between" }}>
-                        <TouchableOpacity activeOpacity={1} onPress={() => props.navigation.navigate(routes.search, { discount: '', location: '', category: getCheckedLocalizedStrings() })}>
-                            <Input
-                                editable={false}
-                                placeholder={LocalizedStrings.search}
-                                value={""}
-                                leftIcon={appIcons.search}
-                                onPressIcon={() => props.navigation.navigate(routes.search, { discount: '', location: '', category: getCheckedLocalizedStrings() })}
-                                eyeValue={appIcons.filter}
-                                shadow
-                                rightIconColor={colors.primaryColor}
-                                containerStyle={{
-                                    borderRadius: 15,
-                                    marginTop: -hp(5),
-                                }}
-                                WholeContainer={{
-                                    borderRadius: 5,
-                                    width: wp(92)
-                                }}
-                                touchable
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => props.navigation.navigate(routes.search, { discount: '', location: '', category: getCheckedLocalizedStrings() })}
+                        style={styles.searchContainer}
+                    >
+                        <View style={styles.searchView}>
+                            <Image
+                                source={appIcons.search}
+                                style={[styles.searchIcon, { tintColor: colors.BlackSecondary }]}
+                                resizeMode="contain"
                             />
-                        </TouchableOpacity>
-                    </View>
+                            <Text style={[styles.searchPlaceholder, rtlStyles.writingDirection]}>
+                                {LocalizedStrings.search}
+                            </Text>
+                            {/* <TouchableOpacity 
+                                activeOpacity={0.7}
+                                onPress={() => props.navigation.navigate(routes.search, { discount: '', location: '', category: getCheckedLocalizedStrings() })}
+                                style={styles.filterButton}
+                            >
+                                <Image 
+                                    source={appIcons.filter} 
+                                    style={[styles.filterIcon, { tintColor: colors.primaryColor }]} 
+                                    resizeMode="contain"
+                                />
+                            </TouchableOpacity> */}
+                        </View>
+                    </TouchableOpacity>
 
                     <View style={{ alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
                         <FlatList
@@ -500,7 +568,8 @@ export default Offer = (props) => {
                                                     borderColor: isSelected ? colors.primaryColor : colors.borderColor,
                                                     borderWidth: 1,
                                                     backgroundColor: isSelected ? colors.primaryColor + '10' : colors.fullWhite,
-                                                    marginHorizontal: wp(1)
+                                                    marginHorizontal: wp(1),
+                                                    paddingVertical: (item.id == 'all' && appLanguage == 'ar' && Platform.OS == 'android') ? wp(1.3) : wp(0)
                                                 }
                                             ]}>
                                                 {item.isAll ? (
@@ -544,6 +613,7 @@ export default Offer = (props) => {
                     )}
 
                     <FlatList
+                        style={{ marginTop: wp(2) }}
                         data={
                             selectedBank
                                 ? myOfferFilterArray?.length > 0 ? myOfferFilterArray : []
@@ -563,7 +633,7 @@ export default Offer = (props) => {
                         showsVerticalScrollIndicator={false}
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{
-                            paddingBottom: wp(5)
+                            // paddingBottom: hp(10) + (insets.bottom > 0 ? insets.bottom * 0.35 : 0) + wp(8),
                         }}
                         refreshControl={
                             <RefreshControl
@@ -573,10 +643,18 @@ export default Offer = (props) => {
                                 tintColor={colors.primaryColor}
                             />
                         }
+                        initialNumToRender={10}
                         ListEmptyComponent={
-                            !isLoading && !refreshing ? (
-                                <Text style={styles.emptytext}>{LocalizedStrings['No Offers yet!']}</Text>
-                            ) : null
+                            isLoading ? (
+                                <View style={styles.emptyContainer}>
+                                    <ActivityIndicator size="large" color={colors.primaryColor} />
+                                    <Text style={styles.loadingText}>{LocalizedStrings['Loading...'] || 'Loading...'}</Text>
+                                </View>
+                            ) : (
+                                <View style={styles.emptyContainer}>
+                                    <Text style={styles.emptytext}>{LocalizedStrings['No Offers yet!']}</Text>
+                                </View>
+                            )
                         }
                         renderItem={({ item, index }) => {
                             return (
@@ -594,13 +672,65 @@ const styles = StyleSheet.create({
     tabTopView: {
         flex: 1,
     },
+    searchContainer: {
+        marginVertical: wp(2),
+    },
+    searchView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.fullWhite,
+        borderRadius: 15,
+        paddingHorizontal: wp(4),
+        paddingVertical: wp(3.5),
+        width: wp(92),
+        shadowColor: colors.black,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    searchIcon: {
+        width: wp(5),
+        height: wp(5),
+        marginRight: wp(3),
+    },
+    searchPlaceholder: {
+        flex: 1,
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistRegular,
+        color: colors.placeholderColor || colors.BlackSecondary,
+    },
+    filterButton: {
+        padding: wp(1),
+        marginLeft: wp(2),
+    },
+    filterIcon: {
+        width: wp(5),
+        height: wp(5),
+    },
     emptytext: {
         fontSize: hp(1.6),
         lineHeight: 24,
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
-        marginVertical: wp(10),
         textAlign: "center"
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: hp(20),
+        minHeight: hp(50),
+    },
+    loadingText: {
+        fontSize: hp(1.6),
+        fontFamily: fontFamily.UrbanistMedium,
+        color: colors.descriptionColor,
+        textAlign: "center",
+        marginTop: wp(3),
     },
     filterView: {
         paddingHorizontal: wp(3),

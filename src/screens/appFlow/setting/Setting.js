@@ -386,7 +386,7 @@ export default Setting = props => {
         backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
         translucent={Platform.OS === 'android'}
       />
-      <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+      <SafeAreaView style={[appStyles.safeContainer, { marginHorizontal: wp(4) }]}>
         <Loader loading={isLoading} />
         <LogoHeader />
 

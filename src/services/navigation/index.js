@@ -21,7 +21,6 @@ export const MainNavigator = () => {
   const paddedContentStyle = useMemo(() => ({
     backgroundColor: colors.fullWhite,
     paddingBottom: insets.bottom > 0 ? insets.bottom : wp(5),
-
   }), [insets.bottom]);
 
   useEffect(() => {

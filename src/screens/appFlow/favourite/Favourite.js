@@ -133,42 +133,42 @@ export default Favourite = (props) => {
 
     return (
         <>
-            <StatusBar 
-                barStyle={'dark-content'} 
+            <StatusBar
+                barStyle={'dark-content'}
                 backgroundColor={Platform.OS === 'android' ? '#fff' : undefined}
                 translucent={Platform.OS === 'android'}
             />
-            <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+            <SafeAreaView style={[appStyles.safeContainer, { marginHorizontal: wp(4) }]}>
                 <Loader loading={isLoading} />
                 <LogoHeader />
 
                 <FlatList
-                data={favorite && favorite.length > 0 ? favorite.filter(item => item !== null) : []}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={(item, index) => index.toString()}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                        colors={[colors.primaryColor]}
-                        tintColor={colors.primaryColor}
-                    />
-                }
-                ListEmptyComponent={
-                    <View style={styles.emptyContainer}>
-                        <Text style={styles.emptyTitle}>{LocalizedStrings["No_Favorite's_Found!"]}</Text>
-                        <Text style={styles.emptyMessage}>{LocalizedStrings["no_favorites_message"]}</Text>
-                    </View>
-                }
-                renderItem={({ item, index }) => {
-                    return (
-                        item && item !== null ? (
-                            <ListItem buttonEnable item={item} IsFavourites={(fav) => IsFavourites(fav?._id)} />
-                        ) : null
-                    )
-                }}
-            />
-        </SafeAreaView>
+                    data={favorite && favorite.length > 0 ? favorite.filter(item => item !== null) : []}
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={(item, index) => index.toString()}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={[colors.primaryColor]}
+                            tintColor={colors.primaryColor}
+                        />
+                    }
+                    ListEmptyComponent={
+                        <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyTitle}>{LocalizedStrings["No_Favorite's_Found!"]}</Text>
+                            <Text style={styles.emptyMessage}>{LocalizedStrings["no_favorites_message"]}</Text>
+                        </View>
+                    }
+                    renderItem={({ item, index }) => {
+                        return (
+                            item && item !== null ? (
+                                <ListItem buttonEnable item={item} IsFavourites={(fav) => IsFavourites(fav?._id)} />
+                            ) : null
+                        )
+                    }}
+                />
+            </SafeAreaView>
         </>
     )
 };

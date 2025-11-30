@@ -12,7 +12,7 @@ export const OfferNavigation = () => {
     const insets = useSafeAreaInsets();
     const contentStyle = useMemo(() => ({
         backgroundColor: colors.fullWhite,
-        paddingBottom: insets.bottom > 0 ? insets.bottom : wp(5),
+        // paddingBottom: insets.bottom > 0 ? insets.bottom : wp(5),
     }), [insets.bottom]);
 
     return (

@@ -74,6 +74,62 @@ export default Home = props => {
     return localizedCheckedItems;
   };
 
+  // Helper function to filter out expired offers
+  const filterExpiredOffers = (offers) => {
+    if (!offers || !Array.isArray(offers)) {
+      return [];
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+
+    return offers.filter((offer) => {
+      const expiryDateStr = offer?.['expiry date'];
+      
+      if (!expiryDateStr) {
+        // If no expiry date, include the offer
+        return true;
+      }
+
+      try {
+        // Try to parse the expiry date
+        // Handle different date formats (DD/MM/YYYY, YYYY-MM-DD, etc.)
+        let expiryDate;
+        
+        // Check if it's in DD/MM/YYYY format
+        if (expiryDateStr.includes('/')) {
+          const parts = expiryDateStr.split('/');
+          if (parts.length === 3) {
+            // DD/MM/YYYY format
+            expiryDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+          } else {
+            // Try default date parsing
+            expiryDate = new Date(expiryDateStr);
+          }
+        } else {
+          // Try default date parsing
+          expiryDate = new Date(expiryDateStr);
+        }
+
+        // Check if date is valid
+        if (isNaN(expiryDate.getTime())) {
+          console.log('Invalid expiry date format:', expiryDateStr);
+          // If date is invalid, include the offer (don't filter it out)
+          return true;
+        }
+
+        expiryDate.setHours(0, 0, 0, 0); // Set to start of day
+
+        // Include offer if expiry date is today or in the future
+        return expiryDate >= today;
+      } catch (error) {
+        console.log('Error parsing expiry date:', expiryDateStr, error);
+        // If there's an error parsing, include the offer (don't filter it out)
+        return true;
+      }
+    });
+  };
+
   const getMyOffers = async () => {
     const formattedCheckedStrings = await checkboxes.filter(
       item => item.checked,
@@ -82,19 +138,21 @@ export default Home = props => {
     const onSuccess = async response => {
       console.log('response getMyOffers Home===', response?.data);
       setIsLoading(false);
-      dispatch(saveCategoryOffers(response?.data?.data));
+      // Filter out expired offers
+      const filteredOffers = filterExpiredOffers(response?.data?.data || []);
+      dispatch(saveCategoryOffers(filteredOffers));
 
-      const originalArray = response?.data?.data;
+      const originalArray = filteredOffers;
       setMarkers(originalArray);
 
-      if (response?.data?.data.length > 0) {
+      if (filteredOffers.length > 0) {
         dispatch(
           saveTotalCategoryMyOfferPagesCount(response?.data?.totalPages),
         );
         dispatch(saveCategoryMyOfferPageNo(categoryMyOfferPageNo + 1));
 
         props.navigation.navigate(routes.storeList, {
-          item: response?.data?.data,
+          item: filteredOffers,
           category: formattedCheckedStrings,
         });
       } else {
