@@ -1,8 +1,9 @@
 import { getDeviceId } from 'react-native-device-info';
 import { BASE_URL } from './routs';
 import { store } from "../store/store";
-import { setToken } from '../store/reducers/userDataSlice';
+import { logout, setToken } from '../store/reducers/userDataSlice';
 import NetInfo from '@react-native-community/netinfo';
+import { EventRegister } from 'react-native-event-listeners';
 
 export const AUTHORIZE = 'AUTHORIZE';
 export const NETWORK_ERROR = 'NETWORK ERROR';
@@ -46,7 +47,7 @@ export const callApi = async (
   if (isConnected) {
     let token = accessToken != undefined ? accessToken : store.getState().user?.token ?? false;
     let refreshToken = store.getState().user?.refreshToken ?? false;
-    
+
     if (multipart) {
       defaultHeaders['Accept'] = 'application/json';
       defaultHeaders['Content-Type'] = 'multipart/form-data';
@@ -88,33 +89,57 @@ export const callApi = async (
         };
         await fetch(`${BASE_URL}user/refresh/${refreshToken}`, fetchObject)
           .then(async res => {
+            // Check if response is OK
+            if (!res.ok) {
+              console.log('Refresh token API failed - status:', res.status);
+              store.dispatch(logout());
+              EventRegister.emit('forceLogout');
+              return;
+            }
+
             let resJson = await res.json();
-            console.log('New refreshToken====', resJson.data.accessToken);
-            store.dispatch(
-              setToken({
-                token: resJson.data.accessToken,
-                refreshToken: refreshToken,
-              }),
-            );
-            callApi(
-              method,
-              endPoint,
-              bodyParams,
-              onSuccess,
-              onError,
-              resJson?.data?.accessToken,
-              multipart
-            );
+            console.log('New refreshToken====', resJson?.data?.accessToken);
+
+            // Check if accessToken exists in response
+            if (resJson?.data?.accessToken) {
+              store.dispatch(
+                setToken({
+                  token: resJson.data.accessToken,
+                  refreshToken: refreshToken,
+                }),
+              );
+              callApi(
+                method,
+                endPoint,
+                bodyParams,
+                onSuccess,
+                onError,
+                resJson?.data?.accessToken,
+                multipart
+              );
+            } else {
+              // No accessToken in response - logout user
+              console.log('Refresh token API response missing accessToken');
+              store.dispatch(logout());
+              EventRegister.emit('forceLogout');
+            }
           })
           .catch(err => {
-            onError(err)
-            console.log('error refresh token=> ', err)
-          }
-          );
+            // Network error or other fetch error - logout user
+            console.log('error refresh token=> ', err);
+            store.dispatch(logout());
+            EventRegister.emit('forceLogout');
+            onError(err);
+          });
       } else if (responseJson?.status < 400) {
         onSuccess(responseJson);
       } else {
         onError(responseJson);
+
+        if (responseJson?.errorType == "session-expired-device" && responseJson?.status == 401) {
+          store.dispatch(logout());
+          EventRegister.emit('forceLogout');
+        }
       }
     } catch (error) {
       onError(error);

@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { EventRegister } from 'react-native-event-listeners';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, CommonActions } from '@react-navigation/native';
 import { colors, routes, wp } from '..';
 import { AuthNavigation } from './authFlow';
 import themeContext from '../config/themeContext';
@@ -17,6 +17,7 @@ const MyStack = createNativeStackNavigator();
 export const MainNavigator = () => {
   const [mode, setMode] = useState();
   const insets = useSafeAreaInsets();
+  const navigationRef = useRef(null);
 
   const paddedContentStyle = useMemo(() => ({
     backgroundColor: colors.fullWhite,
@@ -24,10 +25,36 @@ export const MainNavigator = () => {
   }), [insets.bottom]);
 
   useEffect(() => {
-    let eventListener = EventRegister.addEventListener('changeTheme', (data) => setMode(data));
+    let themeEventListener = EventRegister.addEventListener('changeTheme', (data) => setMode(data));
+    
+    // Listen for force logout event
+    let logoutEventListener = EventRegister.addEventListener('forceLogout', () => {
+      // Use setTimeout to ensure navigation is ready and avoid iOS crash
+      setTimeout(() => {
+        try {
+          if (navigationRef.current?.isReady()) {
+            const currentRoute = navigationRef.current?.getCurrentRoute();
+            // Only navigate if we're not already on auth screen
+            if (currentRoute?.name !== routes.auth) {
+              navigationRef.current.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: routes.auth, params: { screen: routes.login } }],
+                })
+              );
+            }
+          }
+        } catch (error) {
+          console.log('Navigation error during force logout:', error);
+        }
+      }, 100);
+    });
 
-    return () => EventRegister.removeEventListener(eventListener);
-  });
+    return () => {
+      EventRegister.removeEventListener(themeEventListener);
+      EventRegister.removeEventListener(logoutEventListener);
+    };
+  }, []);
 
   const MyTheme = {
     ...DefaultTheme,
@@ -42,7 +69,7 @@ export const MainNavigator = () => {
       <FlashMessage position='bottom' style={{ paddingBottom: insets.bottom > 0 ? insets.bottom : wp(5) }} />
 
       <themeContext.Provider value={mode === true ? theme.dark : theme.light}>
-        <NavigationContainer theme={MyTheme}>
+        <NavigationContainer ref={navigationRef} theme={MyTheme}>
           <MyStack.Navigator initialRouteName={routes.auth} screenOptions={{ headerShown: false, gestureEnabled: false }}>
             <MyStack.Screen name={routes.auth} component={AuthNavigation} />
             <MyStack.Screen name={routes.tab} component={TabNavigation} />
