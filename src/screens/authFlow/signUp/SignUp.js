@@ -323,9 +323,11 @@ const SignUp = props => {
             layout={'second'}
           />
 
-          <Text style={[styles.titleStyle]}>
-            {LocalizedStrings.password}
-          </Text>
+          <View style={[appStyles.row, rtlStyles.row]}>
+            <Text style={[styles.titleStyle]}>
+              {LocalizedStrings.password}
+            </Text>
+          </View>
           <Input
             placeholder={LocalizedStrings['password']}
             secureTextEntry={showPassword}
