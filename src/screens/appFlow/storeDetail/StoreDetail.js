@@ -86,53 +86,23 @@ export default StoreDetailList = (props) => {
 
     const openGoogleMaps = () => {
         const storeName = item?.['store name'] || '';
-        const searchQuery = encodeURIComponent(`${storeName} Saudi Arabia`);
+        const searchQuery = encodeURIComponent(storeName);
 
-        // Try different URL schemes for Google Maps
-        const urls = {
-            ios: [
-                `comgooglemaps://?q=${searchQuery}`,
-                `maps://?q=${searchQuery}`,
-            ],
-            android: [
-                `google.navigation:q=${searchQuery}`,
-                `geo:0,0?q=${searchQuery}`,
-            ],
-        };
+        // Simple Google Maps search URL - ye bas search bar mein text dalega
+        // Suggestions list aayegi, but koi auto-select/pin/map move nahi hoga
+        // Jaise user manually type karta hai waise hi behavior hoga
+        const googleMapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
 
-        // Universal web URL as fallback
-        const webUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
-
-        const platformUrls = Platform.OS === 'ios' ? urls.ios : urls.android;
-
-        // Try native apps first
-        const tryOpenUrl = (urlIndex = 0) => {
-            if (urlIndex < platformUrls.length) {
-                Linking.canOpenURL(platformUrls[urlIndex])
-                    .then(supported => {
-                        if (supported) {
-                            Linking.openURL(platformUrls[urlIndex]).catch(err => {
-                                console.log('Error opening native maps:', err);
-                                // Fallback to web
-                                Linking.openURL(webUrl);
-                            });
-                        } else {
-                            // Try next URL
-                            tryOpenUrl(urlIndex + 1);
-                        }
-                    })
-                    .catch(err => {
-                        console.log('Error checking URL:', err);
-                        // Fallback to web
-                        Linking.openURL(webUrl);
-                    });
-            } else {
-                // All native URLs failed, use web
-                Linking.openURL(webUrl);
-            }
-        };
-
-        tryOpenUrl(0);
+        // Direct open - Google Maps app ya browser mein khulega
+        // Search bar mein store name already likha hoga
+        // Sirf suggestions list aayegi, user manually select kar sakta hai
+        Linking.openURL(googleMapsSearchUrl).catch(err => {
+            console.log('Error opening Google Maps:', err);
+            showMessage({
+                message: LocalizedStrings["Error opening Google Maps"] || 'Error opening Google Maps',
+                type: 'danger',
+            });
+        });
     };
 
     const shareOffer = async () => {
@@ -400,7 +370,7 @@ export default StoreDetailList = (props) => {
                         <Image source={appIcons.navigate} style={styles.headerIcon} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => IsFavourites(item?._id)} activeOpacity={0.7}>
-                        <Image source={isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.headerIcon, { tintColor: !isLiked ? colors.BlackSecondary: null }]} />
+                        <Image source={isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.headerIcon, { tintColor: !isLiked ? colors.BlackSecondary : null }]} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -424,11 +394,15 @@ export default StoreDetailList = (props) => {
                 <View style={styles.line} />
 
                 <View style={{ flexDirection: isRTL ? "row-reverse" : "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <View style={{ width: wp(35), alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
-                        <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.Discount}</Text>
-                        <Text onPress={() => Linking.openURL(item?.['offer link'])} style={[styles.shortDes, { textDecorationLine: 'underline', color: '#2036F8', textAlign: isRTL ? 'right' : 'left' }]}>{item?.['discount %'] ? item?.['discount %'] : 0}%</Text>
-                    </View>
-
+                    {
+                        item?.['discount %'] > 0 && (
+                            <View style={{ width: wp(35), alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
+                                <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.Discount}</Text>
+                                <Text onPress={() => Linking.openURL(item?.['offer link'])} style={[styles.shortDes, { textDecorationLine: 'underline', color: '#2036F8', textAlign: isRTL ? 'right' : 'left' }]}>{item?.['discount %'] ? item?.['discount %'] : 0}%</Text>
+                            </View>
+                        )
+                    }
+                    
                     <View style={{ width: wp(35), alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
                         <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings["Expiry Date"]}</Text>
                         <Text style={[styles.shortDes, { textAlign: isRTL ? 'right' : 'left' }]}>{item?.["expiry date"]}</Text>

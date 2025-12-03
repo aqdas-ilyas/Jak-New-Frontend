@@ -98,14 +98,14 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             </Text>
 
                             <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center' }}>
-                                <TouchableOpacity 
-                                    style={{ 
+                                <TouchableOpacity
+                                    style={{
                                         padding: wp(2),
                                         marginTop: -hp(0.5),
                                         marginRight: isRTL ? 0 : wp(1.5),
                                         marginLeft: isRTL ? wp(1.5) : 0
-                                    }} 
-                                    activeOpacity={0.8} 
+                                    }}
+                                    activeOpacity={0.8}
                                     onPress={() => IsFavourites(item)}
                                 >
                                     <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
@@ -140,18 +140,22 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             <View style={{
                                 flexDirection: isRTL ? "row-reverse" : "row",
                                 alignItems: 'center',
-                                marginRight: wp(2)
+                                marginRight: wp(2.3)
                             }}>
-                                <Text style={[styles.mainDes, {
-                                    fontFamily: fontFamily.UrbanistMedium,
-                                    color: colors.primaryColor,
-                                    fontSize: hp(1.6),
-                                    marginRight: isRTL ? 0 : wp(2),
-                                    marginLeft: isRTL ? wp(2) : 0,
-                                    textAlign: isRTL ? 'left' : 'right'
-                                }]}>
-                                    {item?.['discount %']} %
-                                </Text>
+                                {
+                                    item?.['discount %'] > 0 && (
+                                        <Text style={[styles.mainDes, {
+                                            fontFamily: fontFamily.UrbanistMedium,
+                                            color: colors.primaryColor,
+                                            fontSize: hp(1.6),
+                                            marginRight: isRTL ? 0 : wp(2),
+                                            marginLeft: isRTL ? wp(2) : 0,
+                                            textAlign: isRTL ? 'left' : 'right'
+                                        }]}>
+                                            {item?.['discount %']} %
+                                        </Text>
+                                    )
+                                }
 
                                 <Image source={{ uri: item?.employer?.image }} style={{ width: wp(7), height: wp(6), borderRadius: wp(6) }} />
                             </View>

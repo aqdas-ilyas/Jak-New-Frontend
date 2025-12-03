@@ -23,16 +23,21 @@ export const Input = props => {
     }
 
     return (
-        <View style={[styles.formInput, props.WholeContainer, { paddingTop: 15 }]}>
-            <View style={[appStyles.rowBtw, rtlStyles.rowBetween]}>
-                <View style={[appStyles.row, rtlStyles.row]}>
-                    <Text style={[styles.titleStyle]}>{props.children}</Text>
-                    {props.star &&
-                        <Text style={{ color: colors.errorColor, paddingStart: 3 }}>*</Text>
-                    }
-                </View>
-                <Text onPress={props.onrightTextPress} style={[styles.rightTitleStyle, rtlStyles.textAlign]}>{props.rghtText}</Text>
-            </View>
+        <View style={[styles.formInput, props.WholeContainer]}>
+            {
+                props.children && (
+                    <View style={[appStyles.rowBtw, rtlStyles.rowBetween]}>
+                        <View style={[appStyles.row, rtlStyles.row]}>
+                            <Text style={[styles.titleStyle]}>{props.children}</Text>
+                            {props.star &&
+                                <Text style={{ color: 'red' }}>*</Text>
+                            }
+                        </View>
+                        <Text onPress={props.onrightTextPress} style={[styles.rightTitleStyle, rtlStyles.textAlign]}>{props.rghtText}</Text>
+                    </View>
+                )
+            }
+
             {
                 !props?.hideInput && (
                     <TouchableOpacity
@@ -209,6 +214,7 @@ const styles = StyleSheet.create({
     },
     formInput: {
         width: '100%',
+        paddingTop: 15
     },
     titleStyle: {
         paddingVertical: wp(2),

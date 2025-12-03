@@ -535,7 +535,7 @@ const SignIn = props => {
         props?.navigation?.navigate(routes.createProfile, {
           email: user?.email.toLowerCase(),
           userName: user?.userFirstName + ' ' + user?.userLastName
-      });
+        });
       } else {
         props.navigation.navigate(routes.tab, { screen: routes.home });
       }
@@ -670,6 +670,9 @@ const SignIn = props => {
             layout={'second'}
           />
 
+          <Text style={[styles.titleStyle]}>
+            {LocalizedStrings.password}
+          </Text>
           <Input
             placeholder={LocalizedStrings.password}
             secureTextEntry={showPassword}
@@ -677,9 +680,11 @@ const SignIn = props => {
             value={password}
             onChangeText={value => setPassword(value)}
             eye={true}
-            leftIcon={appIcons.lock}>
-            {LocalizedStrings.password}
-          </Input>
+            leftIcon={appIcons.lock}
+            WholeContainer={{
+              paddingTop: 0,
+            }}
+          />
         </View>
 
         <View style={[rtlStyles.rowBetween, { marginVertical: wp(5) }]}>
@@ -826,6 +831,12 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistRegular,
     color: colors.descriptionColor,
     marginTop: wp(5),
+  },
+  titleStyle: {
+    paddingVertical: wp(2),
+    fontSize: hp(1.6),
+    fontFamily: fontFamily.UrbanistSemiBold,
+    color: colors.BlackSecondary,
   },
   forgotPassword: {
     fontSize: hp(1.6),

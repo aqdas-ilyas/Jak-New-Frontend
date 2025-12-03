@@ -323,6 +323,9 @@ const SignUp = props => {
             layout={'second'}
           />
 
+          <Text style={[styles.titleStyle]}>
+            {LocalizedStrings.password}
+          </Text>
           <Input
             placeholder={LocalizedStrings['password']}
             secureTextEntry={showPassword}
@@ -330,9 +333,11 @@ const SignUp = props => {
             value={password}
             onChangeText={value => setPassword(value)}
             eye={true}
-            leftIcon={appIcons.lock}>
-            {LocalizedStrings['password']}
-          </Input>
+            leftIcon={appIcons.lock}
+            WholeContainer={{
+              paddingTop: 0,
+            }}
+          />
 
           <Input
             placeholder={LocalizedStrings['password']}
@@ -437,6 +442,12 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistBold,
     color: '#1D191C',
     marginTop: wp(5),
+  },
+  titleStyle: {
+    paddingVertical: wp(2),
+    fontSize: hp(1.6),
+    fontFamily: fontFamily.UrbanistSemiBold,
+    color: colors.BlackSecondary,
   },
   forgotPassword: {
     fontSize: hp(1.6),
