@@ -7,6 +7,10 @@ const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
 export const GOOGLE_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
 
+// App Store Links
+export const APP_STORE_LINK = 'https://apps.apple.com/sa/app/jak-offers/id6642682560';
+export const PLAY_STORE_LINK = 'https://play.google.com/store/apps/details?id=com.jakkkkkkkkkkk'; // Update with your Play Store link when available
+
 export const emailFormat =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 

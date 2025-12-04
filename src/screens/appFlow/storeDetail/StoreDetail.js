@@ -5,7 +5,7 @@ import Share from 'react-native-share';
 import RNFS from 'react-native-fs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps'
-import { heightPixel, hp, routes, wp } from "../../../services/constants";
+import { heightPixel, hp, routes, wp, APP_STORE_LINK, PLAY_STORE_LINK } from "../../../services/constants";
 import Geolocation from '@react-native-community/geolocation';
 import { getLocationPermission } from "../../../common/HelpingFunc";
 import { appIcons, appImages } from "../../../services/utilities/assets";
@@ -112,23 +112,16 @@ export default StoreDetailList = (props) => {
             const discount = item?.['discount %'] || 0;
             const offerText = item?.['offer text'] || '';
             const offerLink = item?.['offer link'] || '';
-            const category = item?.category || '';
             const expiryDate = item?.['expiry date'] || '';
             const storeLogo = item?.logo || '';
 
             // Create a formatted message for sharing
-            let shareMessage = `🏪 ${storeName}\n\n`;
-
-            if (discount > 0) {
-                shareMessage += `💰 ${discount}% ${LocalizedStrings.Discount || 'Discount'}\n\n`;
-            }
+            // Format: Offer text -> Expiry Date -> Offer Link -> App Store Link -> Play Store Link
+            // Category, Store Name, and Discount are removed as per requirements
+            let shareMessage = '';
 
             if (offerText) {
                 shareMessage += `📝 ${offerText}\n\n`;
-            }
-
-            if (category) {
-                shareMessage += `🏷️ ${LocalizedStrings.category || 'Category'}: ${category}\n\n`;
             }
 
             if (expiryDate) {
@@ -136,7 +129,10 @@ export default StoreDetailList = (props) => {
             }
 
             shareMessage += `🔗 ${offerLink}\n\n`;
-            shareMessage += `📱 ${LocalizedStrings["For more details"] || 'For more details, visit the link above'}`;
+            
+            // Add App Store and Play Store links
+            shareMessage += `🍎 ${APP_STORE_LINK}\n\n`;
+            shareMessage += `🤖 ${PLAY_STORE_LINK}`;
 
             let imageUrl = null;
 

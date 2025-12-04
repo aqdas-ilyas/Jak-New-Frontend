@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Platform, SafeAreaView, Text, FlatList, TouchableOpacity, Pressable, StatusBar, RefreshControl, Image, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Platform, SafeAreaView, Text, FlatList, TouchableOpacity, Pressable, StatusBar, RefreshControl, Image, ActivityIndicator, Animated, Easing } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { hp, routes, wp } from "../../../services/constants";
 import appStyles from "../../../services/utilities/appStyles";
@@ -9,12 +9,149 @@ import { LocalizationContext } from "../../../language/LocalizationContext";
 import { useRTL } from "../../../language/useRTL";
 import routs from "../../../api/routs";
 import { callApi, Method } from "../../../api/apiCaller";
-import { Loader } from "../../../components/loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { saveCategoryOffers, saveMyOffer } from "../../../store/reducers/OfferSlice";
 import { showMessage } from "react-native-flash-message";
 import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
 import { resolveMessage } from "../../../language/helpers";
+
+// Beautiful Animated Loader Component
+const AnimatedLoader = () => {
+    const spinValue = useRef(new Animated.Value(0)).current;
+    const scaleValue1 = useRef(new Animated.Value(0.4)).current;
+    const scaleValue2 = useRef(new Animated.Value(0.4)).current;
+    const scaleValue3 = useRef(new Animated.Value(0.4)).current;
+    const pulseValue = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+        // Continuous rotating animation
+        const spinAnimation = Animated.loop(
+            Animated.timing(spinValue, {
+                toValue: 1,
+                duration: 1500,
+                easing: Easing.linear,
+                useNativeDriver: true,
+            })
+        );
+
+        // Sequential pulsing animation for dots
+        const createPulseAnimation = (scaleValue, delay) => {
+            return Animated.loop(
+                Animated.sequence([
+                    Animated.delay(delay),
+                    Animated.timing(scaleValue, {
+                        toValue: 1.2,
+                        duration: 500,
+                        easing: Easing.out(Easing.ease),
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(scaleValue, {
+                        toValue: 0.4,
+                        duration: 500,
+                        easing: Easing.in(Easing.ease),
+                        useNativeDriver: true,
+                    }),
+                ])
+            );
+        };
+
+        const pulseAnimation1 = createPulseAnimation(scaleValue1, 0);
+        const pulseAnimation2 = createPulseAnimation(scaleValue2, 200);
+        const pulseAnimation3 = createPulseAnimation(scaleValue3, 400);
+
+        // Outer circle pulse animation
+        const outerPulseAnimation = Animated.loop(
+            Animated.sequence([
+                Animated.timing(pulseValue, {
+                    toValue: 1.1,
+                    duration: 800,
+                    easing: Easing.inOut(Easing.ease),
+                    useNativeDriver: true,
+                }),
+                Animated.timing(pulseValue, {
+                    toValue: 1,
+                    duration: 800,
+                    easing: Easing.inOut(Easing.ease),
+                    useNativeDriver: true,
+                }),
+            ])
+        );
+
+        spinAnimation.start();
+        pulseAnimation1.start();
+        pulseAnimation2.start();
+        pulseAnimation3.start();
+        outerPulseAnimation.start();
+
+        return () => {
+            spinAnimation.stop();
+            pulseAnimation1.stop();
+            pulseAnimation2.stop();
+            pulseAnimation3.stop();
+            outerPulseAnimation.stop();
+        };
+    }, []);
+
+    const spin = spinValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg'],
+    });
+
+    return (
+        <View style={styles.loaderContainer}>
+            <View style={styles.loaderWrapper}>
+                {/* Outer rotating circle with pulse */}
+                <Animated.View
+                    style={[
+                        styles.outerCircle,
+                        {
+                            transform: [
+                                { rotate: spin },
+                                { scale: pulseValue },
+                            ],
+                        },
+                    ]}
+                >
+                    <View style={[styles.circleSegment, { backgroundColor: colors.primaryColor, opacity: 0.8 }]} />
+                    <View style={[styles.circleSegment, styles.circleSegment2, { backgroundColor: colors.primaryColor, opacity: 0.6 }]} />
+                    <View style={[styles.circleSegment, styles.circleSegment3, { backgroundColor: colors.primaryColor, opacity: 0.4 }]} />
+                    <View style={[styles.circleSegment, styles.circleSegment4, { backgroundColor: colors.primaryColor, opacity: 0.2 }]} />
+                </Animated.View>
+
+                {/* Inner pulsing dots */}
+                <View style={styles.dotsContainer}>
+                    <Animated.View
+                        style={[
+                            styles.dot,
+                            {
+                                backgroundColor: colors.primaryColor,
+                                transform: [{ scale: scaleValue1 }],
+                            },
+                        ]}
+                    />
+                    <Animated.View
+                        style={[
+                            styles.dot,
+                            {
+                                backgroundColor: colors.primaryColor,
+                                transform: [{ scale: scaleValue2 }],
+                            },
+                        ]}
+                    />
+                    <Animated.View
+                        style={[
+                            styles.dot,
+                            {
+                                backgroundColor: colors.primaryColor,
+                                transform: [{ scale: scaleValue3 }],
+                            },
+                        ]}
+                    />
+                </View>
+            </View>
+        </View>
+    );
+};
 
 export default Offer = (props) => {
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
@@ -289,14 +426,16 @@ export default Offer = (props) => {
             const filteredOffers = filterExpiredOffers(response?.data?.data || []);
             dispatch(saveCategoryOffers(filteredOffers));
 
-            if (response?.data?.data.length > 0) {
-                setMyOfferFilterArray(response?.data?.data);
+            if (filteredOffers.length > 0) {
+                // Use filtered offers instead of raw response data
+                setMyOfferFilterArray(filteredOffers);
 
-                // Extract banks from category filtered offers when category is selected
+                // Extract banks from filtered offers when category is selected
                 if (formattedCheckedStrings && !bankId) {
-                    extractBanks(response?.data?.data);
+                    extractBanks(filteredOffers);
                 }
             } else {
+                setMyOfferFilterArray([]);
                 showMessage({ message: LocalizedStrings.no_offers_found, type: 'danger' })
             }
         };
@@ -374,10 +513,12 @@ export default Offer = (props) => {
         // If a category is selected, filter from CategoriesOffers (category filtered offers)
         // Otherwise, filter from all offers (myOffer) or call API
         if (selectedCategory && CategoriesOffers?.length > 0) {
-            // Filter category offers by selected bank
-            const filteredOffers = CategoriesOffers.filter(offer =>
+            // Filter category offers by selected bank AND remove expired offers
+            const bankFilteredOffers = CategoriesOffers.filter(offer =>
                 offer?.employer?._id === bank.id
             );
+            // Also filter out expired offers
+            const filteredOffers = filterExpiredOffers(bankFilteredOffers);
             setMyOfferFilterArray(filteredOffers);
 
             if (filteredOffers.length === 0) {
@@ -614,22 +755,29 @@ export default Offer = (props) => {
 
                     <FlatList
                         style={{ marginTop: wp(2) }}
-                        data={
-                            selectedBank
-                                ? myOfferFilterArray?.length > 0 ? myOfferFilterArray : []
-                                : myOfferFilterArray?.length > 0
-                                    ? myOfferFilterArray
-                                    : (() => {
-                                        // If a category is selected, show CategoriesOffers
-                                        const selectedCategory = checkboxes.find(cb =>
-                                            cb.checked &&
-                                            cb.title !== LocalizedStrings.All
-                                        );
-                                        return selectedCategory && CategoriesOffers?.length > 0
-                                            ? CategoriesOffers
-                                            : myOffer;
-                                    })()
-                        }
+                        data={(() => {
+                            let offersToDisplay = [];
+                            
+                            if (selectedBank) {
+                                // If bank is selected, use filtered array
+                                offersToDisplay = myOfferFilterArray?.length > 0 ? myOfferFilterArray : [];
+                            } else if (myOfferFilterArray?.length > 0) {
+                                // If filter array has data, use it
+                                offersToDisplay = myOfferFilterArray;
+                            } else {
+                                // Otherwise determine from category selection
+                                const selectedCategory = checkboxes.find(cb =>
+                                    cb.checked &&
+                                    cb.title !== LocalizedStrings.All
+                                );
+                                offersToDisplay = selectedCategory && CategoriesOffers?.length > 0
+                                    ? CategoriesOffers
+                                    : myOffer;
+                            }
+                            
+                            // Always filter out expired offers before displaying
+                            return filterExpiredOffers(offersToDisplay || []);
+                        })()}
                         showsVerticalScrollIndicator={false}
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{
@@ -647,8 +795,8 @@ export default Offer = (props) => {
                         ListEmptyComponent={
                             isLoading ? (
                                 <View style={styles.emptyContainer}>
-                                    <ActivityIndicator size="large" color={colors.primaryColor} />
-                                    <Text style={styles.loadingText}>{LocalizedStrings['Loading...'] || 'Loading...'}</Text>
+                                    <AnimatedLoader />
+                                    {/* <Text style={styles.loadingText}>{LocalizedStrings['Loading...'] || 'Loading...'}</Text> */}
                                 </View>
                             ) : (
                                 <View style={styles.emptyContainer}>
@@ -770,5 +918,65 @@ const styles = StyleSheet.create({
         width: wp(8),
         height: wp(8),
         borderRadius: wp(6),
+    },
+    loaderContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: wp(4),
+    },
+    loaderWrapper: {
+        width: wp(24),
+        height: wp(24),
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+    },
+    outerCircle: {
+        width: wp(24),
+        height: wp(24),
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    circleSegment: {
+        width: wp(4),
+        height: wp(4),
+        borderRadius: wp(2),
+        position: 'absolute',
+        top: 0,
+        left: '50%',
+        marginLeft: -wp(2),
+    },
+    circleSegment2: {
+        right: 0,
+        top: '50%',
+        left: 'auto',
+        marginTop: -wp(2),
+        marginLeft: 0,
+    },
+    circleSegment3: {
+        bottom: 0,
+        left: '50%',
+        top: 'auto',
+        marginLeft: -wp(2),
+        marginTop: 0,
+    },
+    circleSegment4: {
+        left: 0,
+        top: '50%',
+        marginTop: -wp(2),
+        marginLeft: 0,
+    },
+    dotsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    dot: {
+        width: wp(3.5),
+        height: wp(3.5),
+        borderRadius: wp(1.75),
+        marginHorizontal: wp(1.5),
+        backgroundColor: colors.primaryColor,
     },
 })

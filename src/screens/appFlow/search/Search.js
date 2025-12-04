@@ -53,7 +53,7 @@ export default Search = (props) => {
 
         return offers.filter((offer) => {
             const expiryDateStr = offer?.['expiry date'];
-            
+
             if (!expiryDateStr) {
                 // If no expiry date, include the offer
                 return true;
@@ -63,7 +63,7 @@ export default Search = (props) => {
                 // Try to parse the expiry date
                 // Handle different date formats (DD/MM/YYYY, YYYY-MM-DD, etc.)
                 let expiryDate;
-                
+
                 // Check if it's in DD/MM/YYYY format
                 if (expiryDateStr.includes('/')) {
                     const parts = expiryDateStr.split('/');
@@ -296,7 +296,7 @@ export default Search = (props) => {
                         borderWidth: 1,
                         backgroundColor: colors.primaryColorOpacity,
                         width: wp(85),
-                        marginTop: -wp(10),
+                        marginTop: Platform.OS == 'android' ? -wp(10) : -wp(4),
                         marginRight: wp(5),
                         marginLeft: wp(2),
                     }}
