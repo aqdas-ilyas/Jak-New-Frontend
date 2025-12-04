@@ -410,14 +410,14 @@ export default function Splash(props) {
                     ]}
                     pointerEvents={(isLoading || !apiCompleted || !biometricChecked || biometricInProgress) ? 'auto' : 'none'}
                 >
-                    <View style={styles.loadingContent}>
+                    <View style={[styles.loadingContent, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                         <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
                             <ActivityIndicator size="small" color={colors.primaryColor} />
                         </Animated.View>
                         <Text style={styles.loadingText}>
                             {biometricInProgress || (!biometricChecked && biometricEnabled && islogin)
                                 ? (LocalizedStrings.biometric_app_open_prompt || 'Authenticate to open the app')
-                                : (LocalizedStrings.loading || 'Loading...')
+                                : (LocalizedStrings.loading || 'Loading')
                             }
                         </Text>
                         {/* Animated dots */}
@@ -472,7 +472,6 @@ const styles = StyleSheet.create({
         elevation: 8,
     },
     loadingContent: {
-        flexDirection: 'row',
         alignItems: "center",
         justifyContent: "center",
     },
