@@ -307,7 +307,7 @@ export default {
   'km away': 'على بعد كم',
   Navigate: 'التنقل',
   store_detail: 'تفاصيل المتجر',
-  'Go to Website': 'اذهب إلى الموقع',
+  'Offer Details': 'تفاصيل العرض',
 
   // Image Picker
   select_image_source: 'اختر مصدر الصورة',

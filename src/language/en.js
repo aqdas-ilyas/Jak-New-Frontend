@@ -304,7 +304,7 @@ export default {
   'km away': 'km away',
   Navigate: 'Navigate',
   store_detail: 'Store Details',
-  'Go to Website': 'Go to Website',
+  'Offer Details': 'Offer Details',
 
   // Image Picker
   select_image_source: 'Select Image Source',

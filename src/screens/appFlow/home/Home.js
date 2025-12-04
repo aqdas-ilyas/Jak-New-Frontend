@@ -167,8 +167,7 @@ export default Home = props => {
 
     let endPoint =
       routs.getMyOffers +
-      `user/all?myoffers=yes&limit=10&page=1&language=${appLanguage === 'ar' ? 'arabic' : 'english'
-      }`;
+      `user/all?myoffers=yes&limit=10&page=1&language=${appLanguage === 'ar' ? 'arabic' : 'english'}`;
 
     if (filterLocation != '') {
       endPoint += `&km=${filterLocation}`;

@@ -362,8 +362,12 @@ export default StoreDetailList = (props) => {
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.store_detail}</Text>
                 <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: "center" }}>
-                    <TouchableOpacity onPress={openGoogleMaps} activeOpacity={0.7} style={{ marginRight: isRTL ? 0 : wp(4), marginLeft: isRTL ? wp(4) : 0 }}>
-                        <Image source={appIcons.navigate} style={styles.headerIcon} />
+                    <TouchableOpacity onPress={shareOffer} activeOpacity={0.7} style={{ marginRight: isRTL ? 0 : wp(4), marginLeft: isRTL ? wp(4) : 0 }}>
+                        <MaterialCommunityIcons
+                            name="share-variant"
+                            size={wp(5)}
+                            color={colors.BlackSecondary}
+                        />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => IsFavourites(item?._id)} activeOpacity={0.7}>
                         <Image source={isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.headerIcon, { tintColor: !isLiked ? colors.BlackSecondary : null }]} />
@@ -452,22 +456,17 @@ export default StoreDetailList = (props) => {
                     containerStyle={{
                         width: wp(44),
                     }}>
-                    {LocalizedStrings["Go to Website"]}
+                    {LocalizedStrings["Offer Details"]}
                 </Button>
                 <Button
-                    onPress={shareOffer}
+                    onPress={openGoogleMaps}
                     containerStyle={{
                         width: wp(44),
                     }}>
                     <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: "center", justifyContent: "center" }}>
-                        <MaterialCommunityIcons
-                            name="share-variant"
-                            size={wp(5)}
-                            color={colors.fullWhite}
-                            style={{ marginRight: isRTL ? 0 : wp(2), marginLeft: isRTL ? wp(2) : 0 }}
-                        />
+                        <Image source={appIcons.navigate} style={{ width: wp(5), height: wp(5),marginRight: isRTL ? 0 : wp(2), marginLeft: isRTL ? wp(2) : 0 }} />
                         <Text style={{ color: colors.fullWhite, fontFamily: fontFamily.UrbanistSemiBold, fontSize: hp(1.6) }}>
-                            {LocalizedStrings["Share"] || "Share"}
+                            {LocalizedStrings["Start Navigate"] || "Start Navigate"}
                         </Text>
                     </View>
                 </Button>

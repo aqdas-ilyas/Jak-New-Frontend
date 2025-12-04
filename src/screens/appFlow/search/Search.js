@@ -116,7 +116,7 @@ export default Search = (props) => {
             setIsLoading(false)
         };
 
-        const endPoint = routs.getMyOffers + `user/all?search=${str.toLowerCase()}` // &location=${userLocation.longitude},${userLocation.latitude}&km=${location}&discount=${discount}&category=${category}&myoffers=yes
+        const endPoint = routs.getMyOffers + `user/all?search=${str.toLowerCase()}&language=${appLanguage === 'ar' ? 'arabic' : 'english'}` // &location=${userLocation.longitude},${userLocation.latitude}&km=${location}&discount=${discount}&category=${category}&myoffers=yes
         const method = Method.GET;
         const bodyParams = {};
 
