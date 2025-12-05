@@ -98,6 +98,7 @@ const appIcons = {
 
     scan: require(`${iconUrl}/Scan.png`),
     loyalty: require(`${iconUrl}/loyalty.png`),
+    all: require(`${iconUrl}/all.png`),
 };
 
 export { appImages, appIcons };

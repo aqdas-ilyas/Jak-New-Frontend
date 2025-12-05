@@ -714,17 +714,13 @@ export default Offer = (props) => {
                                                 }
                                             ]}>
                                                 {item.isAll ? (
-                                                    <Text style={[
-                                                        styles.bankText,
-                                                        {
-                                                            paddingHorizontal: wp(3),
-                                                            paddingVertical: isRTL ? wp(1) : wp(3),
-                                                            color: isSelected ? colors.primaryColor : colors.BlackSecondary,
-                                                            textAlign: isRTL ? 'right' : 'left'
-                                                        }
-                                                    ]}>
-                                                        {item.name}
-                                                    </Text>
+                                                    <View style={{ padding: wp(1.5) }}>
+                                                        <Image
+                                                            source={appIcons.all}
+                                                            style={[styles.bankLogo]}
+                                                            resizeMode="contain"
+                                                        />
+                                                    </View>
                                                 ) : item.employer?.image ? (
                                                     <View style={{ padding: wp(1.5) }}>
                                                         <Image
