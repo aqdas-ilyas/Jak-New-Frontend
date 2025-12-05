@@ -129,7 +129,7 @@ export default StoreDetailList = (props) => {
             }
 
             shareMessage += `🔗 ${offerLink}\n\n`;
-            
+
             // Add App Store and Play Store links
             shareMessage += `🍎 ${APP_STORE_LINK}\n\n`;
             shareMessage += `🤖 ${PLAY_STORE_LINK}`;
@@ -402,7 +402,7 @@ export default StoreDetailList = (props) => {
                             </View>
                         )
                     }
-                    
+
                     <View style={{ width: wp(35), alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
                         <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings["Expiry Date"]}</Text>
                         <Text style={[styles.shortDes, { textAlign: isRTL ? 'right' : 'left' }]}>{item?.["expiry date"]}</Text>
@@ -464,9 +464,9 @@ export default StoreDetailList = (props) => {
                         width: wp(44),
                     }}>
                     <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: "center", justifyContent: "center" }}>
-                        <Image source={appIcons.navigate} style={{ width: wp(5), height: wp(5),marginRight: isRTL ? 0 : wp(2), marginLeft: isRTL ? wp(2) : 0 }} />
+                        <Image source={appIcons.navigate} style={{ width: wp(5), height: wp(5), marginRight: isRTL ? 0 : wp(2), marginLeft: isRTL ? wp(2) : 0 }} />
                         <Text style={{ color: colors.fullWhite, fontFamily: fontFamily.UrbanistSemiBold, fontSize: hp(1.6) }}>
-                            {LocalizedStrings["Start Navigate"] || "Start Navigate"}
+                            {LocalizedStrings["Store Location"]}
                         </Text>
                     </View>
                 </Button>

@@ -548,6 +548,6 @@ export default {
   "MESSAGE:": "MESSAGE:",
   'Number': 'Number',
   'No Card Found!': 'No Card Found!',
-
   'loading': 'Loading',
+  'Store Location': 'Store Location',
 }

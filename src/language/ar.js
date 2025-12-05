@@ -558,4 +558,5 @@ export default {
   'No Card Found!': 'لم يتم العثور على بطاقة!',
   'Don’t have an account?': 'ليس لديك حساب؟',
   'loading': 'جار التحميل',
+  'Store Location': 'التوجه للموقع',
 };
