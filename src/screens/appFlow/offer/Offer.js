@@ -717,7 +717,7 @@ export default Offer = (props) => {
                                                     <View style={{ padding: wp(1.5) }}>
                                                         <Image
                                                             source={appIcons.all}
-                                                            style={[styles.bankLogo]}
+                                                            style={[appLanguage == 'ar' ? styles.bankLogoAllArabic : styles.bankLogo]}
                                                             resizeMode="contain"
                                                         />
                                                     </View>
@@ -753,7 +753,7 @@ export default Offer = (props) => {
                         style={{ marginTop: wp(2) }}
                         data={(() => {
                             let offersToDisplay = [];
-                            
+
                             if (selectedBank) {
                                 // If bank is selected, use filtered array
                                 offersToDisplay = myOfferFilterArray?.length > 0 ? myOfferFilterArray : [];
@@ -770,7 +770,7 @@ export default Offer = (props) => {
                                     ? CategoriesOffers
                                     : myOffer;
                             }
-                            
+
                             // Always filter out expired offers before displaying
                             return filterExpiredOffers(offersToDisplay || []);
                         })()}
@@ -913,6 +913,11 @@ const styles = StyleSheet.create({
     bankLogo: {
         width: wp(8),
         height: wp(8),
+        borderRadius: wp(6),
+    },
+    bankLogoAllArabic: {
+        width: wp(7),
+        height: wp(5),
         borderRadius: wp(6),
     },
     loaderContainer: {

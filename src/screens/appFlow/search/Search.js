@@ -277,7 +277,7 @@ export default Search = (props) => {
         <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { margin: wp(4) }]}>
             <Loader loading={isLoadingFull} />
 
-            <View style={[{ paddingTop: Platform.OS == 'android' ? wp(6) : 0, alignItems: "center" }, rtlStyles.row]}>
+            <View style={[{ paddingTop: Platform.OS == 'android' ? wp(10) : 0, alignItems: "center" }, rtlStyles.row]}>
                 <TouchableOpacity onPress={() => props.navigation.goBack()} style={{ paddingVertical: wp(2) }}>
                     <Image source={appIcons.back} style={[styles.back, rtlStyles.iconRotation]} />
                 </TouchableOpacity>
@@ -296,7 +296,7 @@ export default Search = (props) => {
                         borderWidth: 1,
                         backgroundColor: colors.primaryColorOpacity,
                         width: wp(85),
-                        marginTop: Platform.OS == 'android' ? -wp(10) : -wp(4),
+                        marginTop: -wp(4),
                         marginRight: wp(5),
                         marginLeft: wp(2),
                     }}

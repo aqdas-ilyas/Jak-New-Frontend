@@ -130,9 +130,11 @@ export default StoreDetailList = (props) => {
 
             shareMessage += `🔗 ${offerLink}\n\n`;
 
-            // Add App Store and Play Store links
-            shareMessage += `🍎 ${APP_STORE_LINK}\n\n`;
-            shareMessage += `🤖 ${PLAY_STORE_LINK}`;
+            // Add App Store and Play Store links with Apple and Google logos
+            // Apple logo:  (Unicode U+F8FF)
+            const appleLogo = '\uF8FF';
+            shareMessage += `${appleLogo} App Store\n${APP_STORE_LINK}\n\n`;
+            shareMessage += `🅶 Play Store\n${PLAY_STORE_LINK}`;
 
             let imageUrl = null;
 
@@ -363,11 +365,13 @@ export default StoreDetailList = (props) => {
                 <Text style={[styles.headerTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.store_detail}</Text>
                 <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: "center" }}>
                     <TouchableOpacity onPress={shareOffer} activeOpacity={0.7} style={{ marginRight: isRTL ? 0 : wp(4), marginLeft: isRTL ? wp(4) : 0 }}>
-                        <MaterialCommunityIcons
-                            name="share-variant"
-                            size={wp(5)}
-                            color={colors.BlackSecondary}
-                        />
+                        <View style={{ transform: [{ scaleX: isRTL ? -1 : 1 }] }}>
+                            <MaterialCommunityIcons
+                                name="share-variant"
+                                size={wp(5)}
+                                color={colors.BlackSecondary}
+                            />
+                        </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => IsFavourites(item?._id)} activeOpacity={0.7}>
                         <Image source={isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.headerIcon, { tintColor: !isLiked ? colors.BlackSecondary : null }]} />
@@ -471,6 +475,9 @@ export default StoreDetailList = (props) => {
                     </View>
                 </Button>
             </View>
+            <Text style={[styles.disclaimerText, { textAlign: isRTL ? 'right' : 'left', marginBottom: wp(3) }]}>
+                {LocalizedStrings["Map locations may not be accurate; recheck before navigating."]}
+            </Text>
         </SafeAreaView>
     )
 };
@@ -569,5 +576,13 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: 'center',
         marginHorizontal: wp(4)
+    },
+    disclaimerText: {
+        fontSize: hp(1.4),
+        fontFamily: fontFamily.UrbanistRegular,
+        color: colors.descriptionColor,
+        lineHeight: 20,
+        marginTop: wp(2),
+        paddingHorizontal: wp(2),
     },
 });
