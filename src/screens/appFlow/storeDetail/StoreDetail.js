@@ -130,11 +130,18 @@ export default StoreDetailList = (props) => {
 
             shareMessage += `🔗 ${offerLink}\n\n`;
 
-            // Add App Store and Play Store links with Apple and Google logos
-            // Apple logo:  (Unicode U+F8FF)
-            const appleLogo = '\uF8FF';
-            shareMessage += `${appleLogo} App Store\n${APP_STORE_LINK}\n\n`;
-            shareMessage += `🅶 Play Store\n${PLAY_STORE_LINK}`;
+            // Add App Store and Play Store links with language-specific text
+            if (appLanguage === 'ar') {
+                // Arabic format
+                const appleLogo = '\uF8FF';
+                shareMessage += `${appleLogo} تحميل التطبيق لأجهزة الايفون:\n${APP_STORE_LINK}\n\n`;
+                shareMessage += `🅶 تحميل التطبيق لأجهزة اندرويد:\n${PLAY_STORE_LINK}`;
+            } else {
+                // English format
+                const appleLogo = '\uF8FF';
+                shareMessage += `${appleLogo} App Store\n${APP_STORE_LINK}\n\n`;
+                shareMessage += `🅶 Play Store\n${PLAY_STORE_LINK}`;
+            }
 
             let imageUrl = null;
 
