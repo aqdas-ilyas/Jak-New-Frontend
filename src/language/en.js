@@ -381,7 +381,7 @@ export default {
   'Get notified and never miss out': 'Get notified and never miss out',
   'Easily access you loyalty cards': 'Easily access you loyalty cards',
   onbaord1: 'See the offers that your bank or employer have for you all from one simple-to-use app.',
-  onbaord2: "A store nearby might have a promo for the items you have been looking for, get notified and don't miss that deals.",
+  onbaord2: "A store nearby might have a promo for the items you have been looking for.",
   onbaord3: 'Jak app enables you to store your preferred loyalty cards so you can access them from one place and never have to look for them.',
 
   'Welcome Back!': 'Welcome Back!',
