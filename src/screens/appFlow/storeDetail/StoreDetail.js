@@ -132,13 +132,13 @@ export default StoreDetailList = (props) => {
 
             // Add App Store and Play Store links with language-specific text
             if (appLanguage === 'ar') {
-                // Arabic format
-                const appleLogo = '\uF8FF';
+                // Arabic format - Apple logo Unicode (U+F8FF)
+                const appleLogo = String.fromCharCode(0xF8FF);
                 shareMessage += `${appleLogo} تحميل التطبيق لأجهزة الايفون:\n${APP_STORE_LINK}\n\n`;
                 shareMessage += `🅶 تحميل التطبيق لأجهزة اندرويد:\n${PLAY_STORE_LINK}`;
             } else {
-                // English format
-                const appleLogo = '\uF8FF';
+                // English format - Apple logo Unicode (U+F8FF)
+                const appleLogo = String.fromCharCode(0xF8FF);
                 shareMessage += `${appleLogo} App Store\n${APP_STORE_LINK}\n\n`;
                 shareMessage += `🅶 Play Store\n${PLAY_STORE_LINK}`;
             }
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
     },
     imageStyle: {
         width: wp(92),
-        height: wp(55),
+        height: wp(58),
         borderRadius: 15,
     },
     IconStyle: {

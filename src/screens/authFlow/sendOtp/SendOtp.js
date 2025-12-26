@@ -134,7 +134,7 @@ const SendOtp = (props) => {
                 )}
 
                 <Text style={[styles.mainDes, isRTL ? styles.textRight : styles.textLeft]}>
-                    {email ? LocalizedStrings.otp_des1 : LocalizedStrings.otp_des2}
+                    {LocalizedStrings.otp_des2}
                 </Text>
                 <View style={{ width: '100%', justifyContent: 'center', alignSelf: 'center', marginTop: hp(5) }}>
                     <CodeField
