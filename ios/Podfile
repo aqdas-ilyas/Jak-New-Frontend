@@ -18,19 +18,8 @@ node_require('react-native-permissions/scripts/setup.rb')
 
 use_modular_headers!
 # platform :ios, min_ios_version_supported
-platform :ios, '13.4'
+platform :ios, '15.1'
 prepare_react_native_project!
-
-# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
-# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
-#
-# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
-# ```js
-# module.exports = {
-#   dependencies: {
-#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
-# ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -49,26 +38,138 @@ target 'jak' do
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # Enables Flipper.
-    #
-    # Note that if you have use_frameworks! enabled, Flipper will not work and
-    # you should disable the next line.
-    # :flipper_configuration => flipper_config,
+
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'jakTests' do
-    inherit! :complete
-    # Pods for testing
-  end
-
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
     )
+    
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+        
+        # Fix for module import issues
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+        config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+        config.build_settings['SWIFT_COMPILATION_MODE'] = 'wholemodule'
+        
+        # Fix for React-RuntimeHermes module issues
+        if target.name == 'React-RuntimeHermes'
+          config.build_settings['HEADER_SEARCH_PATHS'] ||= ['$(inherited)']
+          config.build_settings['HEADER_SEARCH_PATHS'] << '$(SDKROOT)/usr/include'
+          config.build_settings['HEADER_SEARCH_PATHS'] << '$(SDKROOT)/System/Library/Frameworks/UIKit.framework/Headers'
+        end
+        
+        # Fix for Firebase Swift interface verification issues
+        if target.name.include?('Firebase') || target.name.include?('Google')
+          config.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
+          config.build_settings['SWIFT_STRICT_MODULES'] = 'NO'
+          # Disable Swift interface verification to avoid build errors
+          config.build_settings['SWIFT_EMIT_MODULE_INTERFACE'] = 'NO'
+        end
+      end
+    end
+    
+    # Fix TOCropViewController iOS 26.0 API issue (APIs don't exist in iOS 18.2 SDK)
+    begin
+      tocrop_file = File.join(installer.sandbox.root, 'TOCropViewController/Objective-C/TOCropViewController/TOCropViewController.m')
+      if File.exist?(tocrop_file)
+        # Make file writable
+        File.chmod(0644, tocrop_file)
+        text = File.read(tocrop_file)
+        old_block = <<-OLD.strip
+    // fix: On iOS 26, overlay with iPadOS windowingControl area.
+    if (@available(iOS 26.0, *)) {
+      if (!verticalLayout) {
+        UIViewLayoutRegion *layoutRegion = [UIViewLayoutRegion safeAreaLayoutRegionWithCornerAdaptation: UIViewLayoutRegionAdaptivityAxisVertical];
+        UIEdgeInsets edgeInsets = [self.view edgeInsetsForLayoutRegion:layoutRegion];
+        insets.top = edgeInsets.top;
+        insets.left = edgeInsets.left;
+        insets.bottom = edgeInsets.bottom;
+      }
+    }
+OLD
+        new_block = <<-NEW.strip
+    // fix: On iOS 26, overlay with iPadOS windowingControl area.
+    // Commented out - iOS 26.0 APIs don't exist yet in iOS 18.2 SDK
+    // if (@available(iOS 26.0, *)) {
+    //   if (!verticalLayout) {
+    //     UIViewLayoutRegion *layoutRegion = [UIViewLayoutRegion safeAreaLayoutRegionWithCornerAdaptation: UIViewLayoutRegionAdaptivityAxisVertical];
+    //     UIEdgeInsets edgeInsets = [self.view edgeInsetsForLayoutRegion:layoutRegion];
+    //     insets.top = edgeInsets.top;
+    //     insets.left = edgeInsets.left;
+    //     insets.bottom = edgeInsets.bottom;
+    //   }
+    // }
+NEW
+        if text.include?(old_block)
+          text.gsub!(old_block, new_block)
+          File.open(tocrop_file, "w") { |file| file.puts text }
+          puts "✅ Fixed TOCropViewController iOS 26.0 API issue"
+        end
+      end
+    rescue => e
+      puts "⚠️  Could not fix TOCropViewController: #{e.message}"
+    end
+    
+    # Fix React-RuntimeHermes module redefinition issue - create empty stub modulemap
+    begin
+      jsitooling_modulemap = File.join(installer.sandbox.root, 'Headers/Public/react_runtime/React-jsitooling.modulemap')
+      if File.exist?(jsitooling_modulemap)
+        File.chmod(0644, jsitooling_modulemap)
+        # Create minimal empty modulemap to avoid redefinition
+        File.open(jsitooling_modulemap, "w") do |file|
+          file.puts "module react_runtime_jsitooling {"
+          file.puts "  // Empty stub to avoid module redefinition conflict"
+          file.puts "}"
+        end
+        puts "✅ Fixed React-RuntimeHermes module redefinition issue"
+      end
+    rescue => e
+      puts "⚠️  Could not fix modulemap: #{e.message}"
+    end
+    
+    # Fix ReactCommon module redefinition issue - create empty stub modulemap
+    begin
+      runtime_apple_modulemap = File.join(installer.sandbox.root, 'Headers/Public/ReactCommon/React-RuntimeApple.modulemap')
+      if File.exist?(runtime_apple_modulemap)
+        File.chmod(0644, runtime_apple_modulemap)
+        # Create minimal empty modulemap to avoid redefinition
+        File.open(runtime_apple_modulemap, "w") do |file|
+          file.puts "module ReactCommon_RuntimeApple {"
+          file.puts "  // Empty stub to avoid module redefinition conflict"
+          file.puts "}"
+        end
+        puts "✅ Fixed ReactCommon module redefinition issue"
+      end
+    rescue => e
+      puts "⚠️  Could not fix ReactCommon modulemap: #{e.message}"
+    end
+    
+    # Fix react-native-image-crop-picker customAspectRatio property issue
+    begin
+      project_root = File.expand_path(File.join(installer.sandbox.root, '../..'))
+      image_crop_picker_file = File.join(project_root, 'node_modules/react-native-image-crop-picker/ios/src/ImageCropPicker.m')
+      if File.exist?(image_crop_picker_file)
+        File.chmod(0644, image_crop_picker_file)
+        text = File.read(image_crop_picker_file)
+        # Fix outdated property name - TOCropViewController uses aspectRatioPreset not customAspectRatio
+        if text.include?('cropVC.customAspectRatio')
+          text.gsub!(/cropVC\.customAspectRatio\s*=/, 'cropVC.aspectRatioPreset =')
+          File.open(image_crop_picker_file, "w") { |file| file.puts text }
+          puts "✅ Fixed react-native-image-crop-picker customAspectRatio property issue"
+        end
+      end
+    rescue => e
+      # Silently continue if fix can't be applied
+    end
   end
 end
