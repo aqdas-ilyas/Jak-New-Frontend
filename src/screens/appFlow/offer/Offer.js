@@ -617,7 +617,7 @@ export default Offer = (props) => {
                         onPress={() => props.navigation.navigate(routes.search, { discount: '', location: '', category: getCheckedLocalizedStrings() })}
                         style={styles.searchContainer}
                     >
-                        <View style={styles.searchView}>
+                        <View style={[styles.searchView, { flexDirection: isRTL ? 'row-reverse' : 'row', paddingVertical: isRTL ? wp(2) : wp(3.5), }]}>
                             <Image
                                 source={appIcons.search}
                                 style={[styles.searchIcon, { tintColor: colors.BlackSecondary }]}
@@ -831,12 +831,10 @@ const styles = StyleSheet.create({
         marginVertical: wp(2),
     },
     searchView: {
-        flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: colors.fullWhite,
         borderRadius: 15,
         paddingHorizontal: wp(4),
-        paddingVertical: wp(3.5),
         width: wp(92),
         shadowColor: colors.black,
         shadowOffset: {
@@ -850,7 +848,7 @@ const styles = StyleSheet.create({
     searchIcon: {
         width: wp(5),
         height: wp(5),
-        marginRight: wp(3),
+        marginHorizontal: wp(2),
     },
     searchPlaceholder: {
         flex: 1,

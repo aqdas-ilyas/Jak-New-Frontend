@@ -140,7 +140,7 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             <View style={{
                                 flexDirection: isRTL ? "row-reverse" : "row",
                                 alignItems: 'center',
-                                marginRight: wp(2.3)
+                                marginHorizontal: wp(2.3)
                             }}>
                                 {
                                     item?.['discount %'] > 0 && (
