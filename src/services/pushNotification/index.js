@@ -58,6 +58,8 @@ const displayCustomNotification = async data => {
 };
 
 export async function notificationListeners() {
+        console.log('********** notificationListeners **********');
+
     const unsubscribe = messaging().onMessage(async remoteMessage => {
         console.log('A new FCM message arrived!', remoteMessage);
         displayCustomNotification(remoteMessage);
