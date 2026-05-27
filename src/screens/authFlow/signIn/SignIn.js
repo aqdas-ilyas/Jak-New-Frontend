@@ -24,6 +24,7 @@ import { isPossibleNumber } from 'libphonenumber-js';
 import { decodeJWT } from '../../../common/HelpingFunc';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store';
 
 const SignIn = props => {
   const dispatch = useDispatch();
@@ -165,7 +166,7 @@ const SignIn = props => {
         number: `${countryCode + phoneNumber}`,
         password: password,
         language: appLanguage == 'en' ? 'english' : 'arabic',
-        device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+        device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
       };
 
       console.log('SignInAfterValidation:- ', bodyParams);
@@ -255,7 +256,7 @@ const SignIn = props => {
       number: `${credentials.countryCode + credentials.phoneNumber}`,
       password: credentials.password,
       language: appLanguage == 'en' ? 'english' : 'arabic',
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' },
     };
 
     console.log('Biometric phone login API call with params:', bodyParams);
@@ -322,7 +323,7 @@ const SignIn = props => {
     const method = Method.POST;
     const bodyParams = {
       email: credentials?.email.toLowerCase(),
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
     };
 
     console.log('Biometric email login API call with params:', bodyParams);
@@ -582,7 +583,7 @@ const SignIn = props => {
     const method = Method.POST;
     const bodyParams = {
       email: user?.email.toLowerCase(),
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
     };
 
     setIsLoading(true);

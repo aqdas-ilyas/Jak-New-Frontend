@@ -14,6 +14,7 @@ import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
 import { getDeviceId } from 'react-native-device-info'
 import { showMessage } from 'react-native-flash-message'
+import { store } from '../../../store/store'
 
 const SubscriptionPlan = (props) => {
     const { subscribeArr } = props?.route?.params
@@ -90,8 +91,7 @@ const SubscriptionPlan = (props) => {
         const bodyParams = {
             "subscriptionId": subscribeArr[0]._id,
             "type": subscribeArr[0].type,
-            device: { id: getDeviceId(), deviceToken: "fcmToken" }
-
+            device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
         }
 
         setIsLoading(true);

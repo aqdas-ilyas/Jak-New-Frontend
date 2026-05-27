@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from '../../../store/reducers/userDataSlice'
 import CheckBox from '@react-native-community/checkbox';
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store'
 
 const Preferences = (props) => {
     const dispatch = useDispatch()
@@ -148,12 +149,12 @@ const Preferences = (props) => {
         if (skip) {
             bodyParams = {
                 "isSkipping": "true",
-                device: { id: getDeviceId(), deviceToken: "fcmToken" }
+                device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
             }
         } else {
             bodyParams = {
                 "employer": selectedItems,
-                device: { id: getDeviceId(), deviceToken: "fcmToken" }
+                device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
             }
         }
 

@@ -12,6 +12,7 @@ import { logout, updateUser, migrateState } from '../../../store/reducers/userDa
 import { saveMyOffer, saveMyOfferPageNo, saveTotalMyOfferPagesCount } from '../../../store/reducers/OfferSlice'
 import ReactNativeBiometrics from 'react-native-biometrics'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { notificationListeners, requestUserPermission } from '../../../services/pushNotification';
 
 export default function Splash(props) {
     const dispatch = useDispatch()
@@ -390,6 +391,11 @@ export default function Splash(props) {
             setBiometricChecked(true);
         }
     }, [islogin, biometricEnabled, apiCompleted, biometricChecked, biometricInProgress]);
+
+    useEffect(() => {
+        requestUserPermission()
+        notificationListeners()
+    }, [])
 
     return (
         <>

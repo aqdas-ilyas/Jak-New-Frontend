@@ -15,6 +15,7 @@ import routs from '../../../api/routs'
 import { callApi, Method } from '../../../api/apiCaller'
 import { Loader } from '../../../components/loader/Loader'
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store'
 
 const ResetPassword = (props) => {
     const { number, otp } = props?.route?.params ?? {}
@@ -73,7 +74,7 @@ const ResetPassword = (props) => {
                 number: number,
                 password: password,
                 otp: otp,
-                device: { id: getDeviceId(), deviceToken: "fcmToken" }
+                device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
             }
 
             setIsLoading(true)

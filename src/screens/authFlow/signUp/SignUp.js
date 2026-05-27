@@ -23,6 +23,7 @@ import { decodeJWT } from '../../../common/HelpingFunc';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { resolveMessage } from '../../../language/helpers';
 import CheckBox from '@react-native-community/checkbox';
+import { store } from '../../../store/store';
 
 const SignUp = props => {
   const dispatch = useDispatch();
@@ -128,7 +129,7 @@ const SignUp = props => {
         number: `${countryCode + phoneNumber}`,
         password: password,
         language: appLanguage == 'en' ? 'english' : 'arabic',
-        device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+        device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
       };
 
       console.log('SignUpAfterValidation:- ', bodyParams);
@@ -242,7 +243,7 @@ const SignUp = props => {
     const method = Method.POST;
     const bodyParams = {
       email: user?.email.toLowerCase(),
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
     };
 
     setIsLoading(true);

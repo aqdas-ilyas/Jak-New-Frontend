@@ -52,6 +52,7 @@ import {
 } from '../../../store/reducers/OfferSlice';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store';
 
 export default Setting = props => {
   const dispatch = useDispatch();
@@ -330,7 +331,7 @@ export default Setting = props => {
     const endPoint = routs.logout;
     const method = Method.POST;
     const bodyParams = {
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' },
     };
 
     // setIsLoading(true);

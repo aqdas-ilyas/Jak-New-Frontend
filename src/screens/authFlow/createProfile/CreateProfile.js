@@ -23,6 +23,7 @@ import { getDeviceId } from 'react-native-device-info';
 import { _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
 import { CodeField, Cursor } from "react-native-confirmation-code-field";
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store';
 
 const CreateProfile = (props) => {
     const { userName, number, email } = props?.route?.params ?? {}
@@ -387,7 +388,7 @@ const CreateProfile = (props) => {
             otp: parseFloat(otpValue),
             email: user?.email,
             number: countryCode + phoneNumber,
-            device: { id: getDeviceId(), deviceToken: "fcmToken" }
+            device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
         }
 
         console.log("bodyParams: ", bodyParams);

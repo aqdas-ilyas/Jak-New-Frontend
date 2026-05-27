@@ -6,6 +6,7 @@ const initialState = {
   refreshToken: null,
   isRemember: false,
   numberLogin: false,
+  fcmToken: '',
   biometricEnabled: false,
   savedCredentials: {
     email: null,
@@ -53,6 +54,9 @@ export const userSlice = createSlice({
     saveLoginRemember: (state, action) => {
       state.isRemember = action.payload;;
     },
+    _savefcmToken: (state, action) => {
+      state.fcmToken = action.payload;
+    },
     logout: state => {
       state.user = {};
       state.token = null;
@@ -98,5 +102,5 @@ export const userSlice = createSlice({
     },
   },
 });
-export const { saveSplash, updateUser, saveLoginRemember, setToken, logout, completeLogout, saveNumberLogin, saveBiometricEnabled, saveCredentials, clearCredentials, migrateState } = userSlice.actions;
+export const { saveSplash, updateUser, _savefcmToken, saveLoginRemember, setToken, logout, completeLogout, saveNumberLogin, saveBiometricEnabled, saveCredentials, clearCredentials, migrateState } = userSlice.actions;
 export default userSlice.reducer;

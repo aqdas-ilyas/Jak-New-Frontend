@@ -17,6 +17,7 @@ import { getDeviceId } from 'react-native-device-info'
 import { useDispatch } from 'react-redux'
 import { updateUser, setToken } from '../../../store/reducers/userDataSlice'
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store'
 
 const SendOtp = (props) => {
     const { number, email, key } = props?.route?.params ?? {}
@@ -84,7 +85,7 @@ const SendOtp = (props) => {
             }
 
             if (key !== 'forget') {
-                bodyParams = { ...bodyParams, device: { id: getDeviceId(), deviceToken: "fcmToken" } }
+                bodyParams = { ...bodyParams, device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || "fcmToken" } }
             }
 
             setIsLoading(true)

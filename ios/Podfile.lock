@@ -1231,6 +1231,11 @@ PODS:
     - TOCropViewController
   - RNLocalize (3.1.0):
     - React-Core
+  - RNNotifee (9.1.8):
+    - React-Core
+    - RNNotifee/NotifeeCore (= 9.1.8)
+  - RNNotifee/NotifeeCore (9.1.8):
+    - React-Core
   - RNPermissions (4.1.5):
     - React-Core
   - RNScreens (3.30.1):
@@ -1322,6 +1327,7 @@ DEPENDENCIES:
   - RNIap (from `../node_modules/react-native-iap`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNLocalize (from `../node_modules/react-native-localize`)
+  - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
@@ -1499,6 +1505,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-crop-picker"
   RNLocalize:
     :path: "../node_modules/react-native-localize"
+  RNNotifee:
+    :path: "../node_modules/@notifee/react-native"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNScreens:
@@ -1601,6 +1609,7 @@ SPEC CHECKSUMS:
   RNIap: 2a3674383dcf383e5b7b3c4680dc87f1b2657326
   RNImageCropPicker: e7ab6fb43d2fc3e84651e786ef4a080d63b0ed3d
   RNLocalize: e8694475db034bf601e17bd3dfa8986565e769eb
+  RNNotifee: 4a6ee5c7deaf00e005050052d73ee6315dff7ec9
   RNPermissions: 294531ede5a64d1528463e88fffef05675842042
   RNScreens: b6b64d956af3715adbfe84808694ae82d3fec74f
   RNShare: 1ad840bef35e1330349baee7835287f7e774657d

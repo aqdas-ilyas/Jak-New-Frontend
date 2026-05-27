@@ -21,6 +21,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import appleAuth from '@invertase/react-native-apple-authentication'
 import { decodeJWT } from '../../../common/HelpingFunc'
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store'
 
 const Welcome = (props) => {
     const dispatch = useDispatch()
@@ -153,7 +154,7 @@ const Welcome = (props) => {
         const method = Method.POST;
         const bodyParams = {
             email: user?.email.toLowerCase(),
-            device: { id: getDeviceId(), deviceToken: "fcmToken" }
+            device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
         }
 
         setIsLoading(true)
