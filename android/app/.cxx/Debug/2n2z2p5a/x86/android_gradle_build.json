@@ -4,7 +4,7 @@
     "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-community/geolocation/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-date-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
-    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-localize/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-permissions/android/build/generated/source/codegen/jni/CMakeLists.txt",
     "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
@@ -47,6 +47,11 @@
       "abi": "x86",
       "artifactName": "react_codegen_RNCGeolocation"
     },
+    "react_codegen_RNCImageCropPickerSpec::@702b02f8d2524609d414": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "react_codegen_RNCImageCropPickerSpec"
+    },
     "react_codegen_RNCWebViewSpec::@eb48929f9f7453740a6c": {
       "toolchain": "toolchain",
       "abi": "x86",
@@ -56,11 +61,6 @@
       "toolchain": "toolchain",
       "abi": "x86",
       "artifactName": "react_codegen_RNDatePickerSpecs"
-    },
-    "react_codegen_RNImagePickerSpec::@f66ee9a2efecfb28bee4": {
-      "toolchain": "toolchain",
-      "abi": "x86",
-      "artifactName": "react_codegen_RNImagePickerSpec"
     },
     "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205": {
       "toolchain": "toolchain",
