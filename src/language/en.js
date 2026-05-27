@@ -550,5 +550,6 @@ export default {
   'No Card Found!': 'No Card Found!',
   'loading': 'Loading',
   'Store Location': 'Store Location',
+  'Unable to open link': 'Unable to open link',
   'Map locations may not be accurate; recheck before navigating.': 'Map locations may not be accurate; recheck before navigating.',
 }

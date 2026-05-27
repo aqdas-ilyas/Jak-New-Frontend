@@ -23,6 +23,7 @@ import { decodeJWT } from '../../../common/HelpingFunc';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { resolveMessage } from '../../../language/helpers';
 import CheckBox from '@react-native-community/checkbox';
+import { store } from '../../../store/store';
 
 const SignUp = props => {
   const dispatch = useDispatch();
@@ -39,6 +40,19 @@ const SignUp = props => {
   const [countryCode, setCountryCode] = useState('966');
   const [countryAbbreviationCode, setCountryAbbrivaitionCode] = useState('SA');
   const [acceptPolicies, setAcceptPolicies] = useState(false);
+  const checkboxPlatformProps = Platform.OS === 'ios'
+    ? {
+      boxType: 'square',
+      onFillColor: colors.primaryColor,
+      onCheckColor: 'white',
+      onTintColor: colors.primaryColor,
+    }
+    : {
+      tintColors: {
+        true: colors.primaryColor,
+        false: colors.placeholderColor,
+      },
+    };
 
   // Fetch and set the State's
   const fetchCountryAbbrivaition = async code => {
@@ -128,7 +142,7 @@ const SignUp = props => {
         number: `${countryCode + phoneNumber}`,
         password: password,
         language: appLanguage == 'en' ? 'english' : 'arabic',
-        device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+        device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
       };
 
       console.log('SignUpAfterValidation:- ', bodyParams);
@@ -242,7 +256,7 @@ const SignUp = props => {
     const method = Method.POST;
     const bodyParams = {
       email: user?.email.toLowerCase(),
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
     };
 
     setIsLoading(true);
@@ -321,6 +335,7 @@ const SignUp = props => {
             setValue={setPhoneNumber}
             setSelectedCode={setCountryCode}
             layout={'second'}
+            returnKeyType={'done'}
           />
 
           <View style={[appStyles.row, rtlStyles.row]}>
@@ -334,6 +349,7 @@ const SignUp = props => {
             onPressEye={() => setShowPassword(!showPassword)}
             value={password}
             onChangeText={value => setPassword(value)}
+            returnKeyType={'done'}
             eye={true}
             leftIcon={appIcons.lock}
             WholeContainer={{
@@ -347,6 +363,7 @@ const SignUp = props => {
             onPressEye={() => setShowConfirmPassword(!showConfirmPassword)}
             value={confirmPassword}
             onChangeText={value => setConfirmPassword(value)}
+            returnKeyType={'done'}
             eye={true}
             leftIcon={appIcons.lock}>
             {LocalizedStrings['Re-Enter Password']}
@@ -357,12 +374,8 @@ const SignUp = props => {
           <CheckBox
             value={acceptPolicies}
             onValueChange={setAcceptPolicies}
-            boxType="square"
-            onFillColor={colors.primaryColor}
-            onCheckColor="white"
-            onTintColor={colors.primaryColor}
-            tintColors={{ true: colors.primaryColor, false: colors.placeholderColor }}
             style={styles.checbox}
+            {...checkboxPlatformProps}
           />
           <Text style={[styles.termsText, rtlStyles.textAlign, rtlStyles.writingDirection]}>
             {(LocalizedStrings.accept_terms_prefix || 'I accept the ')}
@@ -519,7 +532,7 @@ const styles = StyleSheet.create({
   checbox: {
     height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
     width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
-    marginRight: wp(2),
+    marginHorizontal: wp(1),
   },
   biometricButton: {
     flexDirection: 'row',

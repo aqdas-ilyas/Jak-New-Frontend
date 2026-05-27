@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { View, StyleSheet, Platform, SafeAreaView, Image, ImageBackground, Text, FlatList, ScrollView, TouchableOpacity, Pressable, Alert, ActivityIndicator, KeyboardAvoidingView } from "react-native";
-import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel, GOOGLE_API_KEY } from '../../../services'
+import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, fontPixel } from '../../../services'
 import { appIcons, appImages } from "../../../services/utilities/assets";
 import Header from "../../../components/header";
 import appStyles from "../../../services/utilities/appStyles";

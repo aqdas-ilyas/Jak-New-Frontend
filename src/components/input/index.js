@@ -56,6 +56,7 @@ export const Input = props => {
                                 )
                                 : (
                                     <TextInput
+                                        ref={props.inputRef}
                                         style={[
                                             styles.inputTextStyle,
                                             props.inputStyle,
@@ -63,6 +64,7 @@ export const Input = props => {
                                             rtlStyles.writingDirection,
                                             { marginHorizontal: wp(2) }
                                         ]}
+                                        autoFocus={props.autoFocus}
                                         selectionColor={colors.grey}
                                         value={props.value}
                                         onFocus={onFocus}
@@ -70,6 +72,7 @@ export const Input = props => {
                                         placeholderTextColor={colors.placeholderColor}
                                         secureTextEntry={props.secureTextEntry}
                                         keyboardType={props.keyboardType}
+                                        returnKeyType={props.returnKeyType}
                                         onBlur={onBlur}
                                         editable={props.editable}
                                         onChangeText={props.onChangeText}

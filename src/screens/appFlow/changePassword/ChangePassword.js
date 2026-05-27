@@ -12,6 +12,7 @@ import routs from '../../../api/routs'
 import { getDeviceId } from 'react-native-device-info'
 import { Loader } from '../../../components/loader/Loader'
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store'
 
 const ChangePassword = (props) => {
     const { appLanguage, LocalizedStrings, setAppLanguage } = React.useContext(LocalizationContext);
@@ -67,7 +68,7 @@ const ChangePassword = (props) => {
             const bodyParams = {
                 "currentPassword": password,
                 "password": newPassword,
-                device: { id: getDeviceId(), deviceToken: "fcmToken" }
+                device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
             }
 
             setIsLoading(true)

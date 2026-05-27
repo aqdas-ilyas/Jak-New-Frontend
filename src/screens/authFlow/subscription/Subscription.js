@@ -13,6 +13,7 @@ import { getDeviceId } from 'react-native-device-info'
 import { useDispatch, useSelector } from 'react-redux'
 import { setToken, updateUser } from '../../../store/reducers/userDataSlice'
 import CallModal from '../../../components/modal'
+import { store } from '../../../store/store'
 
 const Subscription = (props) => {
     const { appLanguage, LocalizedStrings } = React.useContext(LocalizationContext);
@@ -93,7 +94,7 @@ const Subscription = (props) => {
         const bodyParams = {
             "subscriptionId": obj._id,
             "type": obj.type,
-            device: { id: getDeviceId(), deviceToken: "fcmToken" }
+            device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
         }
 
         setIsLoading(true);

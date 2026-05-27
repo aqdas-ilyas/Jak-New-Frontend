@@ -18,6 +18,7 @@ import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
 import { showMessage } from "react-native-flash-message";
 import { resolveMessage } from "../../../language/helpers";
 import { useRTL } from "../../../language/useRTL";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default Search = (props) => {
     // const { discount, location, category } = props?.route?.params
@@ -28,19 +29,30 @@ export default Search = (props) => {
     const searchOfferArray = useSelector(state => state.offer.searchOfferArray)
     const CategoriesOffers = useSelector(state => state.offer.CategoriesOffers)
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
-    const { rtlStyles } = useRTL();
+    const { isRTL, rtlStyles } = useRTL();
     const [modalShow, setModalShow] = useState(false)
     const [search, setSearch] = useState('')
     const [searchArray, setSearchArray] = useState([])
     const [recentSearchArray, setRecentSearchArray] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingFull, setIsLoadingFull] = useState(false)
+    const searchInputRef = useRef(null)
 
     useEffect(() => {
         getSearchHistory()
 
         dispatch(saveSearchOfferArray(null))
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            const timer = setTimeout(() => {
+                searchInputRef.current?.focus?.();
+            }, 150);
+
+            return () => clearTimeout(timer);
+        }, [])
+    );
 
     // Helper function to filter out expired offers
     const filterExpiredOffers = (offers) => {
@@ -286,6 +298,8 @@ export default Search = (props) => {
                 <Input
                     placeholder={LocalizedStrings.search}
                     value={search}
+                    autoFocus={true}
+                    inputRef={searchInputRef}
                     leftIcon={appIcons.search}
                     // rightIcon
                     // onPressIcon={() => setModalShow(!modalShow)}
@@ -298,8 +312,8 @@ export default Search = (props) => {
                         backgroundColor: colors.primaryColorOpacity,
                         width: wp(85),
                         marginTop: -wp(4),
-                        marginRight: wp(5),
-                        marginLeft: wp(2),
+                        marginRight: isRTL ? wp(5) : wp(2),
+                        marginLeft: !isRTL ? wp(2) : wp(5),
                     }}
                     inputStyle={{
                         backgroundColor: colors.primaryColorOpacity,

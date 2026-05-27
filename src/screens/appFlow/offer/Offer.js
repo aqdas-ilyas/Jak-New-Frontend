@@ -613,17 +613,21 @@ export default Offer = (props) => {
 
                 <View style={styles.tabTopView}>
                     <TouchableOpacity
-                        activeOpacity={0.8}
+                        activeOpacity={1}
                         onPress={() => props.navigation.navigate(routes.search, { discount: '', location: '', category: getCheckedLocalizedStrings() })}
                         style={styles.searchContainer}
                     >
-                        <View style={[styles.searchView, { flexDirection: isRTL ? 'row-reverse' : 'row', paddingVertical: isRTL ? wp(2) : wp(3.5), }]}>
+                        <View style={[styles.searchView, rtlStyles.row, isRTL && styles.searchViewRTL]}>
                             <Image
                                 source={appIcons.search}
-                                style={[styles.searchIcon, { tintColor: colors.BlackSecondary }]}
+                                style={[
+                                    styles.searchIcon,
+                                    isRTL ? styles.searchIconRTL : styles.searchIconLTR,
+                                    { tintColor: colors.BlackSecondary }
+                                ]}
                                 resizeMode="contain"
                             />
-                            <Text style={[styles.searchPlaceholder, rtlStyles.writingDirection]}>
+                            <Text style={[styles.searchPlaceholder, rtlStyles.writingDirection, rtlStyles.textAlign]}>
                                 {LocalizedStrings.search}
                             </Text>
                             {/* <TouchableOpacity 
@@ -835,6 +839,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.fullWhite,
         borderRadius: 15,
         paddingHorizontal: wp(4),
+        paddingVertical: wp(3.5),
         width: wp(92),
         shadowColor: colors.black,
         shadowOffset: {
@@ -845,10 +850,18 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
+    searchViewRTL: {
+        paddingVertical: wp(2),
+    },
     searchIcon: {
         width: wp(5),
         height: wp(5),
-        marginHorizontal: wp(2),
+    },
+    searchIconLTR: {
+        marginRight: wp(3),
+    },
+    searchIconRTL: {
+        marginLeft: wp(3),
     },
     searchPlaceholder: {
         flex: 1,

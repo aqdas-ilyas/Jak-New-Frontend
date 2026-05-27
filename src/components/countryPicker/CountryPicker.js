@@ -68,7 +68,8 @@ const CountryInput = (props) => {
                 disabled={props.disabled}
                 textInputProps={{
                     placeholderTextColor: colors.placeholderColor,
-                    editable: !props.disabled
+                    editable: !props.disabled,
+                    returnKeyType: props.returnKeyType,
                 }}
                 onChangeText={(text) => {
                     if (!props.disabled) {

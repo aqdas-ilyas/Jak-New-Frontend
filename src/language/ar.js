@@ -22,11 +22,11 @@ export default {
   retry: 'إعادة المحاولة',
 
   // Biometric Authentication
-  biometric_login: 'تسجيل الدخول البيومتري',
-  biometric_description: 'استخدم بصمتك أو وجهك للوصول السريع والآمن إلى حسابك',
+  biometric_login: 'تسجيل الدخول بالبصمة',
+  biometric_description: 'السماح باستخدام بصمة الإصبع أو الوجه لتسجيل الدخول.',
   biometric_prompt_message: 'قم بالمصادقة لتمكين تسجيل الدخول البيومتري',
-  biometric_enabled: 'تم تفعيل المصادقة البيومترية',
-  biometric_disabled: 'تم إلغاء تفعيل المصادقة البيومترية',
+  biometric_enabled: 'تم تفعيل المصادقة بالبصمة',
+  biometric_disabled: 'تم إلغاء تفعيل المصادقة بالبصمة',
   biometric_error: 'فشل في تفعيل المصادقة البيومترية',
   biometric_login_prompt: 'قم بالمصادقة لتسجيل الدخول',
   biometric_no_credentials: 'لم يتم العثور على بيانات محفوظة',
@@ -559,5 +559,6 @@ export default {
   'Don’t have an account?': 'ليس لديك حساب؟',
   'loading': 'جار التحميل',
   'Store Location': 'التوجه للموقع',
+  'Unable to open link': 'تعذر فتح الرابط',
   'Map locations may not be accurate; recheck before navigating.': 'موقع المتجر قد لا يكون دائماً صحيح. تحقق منه قبل التوجه.',
 };

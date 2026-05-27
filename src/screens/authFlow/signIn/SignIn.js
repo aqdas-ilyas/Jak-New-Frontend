@@ -24,6 +24,7 @@ import { isPossibleNumber } from 'libphonenumber-js';
 import { decodeJWT } from '../../../common/HelpingFunc';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store';
 
 const SignIn = props => {
   const dispatch = useDispatch();
@@ -49,6 +50,19 @@ const SignIn = props => {
   const [showPassword, setShowPassword] = useState(true);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const checkboxPlatformProps = Platform.OS === 'ios'
+    ? {
+      boxType: 'square',
+      onFillColor: colors.primaryColor,
+      onCheckColor: 'white',
+      onTintColor: colors.primaryColor,
+    }
+    : {
+      tintColors: {
+        true: colors.primaryColor,
+        false: colors.placeholderColor,
+      },
+    };
 
   // Fetch and set the State's
   const fetchCountryAbbrivaition = async code => {
@@ -165,7 +179,7 @@ const SignIn = props => {
         number: `${countryCode + phoneNumber}`,
         password: password,
         language: appLanguage == 'en' ? 'english' : 'arabic',
-        device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+        device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
       };
 
       console.log('SignInAfterValidation:- ', bodyParams);
@@ -255,7 +269,7 @@ const SignIn = props => {
       number: `${credentials.countryCode + credentials.phoneNumber}`,
       password: credentials.password,
       language: appLanguage == 'en' ? 'english' : 'arabic',
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' },
     };
 
     console.log('Biometric phone login API call with params:', bodyParams);
@@ -322,7 +336,7 @@ const SignIn = props => {
     const method = Method.POST;
     const bodyParams = {
       email: credentials?.email.toLowerCase(),
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
     };
 
     console.log('Biometric email login API call with params:', bodyParams);
@@ -582,7 +596,7 @@ const SignIn = props => {
     const method = Method.POST;
     const bodyParams = {
       email: user?.email.toLowerCase(),
-      device: { id: getDeviceId(), deviceToken: 'fcmToken' },
+      device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
     };
 
     setIsLoading(true);
@@ -668,6 +682,7 @@ const SignIn = props => {
             setValue={setPhoneNumber}
             setSelectedCode={setCountryCode}
             layout={'second'}
+            returnKeyType={'done'}
           />
 
           <View style={[appStyles.row, rtlStyles.row]}>
@@ -681,6 +696,7 @@ const SignIn = props => {
             onPressEye={() => setShowPassword(!showPassword)}
             value={password}
             onChangeText={value => setPassword(value)}
+            returnKeyType={'done'}
             eye={true}
             leftIcon={appIcons.lock}
             WholeContainer={{
@@ -693,18 +709,11 @@ const SignIn = props => {
           <View style={[rtlStyles.row, { paddingStart: wp(1) }]}>
             <CheckBox
               disabled={false}
-              onFillColor={colors.primaryColor}
-              onCheckColor="white"
               value={toggleCheckBox}
               onValueChange={newValue => setToggleCheckBox(newValue)}
-              boxType="square"
-              onTintColor={colors.primaryColor}
               style={styles.checbox}
               hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
-              tintColors={{
-                true: colors.primaryColor,
-                false: colors.placeholderColor,
-              }} // Change tint colors if needed
+              {...checkboxPlatformProps}
             />
             <Text style={[styles.rememberMe, rtlStyles.writingDirection]}>
               {LocalizedStrings.remember_me}

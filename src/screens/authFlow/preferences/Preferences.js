@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from '../../../store/reducers/userDataSlice'
 import CheckBox from '@react-native-community/checkbox';
 import { resolveMessage } from '../../../language/helpers';
+import { store } from '../../../store/store'
 
 const Preferences = (props) => {
     const dispatch = useDispatch()
@@ -33,6 +34,19 @@ const Preferences = (props) => {
     const [confimationModalShow, setConfimationModalShow] = useState(false)
 
     const [isLoading, setIsLoading] = useState(false);
+    const checkboxPlatformProps = Platform.OS === 'ios'
+        ? {
+            boxType: 'square',
+            onFillColor: colors.primaryColor,
+            onCheckColor: 'white',
+            onTintColor: colors.primaryColor,
+        }
+        : {
+            tintColors: {
+                true: colors.primaryColor,
+                false: colors.placeholderColor,
+            },
+        };
 
     // // Define the effect to be executed when the screen gains focus
     // useFocusEffect(
@@ -148,12 +162,12 @@ const Preferences = (props) => {
         if (skip) {
             bodyParams = {
                 "isSkipping": "true",
-                device: { id: getDeviceId(), deviceToken: "fcmToken" }
+                device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
             }
         } else {
             bodyParams = {
                 "employer": selectedItems,
-                device: { id: getDeviceId(), deviceToken: "fcmToken" }
+                device: { id: getDeviceId(), deviceToken: store.getState()?.user?.fcmToken || 'fcmToken' }
             }
         }
 
@@ -184,12 +198,8 @@ const Preferences = (props) => {
                     </View>
                     <CheckBox
                         value={isSelected}
-                        boxType='square'
-                        onFillColor={colors.primaryColor}
-                        onCheckColor='white'
-                        onTintColor={colors.primaryColor}
                         style={styles.checbox}
-                        tintColors={{ true: colors.primaryColor, false: colors.placeholderColor }}
+                        {...checkboxPlatformProps}
                     />
                 </TouchableOpacity>
             </View>
