@@ -8,7 +8,10 @@ import { store } from '../../store/store';
 export async function requestUserPermission() {
     Platform.OS === 'android' && PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
     const authStatus = await messaging().requestPermission();
+    console.log('authStatus', authStatus);
+
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    console.log('enabled', enabled);
 
     if (enabled) {
         console.log('Authorization status:', authStatus);

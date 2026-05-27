@@ -644,14 +644,14 @@ export default Offer = (props) => {
                         </View>
                     </TouchableOpacity>
 
-                    <View style={{ alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
+                    <View style={{ alignItems: 'flex-start' }}>
                         <FlatList
                             data={checkboxes}
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index.toString()}
                             contentContainerStyle={{
-                                flexDirection: isRTL ? 'row-reverse' : 'row'
+                                flexDirection: 'row'
                             }}
                             renderItem={({ item, index }) => {
                                 return (
@@ -660,10 +660,10 @@ export default Offer = (props) => {
                                             key={index}
                                             onPress={() => handleCheckboxChange(item.id)}
                                             style={{
-                                                flexDirection: isRTL ? "row-reverse" : "row",
+                                                flexDirection: "row",
                                                 alignItems: "center",
                                                 marginHorizontal: wp(1),
-                                                alignSelf: isRTL ? 'flex-end' : 'flex-start'
+                                                alignSelf: 'flex-start'
                                             }}>
                                             <View
                                                 style={[
@@ -671,7 +671,7 @@ export default Offer = (props) => {
                                                     {
                                                         borderColor: item.checked ? colors.primaryColor : colors.borderColor,
                                                         borderWidth: 1,
-                                                        flexDirection: isRTL ? "row-reverse" : "row"
+                                                        flexDirection: "row"
                                                     }
                                                 ]}>
                                                 <Text style={[styles.filterText, { textAlign: isRTL ? 'right' : 'left' }]}>{item.title}</Text>
@@ -685,13 +685,13 @@ export default Offer = (props) => {
 
                     {/* Banks List - Always visible */}
                     {banks.length > 0 && (
-                        <View style={[styles.banksContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+                        <View style={[styles.banksContainer, { alignItems: 'flex-start' }]}>
                             <FlatList
                                 data={[{ id: 'all', name: LocalizedStrings.All, isAll: true }, ...banks]}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={{
-                                    flexDirection: isRTL ? 'row-reverse' : 'row'
+                                    flexDirection: 'row'
                                 }}
                                 keyExtractor={(item, index) => item.isAll ? 'bank-all' : `bank-${item.id || index}-${item.name || ''}`}
                                 removeClippedSubviews={false}
@@ -705,11 +705,11 @@ export default Offer = (props) => {
                                         <Pressable
                                             key={item.isAll ? 'bank-pressable-all' : `bank-pressable-${item.id || index}`}
                                             onPress={() => handleBankSelect(item.isAll ? null : item)}
-                                            style={{ alignSelf: isRTL ? 'flex-end' : 'flex-start' }}>
+                                            style={{ alignSelf: 'flex-start' }}>
                                             <View style={[
                                                 styles.bankView,
                                                 {
-                                                    flexDirection: isRTL ? 'row-reverse' : 'row',
+                                                    flexDirection: 'row',
                                                     borderColor: isSelected ? colors.primaryColor : colors.borderColor,
                                                     borderWidth: 1,
                                                     backgroundColor: isSelected ? colors.primaryColor + '10' : colors.fullWhite,
