@@ -18,6 +18,7 @@ import { saveFavourite } from "../../../store/reducers/FavoruiteOffersSlice";
 import { showMessage } from "react-native-flash-message";
 import { resolveMessage } from "../../../language/helpers";
 import { useRTL } from "../../../language/useRTL";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default Search = (props) => {
     // const { discount, location, category } = props?.route?.params
@@ -35,12 +36,23 @@ export default Search = (props) => {
     const [recentSearchArray, setRecentSearchArray] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingFull, setIsLoadingFull] = useState(false)
+    const searchInputRef = useRef(null)
 
     useEffect(() => {
         getSearchHistory()
 
         dispatch(saveSearchOfferArray(null))
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            const timer = setTimeout(() => {
+                searchInputRef.current?.focus?.();
+            }, 150);
+
+            return () => clearTimeout(timer);
+        }, [])
+    );
 
     // Helper function to filter out expired offers
     const filterExpiredOffers = (offers) => {
@@ -286,6 +298,8 @@ export default Search = (props) => {
                 <Input
                     placeholder={LocalizedStrings.search}
                     value={search}
+                    autoFocus={true}
+                    inputRef={searchInputRef}
                     leftIcon={appIcons.search}
                     // rightIcon
                     // onPressIcon={() => setModalShow(!modalShow)}

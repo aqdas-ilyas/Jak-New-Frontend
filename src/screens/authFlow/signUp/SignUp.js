@@ -321,6 +321,7 @@ const SignUp = props => {
             setValue={setPhoneNumber}
             setSelectedCode={setCountryCode}
             layout={'second'}
+            returnKeyType={'done'}
           />
 
           <View style={[appStyles.row, rtlStyles.row]}>
@@ -334,6 +335,7 @@ const SignUp = props => {
             onPressEye={() => setShowPassword(!showPassword)}
             value={password}
             onChangeText={value => setPassword(value)}
+            returnKeyType={'done'}
             eye={true}
             leftIcon={appIcons.lock}
             WholeContainer={{
@@ -347,6 +349,7 @@ const SignUp = props => {
             onPressEye={() => setShowConfirmPassword(!showConfirmPassword)}
             value={confirmPassword}
             onChangeText={value => setConfirmPassword(value)}
+            returnKeyType={'done'}
             eye={true}
             leftIcon={appIcons.lock}>
             {LocalizedStrings['Re-Enter Password']}

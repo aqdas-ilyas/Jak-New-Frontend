@@ -668,6 +668,7 @@ const SignIn = props => {
             setValue={setPhoneNumber}
             setSelectedCode={setCountryCode}
             layout={'second'}
+            returnKeyType={'done'}
           />
 
           <View style={[appStyles.row, rtlStyles.row]}>
@@ -681,6 +682,7 @@ const SignIn = props => {
             onPressEye={() => setShowPassword(!showPassword)}
             value={password}
             onChangeText={value => setPassword(value)}
+            returnKeyType={'done'}
             eye={true}
             leftIcon={appIcons.lock}
             WholeContainer={{

@@ -221,8 +221,8 @@ const Welcome = (props) => {
             <View style={styles.topSection}>
                 <Image source={appIcons.appLogo} style={styles.imageLogo} />
                 <View>
-                    <Text style={styles.mainTitle}>{LocalizedStrings["Let's Get Started!"]}</Text>
-                    <Text style={styles.mainDes}>{LocalizedStrings["Let's dive into your account."]}</Text>
+                    <Text style={[styles.mainTitle, { marginBottom: wp(5) }]}>{LocalizedStrings["Let's Get Started!"]}</Text>
+                    {/* <Text style={styles.mainDes}>{LocalizedStrings["Let's dive into your account."]}</Text> */}
                 </View>
 
                 <View style={[appStyles.ph20, appStyles.mb5]}>

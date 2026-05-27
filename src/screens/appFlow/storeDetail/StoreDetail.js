@@ -26,6 +26,9 @@ import { Loader } from "../../../components/loader/Loader";
 import { saveCategoryOffers, saveForAllOffers, saveMyOffer, saveSearchOfferArray } from "../../../store/reducers/OfferSlice";
 import { resolveMessage } from "../../../language/helpers";
 
+const URL_PATTERN = /((?:https?:\/\/|https?:;\/\/|www\.)[^\s]+)/gi;
+const URL_ONLY_PATTERN = /^(?:https?:\/\/|https?:;\/\/|www\.)[^\s]+$/i;
+
 // const GEOCODING_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
 // const GEOCODING_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
 
@@ -103,6 +106,89 @@ export default StoreDetailList = (props) => {
                 type: 'danger',
             });
         });
+    };
+
+    const splitLinkAndTrailingText = (urlText = '') => {
+        const sanitizedUrl = urlText.replace(/[),.;:!?\u060C\u061B\u061F]+$/g, '');
+        const trailingChars = urlText.slice(sanitizedUrl.length);
+        return { sanitizedUrl, trailingChars };
+    };
+
+    const normalizeUrl = (url = '') => {
+        if (!url) return '';
+
+        const normalizedMalformedScheme = url.replace(/^https?:;\/\//i, (match) =>
+            match.replace(';', ':')
+        );
+
+        if (/^https?:\/\//i.test(normalizedMalformedScheme)) {
+            return normalizedMalformedScheme;
+        }
+
+        return `https://${normalizedMalformedScheme}`;
+    };
+
+    const openExternalLink = async (rawUrl) => {
+        try {
+            const formattedUrl = normalizeUrl(rawUrl);
+            if (!formattedUrl) return;
+
+            const supported = await Linking.canOpenURL(formattedUrl);
+            if (!supported) {
+                throw new Error('unsupported-url');
+            }
+
+            await Linking.openURL(formattedUrl);
+        } catch (error) {
+            console.log('Error opening URL:', rawUrl, error);
+            showMessage({
+                message: LocalizedStrings["Unable to open link"] || 'Unable to open link',
+                type: 'danger',
+            });
+        }
+    };
+
+    const renderTermsAndConditionsWithLinks = (content) => {
+        if (!content) return null;
+
+        const parts = String(content).split(URL_PATTERN);
+        const textNodes = [];
+
+        parts.forEach((part, index) => {
+            if (!part) return;
+
+            if (!URL_ONLY_PATTERN.test(part)) {
+                textNodes.push(<Text key={`text-${index}`}>{part}</Text>);
+                return;
+            }
+
+            const { sanitizedUrl, trailingChars } = splitLinkAndTrailingText(part);
+            if (!sanitizedUrl) {
+                textNodes.push(<Text key={`text-${index}`}>{part}</Text>);
+                return;
+            }
+
+            textNodes.push(
+                <Text
+                    key={`link-${index}`}
+                    accessibilityRole="link"
+                    onPress={() => openExternalLink(sanitizedUrl)}
+                    style={styles.termsLink}
+                >
+                    {sanitizedUrl}
+                </Text>
+            );
+
+            if (trailingChars) {
+                textNodes.push(<Text key={`trail-${index}`}>{trailingChars}</Text>);
+            }
+        });
+
+        return (
+            <Text style={[styles.locationText, { textAlign: isRTL ? 'right' : 'left' }]}>
+                {textNodes}
+            </Text>
+        );
     };
 
     const shareOffer = async () => {
@@ -428,9 +514,7 @@ export default StoreDetailList = (props) => {
 
                 <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center', marginVertical: wp(4) }}>
                     {/* <Image source={appIcons.location} style={styles.IconStyle} /> */}
-                    <Text style={[styles.locationText, { textAlign: isRTL ? 'right' : 'left' }]}>
-                        {item?.['terms and conditions']}
-                    </Text>
+                    {renderTermsAndConditionsWithLinks(item?.['terms and conditions'])}
                 </View>
 
                 {/* {
@@ -547,6 +631,10 @@ const styles = StyleSheet.create({
         letterSpacing: 0.1,
         marginLeft: wp(2),
         textAlign: 'left'
+    },
+    termsLink: {
+        color: '#2036F8',
+        textDecorationLine: 'underline',
     },
     markerEvenImage: {
         width: heightPixel(34),
