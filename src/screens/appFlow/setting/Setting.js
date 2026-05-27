@@ -564,9 +564,18 @@ export default Setting = props => {
           {biometricAvailable && (
             <View style={[styles.biometricSection, rtlStyles.row, { justifyContent: "space-between" }]}>
               <View style={[styles.biometricTextContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
-                <Text style={[styles.biometricTitle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
-                  🔐 {LocalizedStrings.biometric_login || 'Biometric Login'}
-                </Text>
+                <View style={[styles.biometricTitleRow, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                  <Image
+                    source={appIcons.face}
+                    style={[
+                      styles.biometricTitleIcon,
+                      { marginRight: isRTL ? 0 : wp(2), marginLeft: isRTL ? wp(2) : 0 },
+                    ]}
+                  />
+                  <Text style={[styles.biometricTitle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
+                    {LocalizedStrings.biometric_login || 'Biometric Login'}
+                  </Text>
+                </View>
                 <Text style={[styles.biometricDescription, rtlStyles.textAlign, rtlStyles.writingDirection]}>
                   {LocalizedStrings.biometric_description || 'Use your fingerprint or face to quickly and securely access your account'}
                 </Text>
@@ -697,11 +706,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "flex-start"
   },
+  biometricTitleRow: {
+    alignItems: 'center',
+    marginBottom: hp(0.5),
+  },
+  biometricTitleIcon: {
+    width: wp(5),
+    height: wp(5),
+    resizeMode: 'contain',
+  },
   biometricTitle: {
     fontSize: hp(1.8),
     fontFamily: fontFamily.UrbanistBold,
     color: colors.BlackSecondary,
-    marginBottom: hp(0.5),
   },
   biometricDescription: {
     fontSize: hp(1.4),

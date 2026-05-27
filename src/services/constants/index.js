@@ -5,7 +5,7 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('screen').width;
 const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
-export const GOOGLE_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
+// export const GOOGLE_API_KEY = 'AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8';
 
 // App Store Links
 export const APP_STORE_LINK = 'https://apps.apple.com/sa/app/jak-offers/id6642682560';

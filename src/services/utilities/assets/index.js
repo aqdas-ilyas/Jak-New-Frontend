@@ -80,6 +80,7 @@ const appIcons = {
     InfoCircle: require(`${iconUrl}/InfoCircle.png`),
     LockNotify: require(`${iconUrl}/LockNotify.png`),
     ShieldDone: require(`${iconUrl}/ShieldDone.png`),
+    face: require(`${iconUrl}/face.png`),
 
     crossSqure: require(`${iconUrl}/crossSquare.png`),
     cross: require(`${iconUrl}/cross.png`),
