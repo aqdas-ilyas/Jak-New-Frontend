@@ -646,8 +646,10 @@ export default Offer = (props) => {
 
                     <View style={{ alignItems: 'flex-start' }}>
                         <FlatList
+                            key={`offer-categories-${isRTL ? 'rtl' : 'ltr'}`}
                             data={checkboxes}
                             horizontal
+                            inverted={isRTL}
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index.toString()}
                             contentContainerStyle={{
@@ -687,8 +689,10 @@ export default Offer = (props) => {
                     {banks.length > 0 && (
                         <View style={[styles.banksContainer, { alignItems: 'flex-start' }]}>
                             <FlatList
+                                key={`offer-banks-${isRTL ? 'rtl' : 'ltr'}`}
                                 data={[{ id: 'all', name: LocalizedStrings.All, isAll: true }, ...banks]}
                                 horizontal
+                                inverted={isRTL}
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={{
                                     flexDirection: 'row'
