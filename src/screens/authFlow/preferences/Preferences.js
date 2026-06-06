@@ -26,6 +26,7 @@ const Preferences = (props) => {
     const user = useSelector(state => state.user.user.user)
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const { isRTL } = useRTL();
+    const MAX_SELECTED_BANKS = 3;
 
     const [employeeArray, setEmployeeArray] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -113,6 +114,14 @@ const Preferences = (props) => {
 
     // Create Preference API
     const createPreference = (skip) => {
+        if (!skip && selectedItems.length > MAX_SELECTED_BANKS) {
+            showMessage({
+                message: `You can select up to ${MAX_SELECTED_BANKS} banks only.`,
+                type: "danger"
+            });
+            return;
+        }
+
         const onSuccess = response => {
             setIsLoading(false)
             console.log('res while createPreference====>', response);
@@ -176,15 +185,24 @@ const Preferences = (props) => {
     }
 
     const handleToggle = (item) => {
-        setSelectedItems(prevState => {
-            if (prevState.includes(item._id)) {
-                // If the item is already selected, remove it from the selection
-                return prevState.filter(i => i !== item._id);
-            } else {
-                // If the item is not selected, add it to the selection
-                return [...prevState, item._id];
-            }
-        });
+        const isSelected = selectedItems.includes(item._id);
+
+        if (isSelected) {
+            // If the item is already selected, remove it from the selection
+            setSelectedItems(prevState => prevState.filter(i => i !== item._id));
+            return;
+        }
+
+        if (selectedItems.length >= MAX_SELECTED_BANKS) {
+            showMessage({
+                message: `You can select up to ${MAX_SELECTED_BANKS} banks only.`,
+                type: "danger"
+            });
+            return;
+        }
+
+        // If the item is not selected, add it to the selection
+        setSelectedItems(prevState => [...prevState, item._id]);
     };
 
     const renderItem = ({ item }) => {
@@ -192,9 +210,22 @@ const Preferences = (props) => {
         return (
             <View key={item._id}>
                 <TouchableOpacity activeOpacity={0.9} onPress={() => handleToggle(item)} style={[styles.Item, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-                    <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: "center" }}>
+                    <View style={[styles.itemContent, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                         <Image source={{ uri: item.image }} style={[styles.Icon, { marginLeft: isRTL ? wp(2) : 0, marginRight: isRTL ? 0 : wp(2) }]} />
-                        <Text style={[styles.mainDes, { marginLeft: isRTL ? 0 : wp(4), marginRight: isRTL ? wp(4) : 0, textAlign: isRTL ? 'right' : 'left' }]}>{item.name}</Text>
+                        <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={[
+                                styles.mainDes,
+                                {
+                                    marginLeft: isRTL ? 0 : wp(4),
+                                    marginRight: isRTL ? wp(4) : 0,
+                                    textAlign: isRTL ? 'right' : 'left'
+                                }
+                            ]}
+                        >
+                            {item.name}
+                        </Text>
                     </View>
                     <CheckBox
                         value={isSelected}
@@ -272,6 +303,11 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         padding: wp(3)
     },
+    itemContent: {
+        flex: 1,
+        minWidth: 0,
+        alignItems: "center",
+    },
     mainTitle: {
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistRegular,
@@ -285,6 +321,8 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
         marginLeft: wp(4),
+        flex: 1,
+        flexShrink: 1,
     },
     Icon: {
         width: hp(5),

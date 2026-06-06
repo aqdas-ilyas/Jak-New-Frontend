@@ -76,12 +76,12 @@ export default Setting = props => {
       name: LocalizedStrings.edit_profile,
       onpress: () => props.navigation.navigate(routes.editProfile),
     },
-    // {
-    //   id: 3,
-    //   name: LocalizedStrings.my_preference,
-    //   onpress: () =>
-    //     props.navigation.navigate(routes.preferences, { key: 'settings' }),
-    // },
+    {
+      id: 3,
+      name: LocalizedStrings.my_preference,
+      onpress: () =>
+        props.navigation.navigate(routes.preferences, { key: 'settings' }),
+    },
     // { id: 4, name: LocalizedStrings.Notification },
     {
       id: 5,
