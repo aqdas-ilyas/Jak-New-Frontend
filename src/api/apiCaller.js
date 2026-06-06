@@ -23,9 +23,34 @@ export const Status = {
   NOT_FOUND: 400,
 };
 
-var defaultHeaders = {
-  Accept: 'application/json',
-  'Content-Type': 'application/json',
+const buildHeaders = (multipart = false, token = null) => {
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': multipart ? 'multipart/form-data' : 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = token;
+  }
+
+  return headers;
+};
+
+const shouldRefreshAccessToken = responseJson => {
+  const message =
+    typeof responseJson?.message === 'string'
+      ? responseJson.message.toLowerCase()
+      : '';
+
+  return (
+    responseJson?.status === 401 &&
+    (responseJson?.errorType === 'jwt-expired' ||
+      responseJson?.errorType === 'jwt-invalid' ||
+      message.includes('jwt expired') ||
+      message.includes('token has expired') ||
+      message.includes('invalid token') ||
+      message.includes('jwt malformed'))
+  );
 };
 
 const isNetworkAvailable = async () => {
@@ -45,26 +70,17 @@ export const callApi = async (
   const isConnected = await isNetworkAvailable();
   const deviceToken = getDeviceId()
   if (isConnected) {
-    let token = accessToken != undefined ? accessToken : store.getState().user?.token ?? false;
+    let token = accessToken !== undefined ? accessToken : store.getState().user?.token ?? false;
     let refreshToken = store.getState().user?.refreshToken ?? false;
 
-    if (multipart) {
-      defaultHeaders['Accept'] = 'application/json';
-      defaultHeaders['Content-Type'] = 'multipart/form-data';
-
-    } else {
-      defaultHeaders['Content-Type'] = 'application/json';
-    }
-    if (token) {
-      defaultHeaders['Authorization'] = token;
-    }
+    const headers = buildHeaders(multipart, token);
     let fetchObject = {
       method: method,
-      headers: defaultHeaders,
+      headers,
       body:
-        method == 'GET'
+        method === 'GET'
           ? null
-          : method == 'DELETE'
+          : method === 'DELETE'
             ? null
             : multipart
               ? bodyParams
@@ -76,67 +92,79 @@ export const callApi = async (
     try {
       let response = await fetch(endPoint, fetchObject);
       let responseJson = await response.json();
-      if (responseJson?.message == 'jwt expired') {
+      if (shouldRefreshAccessToken(responseJson)) {
+        if (!refreshToken) {
+          store.dispatch(logout());
+          EventRegister.emit('forceLogout');
+          return;
+        }
+
         console.log(responseJson?.message, '-----', deviceToken ? deviceToken : getDeviceId());
-        let fetchObject = {
+        const refreshFetchObject = {
           method: 'POST',
-          headers: defaultHeaders,
+          headers: buildHeaders(false),
           body: JSON.stringify({
             device: {
               id: deviceToken ? deviceToken : getDeviceId(),
             },
           }),
         };
-        await fetch(`${BASE_URL}user/refresh/${refreshToken}`, fetchObject)
-          .then(async res => {
-            // Check if response is OK
-            if (!res.ok) {
-              console.log('Refresh token API failed - status:', res.status);
-              store.dispatch(logout());
-              EventRegister.emit('forceLogout');
-              return;
-            }
+        try {
+          console.log('Attempting to refresh access token with refresh token:', `${BASE_URL}user/refresh/${refreshToken}`);
+          
+          const refreshResponse = await fetch(
+            `${BASE_URL}user/refresh/${refreshToken}`,
+            refreshFetchObject,
+          );
 
-            let resJson = await res.json();
-            console.log('New refreshToken====', resJson?.data?.accessToken);
-
-            // Check if accessToken exists in response
-            if (resJson?.data?.accessToken) {
-              store.dispatch(
-                setToken({
-                  token: resJson.data.accessToken,
-                  refreshToken: refreshToken,
-                }),
-              );
-              callApi(
-                method,
-                endPoint,
-                bodyParams,
-                onSuccess,
-                onError,
-                resJson?.data?.accessToken,
-                multipart
-              );
-            } else {
-              // No accessToken in response - logout user
-              console.log('Refresh token API response missing accessToken');
-              store.dispatch(logout());
-              EventRegister.emit('forceLogout');
-            }
-          })
-          .catch(err => {
-            // Network error or other fetch error - logout user
-            console.log('error refresh token=> ', err);
+          if (!refreshResponse.ok) {
+            console.log('Refresh token API failed - status:', refreshResponse.status);
             store.dispatch(logout());
             EventRegister.emit('forceLogout');
-            onError(err);
-          });
+            return;
+          }
+
+          const resJson = await refreshResponse.json();
+          console.log('New refreshToken====', resJson?.data?.accessToken);
+
+          if (resJson?.data?.accessToken) {
+            store.dispatch(
+              setToken({
+                token: resJson.data.accessToken,
+                refreshToken,
+              }),
+            );
+
+            return callApi(
+              method,
+              endPoint,
+              bodyParams,
+              onSuccess,
+              onError,
+              resJson?.data?.accessToken,
+              multipart,
+            );
+          }
+
+          console.log('Refresh token API response missing accessToken');
+          store.dispatch(logout());
+          EventRegister.emit('forceLogout');
+        } catch (err) {
+          console.log('error refresh token=> ', err);
+          store.dispatch(logout());
+          EventRegister.emit('forceLogout');
+          onError(err);
+        }
       } else if (responseJson?.status < 400) {
         onSuccess(responseJson);
       } else {
         onError(responseJson);
 
-        if (responseJson?.errorType == "session-expired-device" && responseJson?.status == 401) {
+        if (
+          responseJson?.status === 401 &&
+          (responseJson?.errorType === 'session-expired' ||
+            responseJson?.errorType === 'session-expired-device')
+        ) {
           store.dispatch(logout());
           EventRegister.emit('forceLogout');
         }

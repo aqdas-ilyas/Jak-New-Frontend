@@ -131,7 +131,7 @@ export default Setting = props => {
   // );
 
   useEffect(() => {
-    getSubscriptions(); // Get User Subscription
+    // getSubscriptions(); // Get User Subscription
     setToggle(user?.isNotification); // Get Notification is Enabled or Not?
     checkBiometricAvailability(); // Check biometric availability
   }, [user]);
