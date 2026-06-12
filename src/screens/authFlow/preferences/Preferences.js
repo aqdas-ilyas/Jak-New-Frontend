@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Platform, ScrollView } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel } from '../../../services'
 import { appIcons, appImages } from '../../../services/utilities/assets'
@@ -27,6 +27,7 @@ const Preferences = (props) => {
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const { isRTL } = useRTL();
     const MAX_SELECTED_BANKS = 3;
+    const isSettingsFlow = props?.route?.params?.key === 'settings';
 
     const [employeeArray, setEmployeeArray] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -74,11 +75,7 @@ const Preferences = (props) => {
     // );
 
     // Get API
-    useEffect(() => {
-        getCompany()
-    }, [])
-
-    const getCompany = async () => {
+    const getCompany = useCallback(async () => {
         const onSuccess = async (response) => {
             setIsLoading(false);
             console.log('res while getCompany====>', JSON.stringify(response, "", 2));
@@ -110,7 +107,11 @@ const Preferences = (props) => {
 
         setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
-    }
+    }, [user])
+
+    useEffect(() => {
+        getCompany()
+    }, [getCompany])
 
     // Create Preference API
     const createPreference = (skip) => {
@@ -125,37 +126,34 @@ const Preferences = (props) => {
         const onSuccess = response => {
             setIsLoading(false)
             console.log('res while createPreference====>', response);
-            const fallbackMessage = props?.route?.params?.key === 'settings'
+            const fallbackMessage = isSettingsFlow
                 ? LocalizedStrings.preferences_updated
                 : LocalizedStrings.preferences_created;
 
             showMessage({ message: resolveMessage(LocalizedStrings, response?.message, fallbackMessage), type: "success" })
-            props?.route?.params?.key === 'settings' ? null : setModalShow(true)
 
             dispatch(updateUser(response?.data))
 
-            setTimeout(() => {
-                // if (!user.isAdminApproved) {
-                //     if (props?.route?.params?.key === 'settings') {
-                //         setPendingModalShow(false); // Show a pending modal
-                //     } else {
-                //         setPendingModalShow(true); // Show a pending modal
-                //     }
-                // } else {
-                //     setModalShow(false)
-                // }
-
+            if (isSettingsFlow) {
                 setModalShow(false)
+                setPendingModalShow(false)
+                setConfimationModalShow(false)
+                if (props?.navigation?.canGoBack?.()) {
+                    props?.navigation?.goBack()
+                } else {
+                    props?.navigation?.navigate(routes.tab, { screen: routes.settings })
+                }
+                return
+            }
 
-                setTimeout(() => {
-                    // if (response?.act == 'admin-pending') {
-                    props?.route?.params?.key === 'settings' ? null : props?.navigation?.navigate(routes.subscription) // Navigate to login page if response indicates admin pending action
-                    setPendingModalShow(false); // Show a pending modal
-                    setModalShow(false); // Show a Profile Created modal
-                    setConfimationModalShow(false); // Show a Profile Created modal
-                    // }
-                }, 2000); // Delay this inner action for 2000 milliseconds (2 seconds)
-            }, 2000); // Delay the outer action for 2000 milliseconds (2 seconds)
+            setModalShow(true)
+
+            setTimeout(() => {
+                setModalShow(false)
+                setPendingModalShow(false)
+                setConfimationModalShow(false)
+                props?.navigation?.navigate(routes.subscription)
+            }, 2000)
         };
 
         const onError = error => {
@@ -243,7 +241,7 @@ const Preferences = (props) => {
             <Header
                 leftIcon
                 onleftIconPress={() => props.navigation.goBack()}
-                title={props?.route?.params?.key === 'settings' ? LocalizedStrings.preferences_title : LocalizedStrings.preferences_title}
+                title={LocalizedStrings.preferences_title}
             // rightTitle={props?.route?.params?.key === 'settings' ? '' : LocalizedStrings.skip} 
             // onPressRightTitle={() => createPreference('skip')}
             />
@@ -264,7 +262,7 @@ const Preferences = (props) => {
             </ScrollView>
 
             <View style={[appStyles.ph20, appStyles.mb5]}>
-                <Button onPress={() => createPreference()}>{props?.route?.params?.key === 'settings' ? LocalizedStrings.save_changes : LocalizedStrings.continue}</Button>
+                <Button onPress={() => createPreference()}>{isSettingsFlow ? LocalizedStrings.save_changes : LocalizedStrings.continue}</Button>
             </View>
 
             <CallModal

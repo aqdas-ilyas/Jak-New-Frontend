@@ -224,6 +224,10 @@ export default Offer = (props) => {
     const [banks, setBanks] = useState([]);
     const [selectedBank, setSelectedBank] = useState(null);
     const refreshCounterRef = useRef(0);
+    const horizontalListContainerStyle = {
+        flexDirection: 'row',
+        width: '100%',
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -644,7 +648,7 @@ export default Offer = (props) => {
                         </View>
                     </TouchableOpacity>
 
-                    <View style={{ alignItems: 'flex-start' }}>
+                    <View style={{ alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
                         <FlatList
                             key={`offer-categories-${isRTL ? 'rtl' : 'ltr'}`}
                             data={checkboxes}
@@ -652,9 +656,8 @@ export default Offer = (props) => {
                             inverted={isRTL}
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index.toString()}
-                            contentContainerStyle={{
-                                flexDirection: 'row'
-                            }}
+                            style={{ width: '100%' }}
+                            contentContainerStyle={horizontalListContainerStyle}
                             renderItem={({ item, index }) => {
                                 return (
                                     item.title != null && (
@@ -687,16 +690,15 @@ export default Offer = (props) => {
 
                     {/* Banks List - Always visible */}
                     {banks.length > 0 && (
-                        <View style={[styles.banksContainer, { alignItems: 'flex-start' }]}>
+                        <View style={[styles.banksContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
                             <FlatList
                                 key={`offer-banks-${isRTL ? 'rtl' : 'ltr'}`}
                                 data={[{ id: 'all', name: LocalizedStrings.All, isAll: true }, ...banks]}
                                 horizontal
                                 inverted={isRTL}
                                 showsHorizontalScrollIndicator={false}
-                                contentContainerStyle={{
-                                    flexDirection: 'row'
-                                }}
+                                style={{ width: '100%' }}
+                                contentContainerStyle={horizontalListContainerStyle}
                                 keyExtractor={(item, index) => item.isAll ? 'bank-all' : `bank-${item.id || index}-${item.name || ''}`}
                                 removeClippedSubviews={false}
                                 initialNumToRender={banks.length + 1}
