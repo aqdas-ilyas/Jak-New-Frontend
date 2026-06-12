@@ -77,6 +77,8 @@ export default {
   logout_confirmation_message: 'Are you sure you want to logout from your account?',
   yes: 'Yes',
   no: 'No',
+  exit_confirmation_title: 'Jak App!',
+  exit_confirmation_message: 'Are you sure you want to exit the app?',
 
   // Subscription Plan
   subscription_plan: 'Subscription Plan',

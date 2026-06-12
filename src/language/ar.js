@@ -76,6 +76,8 @@ export default {
   logout_confirmation_message: 'هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟',
   yes: 'نعم',
   no: 'لا',
+  exit_confirmation_title: 'تطبيق جاك!',
+  exit_confirmation_message: 'هل أنت متأكد أنك تريد الخروج من التطبيق؟',
 
   // Subscription Plan
   subscription_plan: 'خطة الاشتراك',

@@ -15,7 +15,8 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="${usesCleartextTraffic}"
-      android:supportsRtl="true">
+      android:supportsRtl="true"
+      android:enableOnBackInvokedCallback="false">
       <meta-data  
        android:name="com.google.android.geo.API_KEY" 
        android:value="AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8"/>
