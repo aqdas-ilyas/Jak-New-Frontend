@@ -78,7 +78,7 @@ const SubscriptionPlan = (props) => {
             }))
             dispatch(updateUser(response?.data))
             showMessage({ message: 'Subsription Renewed!', type: "success", });
-            props.navigation.navigate(routes.tab, { screen: routes.home })
+            props.navigation.replace(routes.tab, { screen: routes.home })
         };
 
         const onError = error => {

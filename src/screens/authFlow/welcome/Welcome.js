@@ -104,7 +104,7 @@ const Welcome = (props) => {
             }
 
             if (response?.act === 'login-granted') {
-                props.navigation.navigate(routes.tab, { screen: routes.home })
+                props.navigation.replace(routes.tab, { screen: routes.home })
             } else if (response?.act === 'email-unverified') {
                 props.navigation.navigate(routes.otp, { email: user?.email.toLowerCase(), key: 'auth' })
             } else if (response?.act === 'incomplete-profile') {
@@ -113,14 +113,14 @@ const Welcome = (props) => {
                     userName: user?.userFirstName + ' ' + user?.userLastName
                 });
             } else {
-                props.navigation.navigate(routes.tab, { screen: routes.home })
+                props.navigation.replace(routes.tab, { screen: routes.home })
             }
             // else if (response?.act === 'incomplete-preferences') {
             //     if (!response?.data?.user?.isPreferencesSkipped) {
             //         props?.navigation?.navigate(routes.preferences);
             //     } else {
             //         if (response?.act == 'admin-pending') {
-            //             props.navigation.navigate(routes.tab, { screen: routes.home })
+            //             props.navigation.replace(routes.tab, { screen: routes.home })
 
             //             // props?.navigation?.navigate(routes.preferences);
             //             // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
@@ -130,7 +130,7 @@ const Welcome = (props) => {
             //         }
             //     }
             // } else if (response?.act == 'admin-pending') {
-            //     props.navigation.navigate(routes.tab, { screen: routes.home })
+            //     props.navigation.replace(routes.tab, { screen: routes.home })
 
             //     // props?.navigation?.navigate(routes.preferences);
             //     // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })

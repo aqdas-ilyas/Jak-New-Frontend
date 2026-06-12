@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -22,24 +22,24 @@ import Header from '../../../components/header';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Button from '../../../components/button';
 import CallModal from '../../../components/modal';
-import {Input} from '../../../components/input';
-import {LocalizationContext} from '../../../language/LocalizationContext';
-import {callApi, Method} from '../../../api/apiCaller';
+import { Input } from '../../../components/input';
+import { LocalizationContext } from '../../../language/LocalizationContext';
+import { callApi, Method } from '../../../api/apiCaller';
 import routs from '../../../api/routs';
-import {showMessage} from 'react-native-flash-message';
-import {Loader} from '../../../components/loader/Loader';
-import {useDispatch} from 'react-redux';
-import {updateUser} from '../../../store/reducers/userDataSlice';
-import {resolveMessage} from '../../../language/helpers';
+import { showMessage } from 'react-native-flash-message';
+import { Loader } from '../../../components/loader/Loader';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../../store/reducers/userDataSlice';
+import { resolveMessage } from '../../../language/helpers';
 
 const CancelSubscription = props => {
-  const {LocalizedStrings} = React.useContext(LocalizationContext);
+  const { LocalizedStrings } = React.useContext(LocalizationContext);
   const SubscriptionArray = [
-    {id: 1, desc: LocalizedStrings['Lorem ipsum dolor set amet consectetur']},
-    {id: 2, desc: LocalizedStrings['Integer non placerat justo.']},
-    {id: 3, desc: LocalizedStrings['Fusce sollicitudin venenatis ex, sed']},
-    {id: 4, desc: LocalizedStrings['lorem ipsum dolor set amet']},
-    {id: 5, desc: LocalizedStrings['Aenean cursus sapien nec mauris']},
+    { id: 1, desc: LocalizedStrings['Lorem ipsum dolor set amet consectetur'] },
+    { id: 2, desc: LocalizedStrings['Integer non placerat justo.'] },
+    { id: 3, desc: LocalizedStrings['Fusce sollicitudin venenatis ex, sed'] },
+    { id: 4, desc: LocalizedStrings['lorem ipsum dolor set amet'] },
+    { id: 5, desc: LocalizedStrings['Aenean cursus sapien nec mauris'] },
   ];
 
   const dispatch = useDispatch();
@@ -72,18 +72,18 @@ const CancelSubscription = props => {
       getUserProfile();
       setIsLoading(false);
       setModalShow(true);
-      showMessage({message: resolveMessage(LocalizedStrings, response?.message, LocalizedStrings.subscription_canceled), type: 'success'});
+      showMessage({ message: resolveMessage(LocalizedStrings, response?.message, LocalizedStrings.subscription_canceled), type: 'success' });
 
       setTimeout(() => {
         setModalShow(false);
-        props.navigation.navigate(routes.tab, {screen: routes.home});
+        props.navigation.replace(routes.tab, { screen: routes.home });
       }, 2000);
     };
 
     const onError = error => {
       setIsLoading(false);
       console.log('error while cancelSubscription====>', error);
-      showMessage({message: resolveMessage(LocalizedStrings, error?.message), type: 'danger'});
+      showMessage({ message: resolveMessage(LocalizedStrings, error?.message), type: 'danger' });
     };
 
     const method = Method.POST;
@@ -98,14 +98,14 @@ const CancelSubscription = props => {
   };
 
   return (
-    <SafeAreaView style={[appStyles.safeContainer, {margin: wp(4)}]}>
+    <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
       <Loader loading={isLoading} />
       <Header
         leftIcon
         onleftIconPress={() => props.navigation.goBack()}
         title={LocalizedStrings.select_reson}
       />
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <Text
           style={[
             styles.mainDes,
@@ -123,7 +123,7 @@ const CancelSubscription = props => {
             data={SubscriptionArray}
             showsVerticalScrollIndicator={false}
             keyExtractor={item => item.id}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <TouchableOpacity
                   activeOpacity={0.8}
@@ -138,7 +138,7 @@ const CancelSubscription = props => {
                     padding: wp(3),
                     borderRadius: 50,
                   }}>
-                  <Text style={[styles.mainDes, {color: colors.fullWhite}]}>
+                  <Text style={[styles.mainDes, { color: colors.fullWhite }]}>
                     {item.desc}
                   </Text>
                 </TouchableOpacity>

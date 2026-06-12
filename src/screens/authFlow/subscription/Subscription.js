@@ -78,7 +78,7 @@ const Subscription = (props) => {
             setModalShow(true)
 
             setTimeout(() => {
-                props.navigation.navigate(routes.tab, { screen: routes.home })
+                props.navigation.replace(routes.tab, { screen: routes.home })
 
                 setModalShow(false)
             }, 2000);

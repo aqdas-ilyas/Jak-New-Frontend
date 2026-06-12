@@ -126,20 +126,20 @@ const SignIn = props => {
         }
 
         if (response?.act === 'login-granted') {
-          props.navigation.navigate(routes.tab, { screen: routes.home });
+          props.navigation.replace(routes.tab, { screen: routes.home });
         } else if (response?.act === 'incomplete-profile') {
           props?.navigation?.navigate(routes.createProfile, {
             number: `${countryCode + phoneNumber}`,
           });
         } else {
-          props.navigation.navigate(routes.tab, { screen: routes.home });
+          props.navigation.replace(routes.tab, { screen: routes.home });
         }
         // else if (response?.act === 'incomplete-preferences') {
         //   if (!response?.data?.user?.isPreferencesSkipped) {
         //     props?.navigation?.navigate(routes.preferences);
         //   } else {
         //     if (response?.act == 'admin-pending') {
-        //       props.navigation.navigate(routes.tab, { screen: routes.home });
+        //       props.navigation.replace(routes.tab, { screen: routes.home });
         //       // props?.navigation?.navigate(routes.preferences);
         //       // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
         //     } else if (response?.act == 'incomplete-subscription') {
@@ -151,7 +151,7 @@ const SignIn = props => {
         //     }
         //   }
         // } else if (response?.act == 'admin-pending') {
-        //   props.navigation.navigate(routes.tab, { screen: routes.home });
+        //   props.navigation.replace(routes.tab, { screen: routes.home });
         //   // props?.navigation?.navigate(routes.preferences);
         //   // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
         // } else if (response?.act == 'incomplete-subscription') {
@@ -228,20 +228,20 @@ const SignIn = props => {
       dispatch(saveNumberLogin(true));
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       } else if (response?.act === 'incomplete-profile') {
         props?.navigation?.navigate(routes.createProfile, {
           number: `${credentials.countryCode + credentials.phoneNumber}`,
         });
       } else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
       //     props?.navigation?.navigate(routes.preferences);
       //   } else {
       //     if (response?.act == 'admin-pending') {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //     } else if (response?.act == 'incomplete-subscription') {
       //       props?.navigation?.navigate(routes.subscription);
       //       showMessage({
@@ -249,7 +249,7 @@ const SignIn = props => {
       //         type: 'danger',
       //       });
       //     } else {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //     }
       //   }
       // }
@@ -292,7 +292,7 @@ const SignIn = props => {
       // dispatch(saveLoginRemember(true));
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       } else if (response?.act === 'email-unverified') {
         props.navigation.navigate(routes.otp, {
           email: credentials.email.toLowerCase(),
@@ -303,14 +303,14 @@ const SignIn = props => {
           email: credentials.email.toLowerCase(),
         });
       } else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
       //     props?.navigation?.navigate(routes.preferences);
       //   } else {
       //     if (response?.act == 'admin-pending') {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //     } else if (response?.act == 'incomplete-subscription') {
       //       props?.navigation?.navigate(routes.subscription);
       //       showMessage({
@@ -318,7 +318,7 @@ const SignIn = props => {
       //         type: 'danger',
       //       });
       //     } else {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //     }
       //   }
       // }
@@ -539,7 +539,7 @@ const SignIn = props => {
       }
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       } else if (response?.act === 'email-unverified') {
         props.navigation.navigate(routes.otp, {
           email: user?.email.toLowerCase(),
@@ -551,7 +551,7 @@ const SignIn = props => {
           userName: user?.userFirstName + ' ' + user?.userLastName
         });
       } else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
@@ -559,7 +559,7 @@ const SignIn = props => {
       //   } else {
       //     if (response?.act == 'admin-pending') {
       //       // props?.navigation?.navigate(routes.preferences);
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //       // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
       //     } else if (response?.act == 'incomplete-subscription') {
       //       props?.navigation?.navigate(routes.subscription);
@@ -571,7 +571,7 @@ const SignIn = props => {
       //   }
       // } else if (response?.act == 'admin-pending') {
       //   // props?.navigation?.navigate(routes.preferences);
-      //   props.navigation.navigate(routes.tab, { screen: routes.home });
+      //   props.navigation.replace(routes.tab, { screen: routes.home });
       //   // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
       // } else if (response?.act == 'incomplete-subscription') {
       //   props?.navigation?.navigate(routes.subscription);
