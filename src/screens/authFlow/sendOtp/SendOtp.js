@@ -15,7 +15,7 @@ import routs from '../../../api/routs'
 import { Loader } from '../../../components/loader/Loader'
 import { getDeviceId } from 'react-native-device-info'
 import { useDispatch } from 'react-redux'
-import { updateUser, setToken } from '../../../store/reducers/userDataSlice'
+import { updateUser, setToken, saveLoginRemember } from '../../../store/reducers/userDataSlice'
 import { resolveMessage } from '../../../language/helpers';
 import { store } from '../../../store/store'
 import { CommonActions } from '@react-navigation/native'
@@ -56,6 +56,7 @@ const SendOtp = (props) => {
                         token: response?.data?.token,
                         refreshToken: response?.data?.refreshToken,
                     }))
+                    dispatch(saveLoginRemember(true))
                     if (number) {
                         props.navigation.navigate(routes.createProfile, { number: number })
                     } else {

@@ -224,7 +224,7 @@ const SignIn = props => {
           refreshToken: response?.data?.refreshToken,
         }),
       );
-      // dispatch(saveLoginRemember(true));
+      dispatch(saveLoginRemember(true));
       dispatch(saveNumberLogin(true));
 
       if (response?.act === 'login-granted') {
@@ -289,7 +289,7 @@ const SignIn = props => {
           refreshToken: response?.data?.refreshToken,
         }),
       );
-      // dispatch(saveLoginRemember(true));
+      dispatch(saveLoginRemember(true));
 
       if (response?.act === 'login-granted') {
         props.navigation.replace(routes.tab, { screen: routes.home });
@@ -523,7 +523,7 @@ const SignIn = props => {
           refreshToken: response?.data?.refreshToken,
         }),
       );
-      // dispatch(saveLoginRemember(true));
+      dispatch(saveLoginRemember(true));
 
       // Save credentials for biometric login if biometric is enabled
       if (biometricEnabled) {
