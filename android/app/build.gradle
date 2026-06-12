@@ -92,8 +92,8 @@ android {
         applicationId "com.jakkkkkkkkkkk"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName "9.0"
+        versionCode 10
+        versionName "10.0"
         missingDimensionStrategy "store", "play"
     }
     signingConfigs {
