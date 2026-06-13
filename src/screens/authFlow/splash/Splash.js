@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View, ActivityIndicator, StatusBar, Platform, Animated, Easing } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,6 +14,8 @@ import { saveMyOffer, saveMyOfferPageNo, saveTotalMyOfferPagesCount } from '../.
 import ReactNativeBiometrics from 'react-native-biometrics'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { notificationListeners, requestUserPermission } from '../../../services/pushNotification';
+import { showMessage } from 'react-native-flash-message'
+import { resolveMessage } from '../../../language/helpers'
 
 export default function Splash(props) {
     const dispatch = useDispatch()
@@ -92,6 +95,10 @@ export default function Splash(props) {
             if (islogin) {
                 // If biometric check fails for logged in user, logout
                 console.log('Biometric check error for logged in user - logging out');
+                showMessage({
+                    message: LocalizedStrings.biometric_login_error || 'Biometric authentication failed',
+                    type: 'danger',
+                });
                 dispatch(logout());
                 setBiometricChecked(false);
                 props.navigation.replace(routes.login);
@@ -114,7 +121,18 @@ export default function Splash(props) {
 
         const onError = error => {
             console.log('error while getUserProfile====>', error);
-            dispatch(logout())
+            if (
+                error?.status === 401 ||
+                error?.errorType === 'session-expired' ||
+                error?.errorType === 'session-expired-device'
+            ) {
+                return;
+            }
+
+            showMessage({
+                message: resolveMessage(LocalizedStrings, error?.message, LocalizedStrings.session_verification_failed),
+                type: 'danger',
+            });
             setApiCompleted(true);
         };
 

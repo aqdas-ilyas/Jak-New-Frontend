@@ -32,6 +32,9 @@ export default {
   biometric_no_credentials: 'لم يتم العثور على بيانات محفوظة',
   biometric_login_error: 'فشلت المصادقة البيومترية',
   biometric_app_open_prompt: 'قم بالمصادقة لفتح التطبيق',
+  session_expired_title: 'انتهت الجلسة',
+  session_expired_message: 'انتهت الجلسة الخاصة بك. يرجى تسجيل الدخول مرة أخرى.',
+  session_verification_failed: 'تعذر التحقق من الجلسة الآن. يرجى المحاولة مرة أخرى.',
 
   // Contact Form
   send_us_message: 'أرسل لنا رسالة',

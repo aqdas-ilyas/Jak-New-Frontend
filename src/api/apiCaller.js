@@ -1,7 +1,7 @@
 import { getDeviceId } from 'react-native-device-info';
 import { BASE_URL } from './routs';
 import { store } from "../store/store";
-import { logout, setToken } from '../store/reducers/userDataSlice';
+import { setToken } from '../store/reducers/userDataSlice';
 import NetInfo from '@react-native-community/netinfo';
 import { EventRegister } from 'react-native-event-listeners';
 
@@ -58,6 +58,21 @@ const isNetworkAvailable = async () => {
   return response.isConnected;
 }
 
+let sessionLogoutQueued = false;
+
+const queueSessionLogout = (reason = 'session-expired') => {
+  if (sessionLogoutQueued) {
+    return;
+  }
+
+  sessionLogoutQueued = true;
+  EventRegister.emit('forceLogout', { reason });
+
+  setTimeout(() => {
+    sessionLogoutQueued = false;
+  }, 3000);
+};
+
 export const callApi = async (
   method,
   endPoint,
@@ -94,8 +109,7 @@ export const callApi = async (
       let responseJson = await response.json();
       if (shouldRefreshAccessToken(responseJson)) {
         if (!refreshToken) {
-          store.dispatch(logout());
-          EventRegister.emit('forceLogout');
+          queueSessionLogout('session-expired');
           return;
         }
 
@@ -119,14 +133,35 @@ export const callApi = async (
 
           console.log('Refresh token API response:', refreshResponse);
 
+          const refreshResponseJson = await refreshResponse.json().catch(() => ({}));
+
           if (!refreshResponse.ok) {
             console.log('Refresh token API failed - status:', refreshResponse.status);
-            store.dispatch(logout());
-            EventRegister.emit('forceLogout');
+
+            const refreshRejected =
+              refreshResponse.status === 401 ||
+              refreshResponse.status === 403 ||
+              refreshResponseJson?.errorType === 'jwt-expired' ||
+              refreshResponseJson?.errorType === 'jwt-invalid' ||
+              refreshResponseJson?.errorType === 'session-expired' ||
+              refreshResponseJson?.errorType === 'session-expired-device' ||
+              `${refreshResponseJson?.message || ''}`.toLowerCase().includes('jwt expired') ||
+              `${refreshResponseJson?.message || ''}`.toLowerCase().includes('token has expired') ||
+              `${refreshResponseJson?.message || ''}`.toLowerCase().includes('invalid token');
+
+            if (refreshRejected) {
+              queueSessionLogout('session-expired');
+            } else {
+              const refreshErrorPayload =
+                refreshResponseJson && Object.keys(refreshResponseJson).length > 0
+                  ? refreshResponseJson
+                  : { message: 'Failed to refresh session' };
+              onError(refreshErrorPayload);
+            }
             return;
           }
 
-          const resJson = await refreshResponse.json();
+          const resJson = refreshResponseJson;
           console.log('New refreshToken====', resJson?.data?.accessToken);
 
           if (resJson?.data?.accessToken) {
@@ -149,12 +184,9 @@ export const callApi = async (
           }
 
           console.log('Refresh token API response missing accessToken');
-          store.dispatch(logout());
-          EventRegister.emit('forceLogout');
+          queueSessionLogout('session-expired');
         } catch (err) {
           console.log('error refresh token=> ', err);
-          store.dispatch(logout());
-          EventRegister.emit('forceLogout');
           onError(err);
         }
       } else if (responseJson?.status < 400) {
@@ -167,8 +199,7 @@ export const callApi = async (
           (responseJson?.errorType === 'session-expired' ||
             responseJson?.errorType === 'session-expired-device')
         ) {
-          store.dispatch(logout());
-          EventRegister.emit('forceLogout');
+          queueSessionLogout('session-expired');
         }
       }
     } catch (error) {

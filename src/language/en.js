@@ -33,6 +33,9 @@ export default {
   biometric_no_credentials: 'No saved credentials found',
   biometric_login_error: 'Biometric authentication failed',
   biometric_app_open_prompt: 'Authenticate to open the app',
+  session_expired_title: 'Session Expired',
+  session_expired_message: 'Your session has expired. Please sign in again.',
+  session_verification_failed: 'Unable to verify your session right now. Please try again.',
 
   // Contact Form
   send_us_message: 'Send us a Message',
