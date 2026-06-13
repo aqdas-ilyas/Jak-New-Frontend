@@ -370,13 +370,21 @@ const SignUp = props => {
           </Input>
         </View>
 
-        <View style={[styles.termsRow, rtlStyles.row, { marginTop: wp(4) }]}>
-          <CheckBox
-            value={acceptPolicies}
-            onValueChange={setAcceptPolicies}
-            style={styles.checbox}
-            {...checkboxPlatformProps}
-          />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => setAcceptPolicies(prev => !prev)}
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: acceptPolicies }}
+          style={[styles.termsRow, rtlStyles.row, styles.termsRowPressable, { marginTop: wp(4) }]}
+        >
+          <View pointerEvents="none">
+            <CheckBox
+              value={acceptPolicies}
+              onValueChange={setAcceptPolicies}
+              style={styles.checbox}
+              {...checkboxPlatformProps}
+            />
+          </View>
           <Text style={[styles.termsText, rtlStyles.textAlign, rtlStyles.writingDirection]}>
             {(LocalizedStrings.accept_terms_prefix || 'I accept the ')}
             <Text
@@ -391,7 +399,7 @@ const SignUp = props => {
               {LocalizedStrings.privacy || 'Privacy Policy'}
             </Text>
           </Text>
-        </View>
+        </TouchableOpacity>
 
         <View style={[rtlStyles.row, appStyles.jcCenter, appStyles.mt20]}>
           <Text style={[styles.dontAccountTextStyle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
@@ -500,6 +508,10 @@ const styles = StyleSheet.create({
   termsRow: {
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  termsRowPressable: {
+    flex: 1,
+    paddingVertical: wp(1),
   },
   termsText: {
     flex: 1,

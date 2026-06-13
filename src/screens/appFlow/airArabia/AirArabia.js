@@ -43,7 +43,7 @@ const AddLoyaltyCard = props => {
 
     const cleanCardNumber = cardNumber.replace(/\s/g, '');
 
-    if (cleanCardNumber.length !== 16) {
+    if (cleanCardNumber.length === 0) {
       showMessage({ message: LocalizedStrings.please_add_valid_card_number, type: 'danger' });
       return false;
     }
@@ -213,11 +213,8 @@ const AddLoyaltyCard = props => {
     // Remove all non-digit characters
     const cleaned = value.replace(/\D/g, '');
 
-    // Limit to 16 digits
-    const limited = cleaned.slice(0, 16);
-
     // Add space after every 4 digits
-    const formatted = limited.replace(/(.{4})/g, '$1 ').trim();
+    const formatted = cleaned.replace(/(.{4})/g, '$1 ').trim();
 
     return formatted;
   };
@@ -303,7 +300,6 @@ const AddLoyaltyCard = props => {
             onChangeText={handleCardNumberChange}
             placeholder={LocalizedStrings['Card Number']}
             keyboardType="numeric"
-            maxLength={19}
           // WholeContainer={{ width: wp(78) }}
           >
             {LocalizedStrings['Card Number']}
@@ -446,6 +442,7 @@ const AddLoyaltyCard = props => {
             paddingVertical: wp(2),
             alignItems: 'flex-start',
           }}
+          inputStyle={{ height: '100%', textAlignVertical: 'top' }}
           WholeContainer={styles.notesContainer}
         />
       </ScrollView>
@@ -483,7 +480,7 @@ const styles = StyleSheet.create({
   cameraBox: {
     backgroundColor: colors.offWhite,
     borderRadius: 12,
-    paddingHorizontal: wp(8),
+    // paddingHorizontal: wp(8),
     paddingVertical: wp(4),
     alignItems: 'center',
     justifyContent: 'center',
@@ -496,6 +493,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistSemiBold,
     color: colors.BlackSecondary,
     marginTop: wp(2),
+    teaxtAlign: 'center',
   },
   imageContainer: {
     width: wp(40),

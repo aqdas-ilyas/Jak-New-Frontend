@@ -706,19 +706,27 @@ const SignIn = props => {
         </View>
 
         <View style={[rtlStyles.rowBetween, { marginVertical: wp(5) }]}>
-          <View style={[rtlStyles.row, { paddingStart: wp(1) }]}>
-            <CheckBox
-              disabled={false}
-              value={toggleCheckBox}
-              onValueChange={newValue => setToggleCheckBox(newValue)}
-              style={styles.checbox}
-              hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
-              {...checkboxPlatformProps}
-            />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setToggleCheckBox(prev => !prev)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: toggleCheckBox }}
+            style={[rtlStyles.row, styles.rememberMePressable, { paddingStart: wp(1) }]}
+          >
+            <View pointerEvents="none">
+              <CheckBox
+                disabled={false}
+                value={toggleCheckBox}
+                onValueChange={newValue => setToggleCheckBox(newValue)}
+                style={styles.checbox}
+                hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
+                {...checkboxPlatformProps}
+              />
+            </View>
             <Text style={[styles.rememberMe, rtlStyles.writingDirection]}>
               {LocalizedStrings.remember_me}
             </Text>
-          </View>
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => props.navigation.navigate(routes.forgotPassword)}>
@@ -859,6 +867,10 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistMedium,
     color: colors.BlackSecondary,
     marginStart: wp(1.5),
+  },
+  rememberMePressable: {
+    flex: 1,
+    alignItems: 'center',
   },
   dontAccountTextStyle: {
     fontSize: hp(1.6),
