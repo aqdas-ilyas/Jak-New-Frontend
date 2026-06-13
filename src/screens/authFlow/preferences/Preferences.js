@@ -1,15 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Platform, ScrollView } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Platform } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel } from '../../../services'
-import { appIcons, appImages } from '../../../services/utilities/assets'
+import { appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
 import Button from '../../../components/button';
 import Header from '../../../components/header'
-import { Input } from '../../../components/input'
 import CallModal from '../../../components/modal'
 import { LocalizationContext } from '../../../language/LocalizationContext'
 import { useRTL } from '../../../language/useRTL';
-import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect from React Navigation
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
 import { Loader } from '../../../components/loader/Loader'
@@ -21,19 +19,77 @@ import CheckBox from '@react-native-community/checkbox';
 import { resolveMessage } from '../../../language/helpers';
 import { store } from '../../../store/store'
 
+const MAX_SELECTED_BANKS = 3;
+
+const resolveUserData = (candidate) => {
+    if (!candidate) {
+        return {};
+    }
+
+    if (
+        candidate._id ||
+        candidate.employer ||
+        candidate.isComplete !== undefined ||
+        candidate.isAdminApproved !== undefined
+    ) {
+        return candidate;
+    }
+
+    if (
+        candidate.user &&
+        (candidate.user._id ||
+            candidate.user.employer ||
+            candidate.user.isComplete !== undefined ||
+            candidate.user.isAdminApproved !== undefined)
+    ) {
+        return candidate.user;
+    }
+
+    if (candidate.data?.user) {
+        return candidate.data.user;
+    }
+
+    if (candidate.data) {
+        return candidate.data;
+    }
+
+    return candidate;
+};
+
+const normalizeEmployerIds = (employers) => {
+    if (!employers) {
+        return [];
+    }
+
+    const employerList = Array.isArray(employers) ? employers : [employers];
+
+    return employerList
+        .map((item) => {
+            if (typeof item === 'string') {
+                return item;
+            }
+
+            if (item && typeof item === 'object') {
+                return item._id || item.id || item.value || item.employerId || null;
+            }
+
+            return null;
+        })
+        .filter(Boolean);
+};
+
 const Preferences = (props) => {
     const dispatch = useDispatch()
-    const user = useSelector(state => state.user.user.user)
+    const rawUser = useSelector(state => state.user.user.user)
+    const user = useMemo(() => resolveUserData(rawUser), [rawUser])
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const { isRTL } = useRTL();
-    const MAX_SELECTED_BANKS = 3;
     const isSettingsFlow = props?.route?.params?.key === 'settings';
 
     const [employeeArray, setEmployeeArray] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
     const [modalShow, setModalShow] = useState(false)
     const [pendingModalShow, setPendingModalShow] = useState(false)
-    const [confimationModalShow, setConfimationModalShow] = useState(false)
 
     const [isLoading, setIsLoading] = useState(false);
     const checkboxPlatformProps = Platform.OS === 'ios'
@@ -78,22 +134,8 @@ const Preferences = (props) => {
     const getCompany = useCallback(async () => {
         const onSuccess = async (response) => {
             setIsLoading(false);
-            console.log('res while getCompany====>', JSON.stringify(response, "", 2));
-            setEmployeeArray(response?.data?.data)
-
-            if (user?.employer.length > 0) {
-                for (let index = 0; index < user?.employer.length; index++) {
-                    setSelectedItems(prevState => {
-                        if (prevState.includes(user?.employer[index])) {
-                            // If the item is already selected, remove it from the selection
-                            return prevState.filter(i => i !== user?.employer[index]);
-                        } else {
-                            // If the item is not selected, add it to the selection
-                            return [...prevState, user?.employer[index]];
-                        }
-                    });
-                }
-            }
+            const companies = Array.isArray(response?.data?.data) ? response.data.data : [];
+            setEmployeeArray(companies)
         };
 
         const onError = error => {
@@ -107,11 +149,15 @@ const Preferences = (props) => {
 
         setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
-    }, [user])
+    }, [])
 
     useEffect(() => {
         getCompany()
     }, [getCompany])
+
+    useEffect(() => {
+        setSelectedItems(normalizeEmployerIds(user?.employer));
+    }, [user?.employer])
 
     // Create Preference API
     const createPreference = (skip) => {
@@ -137,7 +183,6 @@ const Preferences = (props) => {
             if (isSettingsFlow) {
                 setModalShow(false)
                 setPendingModalShow(false)
-                setConfimationModalShow(false)
                 if (props?.navigation?.canGoBack?.()) {
                     props?.navigation?.goBack()
                 } else {
@@ -151,7 +196,6 @@ const Preferences = (props) => {
             setTimeout(() => {
                 setModalShow(false)
                 setPendingModalShow(false)
-                setConfimationModalShow(false)
                 props?.navigation?.navigate(routes.subscription)
             }, 2000)
         };
@@ -183,30 +227,36 @@ const Preferences = (props) => {
     }
 
     const handleToggle = (item) => {
-        const isSelected = selectedItems.includes(item._id);
+        const itemId = item?._id || item?.id || item?.value;
 
-        if (isSelected) {
-            // If the item is already selected, remove it from the selection
-            setSelectedItems(prevState => prevState.filter(i => i !== item._id));
+        if (!itemId) {
             return;
         }
 
-        if (selectedItems.length >= MAX_SELECTED_BANKS) {
-            showMessage({
-                message: `You can select up to ${MAX_SELECTED_BANKS} banks only.`,
-                type: "danger"
-            });
-            return;
-        }
+        setSelectedItems(prevState => {
+            const isSelected = prevState.includes(itemId);
 
-        // If the item is not selected, add it to the selection
-        setSelectedItems(prevState => [...prevState, item._id]);
+            if (isSelected) {
+                return prevState.filter(i => i !== itemId);
+            }
+
+            if (prevState.length >= MAX_SELECTED_BANKS) {
+                showMessage({
+                    message: `You can select up to ${MAX_SELECTED_BANKS} banks only.`,
+                    type: "danger"
+                });
+                return prevState;
+            }
+
+            return [...prevState, itemId];
+        });
     };
 
     const renderItem = ({ item }) => {
-        const isSelected = selectedItems.includes(item._id);
+        const itemId = item?._id || item?.id || item?.value;
+        const isSelected = selectedItems.includes(itemId);
         return (
-            <View key={item._id}>
+            <View>
                 <TouchableOpacity activeOpacity={0.9} onPress={() => handleToggle(item)} style={[styles.Item, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                     <View style={[styles.itemContent, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                         <Image source={{ uri: item.image }} style={[styles.Icon, { marginLeft: isRTL ? wp(2) : 0, marginRight: isRTL ? 0 : wp(2) }]} />
@@ -236,39 +286,43 @@ const Preferences = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
-            <Loader loading={isLoading} />
-            <Header
-                leftIcon
-                onleftIconPress={() => props.navigation.goBack()}
-                title={LocalizedStrings.preferences_title}
-            // rightTitle={props?.route?.params?.key === 'settings' ? '' : LocalizedStrings.skip} 
-            // onPressRightTitle={() => createPreference('skip')}
-            />
+            <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+                <Loader loading={isLoading} />
+                <Header
+                    leftIcon
+                    onleftIconPress={() => props.navigation.goBack()}
+                    title={LocalizedStrings.preferences_title}
+                />
 
-            <ScrollView style={{ flex: 1 }}>
-                <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.PreferenceDes}</Text>
+            <View style={{ flex: 1 }}>
                 <FlatList
                     data={employeeArray}
-                    keyExtractor={(item) => item.name}
+                    keyExtractor={(item) => String(item?._id || item?.id || item?.value || item?.name)}
                     ListHeaderComponent={
-                        <Text style={[styles.titleStyle, { marginBottom: wp(2), textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.select_your_bank}</Text>
+                        <View>
+                            <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.PreferenceDes}</Text>
+                            <Text style={[styles.titleStyle, { marginBottom: wp(2), textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.select_your_bank}</Text>
+                        </View>
                     }
-                    nestedScrollEnabled
                     showsVerticalScrollIndicator={false}
                     renderItem={renderItem}
+                    extraData={selectedItems}
                     contentContainerStyle={{ paddingBottom: wp(5) }}
+                    initialNumToRender={8}
+                    maxToRenderPerBatch={8}
+                    windowSize={5}
+                    removeClippedSubviews={Platform.OS === 'android'}
+                    style={{ flex: 1 }}
                 />
-            </ScrollView>
 
-            <View style={[appStyles.ph20, appStyles.mb5]}>
-                <Button onPress={() => createPreference()}>{isSettingsFlow ? LocalizedStrings.save_changes : LocalizedStrings.continue}</Button>
+                <View style={[appStyles.ph20, appStyles.mb5]}>
+                    <Button onPress={() => createPreference()}>{isSettingsFlow ? LocalizedStrings.save_changes : LocalizedStrings.continue}</Button>
+                </View>
             </View>
 
             <CallModal
                 warningImage={pendingModalShow ? appImages.warning : appImages.tick}
                 modalShow={modalShow || pendingModalShow}
-                // setModalShow={() => [setModalShow(!modalShow), setPendingModalShow(!pendingModalShow), setConfimationModalShow(!confimationModalShow)]}
                 setModalShow={() => console.log('On Back Press')}
                 title={pendingModalShow ? LocalizedStrings['Pending Approval From Admin!'] : modalShow ? LocalizedStrings.profile_created_successfully : LocalizedStrings['Congratulation Your Account has Approved!']}
                 subTitle={LocalizedStrings.modalDes}
@@ -281,8 +335,8 @@ export default Preferences
 
 const styles = StyleSheet.create({
     checbox: {
-        height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
-        width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
+        height: Platform.OS === 'ios' ? heightPixel(15) : heightPixel(20),
+        width: Platform.OS === 'ios' ? widthPixel(15) : widthPixel(30),
     },
     mainTopDes: {
         fontSize: hp(1.6),

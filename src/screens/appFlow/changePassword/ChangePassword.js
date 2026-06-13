@@ -81,7 +81,7 @@ const ChangePassword = (props) => {
             <Loader loading={isLoading} />
             <Header leftIcon onleftIconPress={() => props.navigation.goBack()} title={LocalizedStrings.change_password} />
             <View style={{ flex: 1 }}>
-                <Text style={[styles.mainDes, { marginVertical: wp(5) }]}>{LocalizedStrings.change_password_description}</Text>
+                <Text style={[styles.mainDes, { textAlign: appLanguage == 'en' ? 'left' : 'right', marginVertical: wp(5) }]}>{LocalizedStrings.change_password_description}</Text>
                 <View>
                     <Input
                         placeholder={LocalizedStrings.old_password}
@@ -136,6 +136,5 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistRegular,
         color: colors.descriptionColor,
         lineHeight: 24,
-        textAlign: 'left'
     },
 })

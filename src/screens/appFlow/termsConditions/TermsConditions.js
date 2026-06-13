@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, Platform, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { colors, hp, fontFamily, wp, appIcons } from '../../../services';
+import { colors, hp, fontFamily, wp } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
 import Header from '../../../components/header';
 import { LocalizationContext } from '../../../language/LocalizationContext';
@@ -13,8 +13,30 @@ const TermsConditions = (props) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
-    // Google Docs URL for Terms & Conditions
-    const termsUrl = appLanguage == 'en' ? 'https://docs.google.com/document/d/1Uc2Dk7TuWiw0eLZ-iYgUN_aYTkdBUIr-Ca88A3ncNiU/edit?tab=t.0' : 'https://docs.google.com/document/d/1DxBa4Vr-7xJmLntiYQOiBVJajU5wSArR81DRcLlnf1E/edit?tab=t.0';
+    const termsUrl = appLanguage === 'en'
+        ? 'https://docs.google.com/document/d/1Uc2Dk7TuWiw0eLZ-iYgUN_aYTkdBUIr-Ca88A3ncNiU/export?format=html'
+        : 'https://docs.google.com/document/d/1DxBa4Vr-7xJmLntiYQOiBVJajU5wSArR81DRcLlnf1E/export?format=html';
+
+    const injectedJavaScript = `
+      (function () {
+        var direction = '${isRTL ? 'rtl' : 'ltr'}';
+        var textAlign = '${isRTL ? 'right' : 'left'}';
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        style.appendChild(document.createTextNode(
+          'html, body { direction: ' + direction + ' !important; text-align: ' + textAlign + ' !important; width: 100% !important; max-width: 100% !important; }' +
+          ' body { margin: 0 !important; padding: 0 !important; }' +
+          ' img, table { max-width: 100% !important; }'
+        ));
+        document.head.appendChild(style);
+        ${Platform.OS === 'ios' ? "document.documentElement.style.webkitTextSizeAdjust = '300%';" : ''}
+        document.documentElement.setAttribute('dir', direction);
+        if (document.body) {
+          document.body.setAttribute('dir', direction);
+        }
+        true;
+      })();
+    `;
 
     const handleWebViewLoad = () => {
         setLoading(false);
@@ -27,11 +49,13 @@ const TermsConditions = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, { margin: wp(4), paddingTop: Platform.OS == 'android' ? wp(5) : 0 }]}>
-            <View style={{ flex: 1 }}>
-                <TouchableOpacity activeOpacity={0.9} onPress={() => props.navigation.goBack()} style={{ backgroundColor: 'white', borderRadius: 50, position: "absolute", top: wp(2.5), zIndex: 1, left: wp(1), padding: wp(2), }}>
-                    <Image source={appIcons.back} style={[styles.back]} />
-                </TouchableOpacity>
+        <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, styles.screenContainer, Platform.OS === 'android' ? styles.androidTopPadding : null]}>
+            <View style={styles.content}>
+                <Header
+                    leftIcon
+                    onleftIconPress={() => props.navigation.goBack()}
+                    title={LocalizedStrings.terms}
+                />
 
                 {/* Loading Indicator */}
                 {loading && (
@@ -66,10 +90,12 @@ const TermsConditions = (props) => {
                         onError={handleWebViewError}
                         startInLoadingState={true}
                         scalesPageToFit={true}
+                        textZoom={300}
                         javaScriptEnabled={true}
                         domStorageEnabled={true}
                         allowsInlineMediaPlayback={true}
                         mediaPlaybackRequiresUserAction={false}
+                        injectedJavaScript={injectedJavaScript}
                         onMessage={(event) => {
                             console.log('WebView message:', event.nativeEvent.data);
                         }}
@@ -83,6 +109,16 @@ const TermsConditions = (props) => {
 export default TermsConditions;
 
 const styles = StyleSheet.create({
+    screenContainer: {
+        flex: 1,
+        margin: wp(4),
+    },
+    androidTopPadding: {
+        paddingTop: wp(5),
+    },
+    content: {
+        flex: 1,
+    },
     webView: {
         flex: 1,
         backgroundColor: colors.fullWhite,
@@ -123,10 +159,5 @@ const styles = StyleSheet.create({
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.fullWhite,
-    },
-    back: {
-        width: wp(5),
-        height: wp(5),
-        tintColor: colors.BlackSecondary
     },
 });
