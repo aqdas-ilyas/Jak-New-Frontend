@@ -224,9 +224,10 @@ export default Offer = (props) => {
     const [banks, setBanks] = useState([]);
     const [selectedBank, setSelectedBank] = useState(null);
     const refreshCounterRef = useRef(0);
-    const horizontalListContainerStyle = {
+    const horizontalListContentStyle = {
         flexDirection: 'row',
-        width: '100%',
+        alignItems: 'center',
+        paddingHorizontal: wp(0.5),
     };
 
     useEffect(() => {
@@ -648,16 +649,17 @@ export default Offer = (props) => {
                         </View>
                     </TouchableOpacity>
 
-                    <View style={{ alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
+                    <View style={{ width: '100%', alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
                         <FlatList
                             key={`offer-categories-${isRTL ? 'rtl' : 'ltr'}`}
                             data={checkboxes}
                             horizontal
                             inverted={isRTL}
+                            nestedScrollEnabled
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index.toString()}
                             style={{ width: '100%' }}
-                            contentContainerStyle={horizontalListContainerStyle}
+                            contentContainerStyle={horizontalListContentStyle}
                             renderItem={({ item, index }) => {
                                 return (
                                     item.title != null && (
@@ -668,7 +670,8 @@ export default Offer = (props) => {
                                                 flexDirection: "row",
                                                 alignItems: "center",
                                                 marginHorizontal: wp(1),
-                                                alignSelf: 'flex-start'
+                                                alignSelf: 'flex-start',
+                                                flexShrink: 0,
                                             }}>
                                             <View
                                                 style={[
@@ -690,15 +693,16 @@ export default Offer = (props) => {
 
                     {/* Banks List - Always visible */}
                     {banks.length > 0 && (
-                        <View style={[styles.banksContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+                        <View style={[styles.banksContainer, { width: '100%', alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
                             <FlatList
                                 key={`offer-banks-${isRTL ? 'rtl' : 'ltr'}`}
                                 data={[{ id: 'all', name: LocalizedStrings.All, isAll: true }, ...banks]}
                                 horizontal
                                 inverted={isRTL}
+                                nestedScrollEnabled
                                 showsHorizontalScrollIndicator={false}
                                 style={{ width: '100%' }}
-                                contentContainerStyle={horizontalListContainerStyle}
+                                contentContainerStyle={horizontalListContentStyle}
                                 keyExtractor={(item, index) => item.isAll ? 'bank-all' : `bank-${item.id || index}-${item.name || ''}`}
                                 removeClippedSubviews={false}
                                 initialNumToRender={banks.length + 1}
@@ -711,7 +715,11 @@ export default Offer = (props) => {
                                         <Pressable
                                             key={item.isAll ? 'bank-pressable-all' : `bank-pressable-${item.id || index}`}
                                             onPress={() => handleBankSelect(item.isAll ? null : item)}
-                                            style={{ alignSelf: 'flex-start' }}>
+                                            style={{
+                                                alignSelf: 'flex-start',
+                                                flexShrink: 0,
+                                                marginHorizontal: wp(1),
+                                            }}>
                                             <View style={[
                                                 styles.bankView,
                                                 {
@@ -719,7 +727,6 @@ export default Offer = (props) => {
                                                     borderColor: isSelected ? colors.primaryColor : colors.borderColor,
                                                     borderWidth: 1,
                                                     backgroundColor: isSelected ? colors.primaryColor + '10' : colors.fullWhite,
-                                                    marginHorizontal: wp(1),
                                                     paddingVertical: (item.id == 'all' && appLanguage == 'ar' && Platform.OS == 'android') ? wp(1.3) : wp(0)
                                                 }
                                             ]}>
