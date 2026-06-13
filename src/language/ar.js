@@ -497,7 +497,10 @@ export default {
   profile_updated: 'تم تحديث الملف الشخصي!',
 
   // AirArabia Screen
+  please_enter_valid_loyalty_name: 'يرجى إدخال اسم برنامج الولاء بشكل صحيح',
   please_add_valid_card_number: 'يرجى إضافة رقم بطاقة صحيح',
+  please_add_front_image: 'يرجى إضافة صورة الواجهة الأمامية',
+  please_add_back_image: 'يرجى إضافة صورة الواجهة الخلفية',
   updated_successfully: 'تم التحديث بنجاح',
 
   // SignUp Screen

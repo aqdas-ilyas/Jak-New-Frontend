@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, appImages } from '../../../services'
 import appStyles from '../../../services/utilities/appStyles'
@@ -19,11 +19,7 @@ const AddLoyaltyCard = (props) => {
     const [isLoading, setIsLoading] = useState(false)
     const [imageLoadingStates, setImageLoadingStates] = useState({})
 
-    useEffect(() => {
-        getLoyaltyCards()
-    }, [])
-
-    const getLoyaltyCards = () => {
+    const getLoyaltyCards = useCallback(() => {
         const onSuccess = response => {
             console.log('response getLoyaltyCards===', JSON.stringify(response?.data, ' ', 2));
             setIsLoading(false);
@@ -42,7 +38,11 @@ const AddLoyaltyCard = (props) => {
 
         setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
-    };
+    }, [dispatch, user?._id]);
+
+    useEffect(() => {
+        getLoyaltyCards()
+    }, [getLoyaltyCards])
 
     return (
         <SafeAreaView style={[appStyles.safeContainer, { marginHorizontal: wp(4) }]}>
@@ -59,7 +59,10 @@ const AddLoyaltyCard = (props) => {
                 }
                 renderItem={({ item, index }) => {
                     const imageKey = item?._id || item?.id || index.toString();
-                    const isImageLoading = imageLoadingStates[imageKey] !== undefined ? imageLoadingStates[imageKey] : true;
+                    const hasCardImage = typeof item?.backImage === 'string' && item.backImage.trim().length > 0;
+                    const isImageLoading = hasCardImage
+                        ? (imageLoadingStates[imageKey] !== undefined ? imageLoadingStates[imageKey] : true)
+                        : false;
                     
                     return (
                         <TouchableOpacity onPress={() => props.navigation.navigate(routes.airArabia, { item })} key={index} activeOpacity={0.8} style={{ marginHorizontal: wp(2), marginTop: wp(2) }}>
@@ -69,20 +72,24 @@ const AddLoyaltyCard = (props) => {
                                         <ActivityIndicator size="large" color={colors.primaryColor} />
                                     </View>
                                 )}
-                                <Image 
-                                    source={{ uri: item?.backImage }} 
-                                    style={[styles.imageStyle, { borderRadius: 10 }]}
-                                    onLoadStart={() => {
-                                        setImageLoadingStates(prev => ({ ...prev, [imageKey]: true }));
-                                    }}
-                                    onLoadEnd={() => {
-                                        setImageLoadingStates(prev => ({ ...prev, [imageKey]: false }));
-                                    }}
-                                    onError={() => {
-                                        setImageLoadingStates(prev => ({ ...prev, [imageKey]: false }));
-                                    }}
-                                    resizeMode="cover"
-                                />
+                                {hasCardImage ? (
+                                    <Image
+                                        source={{ uri: item?.backImage }}
+                                        style={[styles.imageStyle, { borderRadius: 10 }]}
+                                        onLoadStart={() => {
+                                            setImageLoadingStates(prev => ({ ...prev, [imageKey]: true }));
+                                        }}
+                                        onLoadEnd={() => {
+                                            setImageLoadingStates(prev => ({ ...prev, [imageKey]: false }));
+                                        }}
+                                        onError={() => {
+                                            setImageLoadingStates(prev => ({ ...prev, [imageKey]: false }));
+                                        }}
+                                        resizeMode="cover"
+                                    />
+                                ) : (
+                                    <View style={[styles.imageStyle, styles.imagePlaceholder]} />
+                                )}
                             </View>
                             <View style={{ position: 'absolute', alignItems: "center", justifyContent: "center", top: 0, left: 0, right: 0, bottom: 0 }}>
                                 <View style={{ backgroundColor: colors.primaryColor, borderRadius: 50, padding: wp(1) }}>
@@ -120,6 +127,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    imagePlaceholder: {
+        backgroundColor: colors.primaryColorOpacity,
+        borderRadius: 10,
     },
     imageText: {
         fontSize: hp(1.6),

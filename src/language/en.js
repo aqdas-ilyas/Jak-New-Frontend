@@ -489,7 +489,10 @@ export default {
   profile_updated: 'Profile Updated!',
 
   // AirArabia Screen
+  please_enter_valid_loyalty_name: 'Please enter a valid Loyalty Program Name',
   please_add_valid_card_number: 'Please add Valid Card Number',
+  please_add_front_image: 'Please add Front Image',
+  please_add_back_image: 'Please add Back Image',
   updated_successfully: 'Updated Successfully',
 
   // SignUp Screen

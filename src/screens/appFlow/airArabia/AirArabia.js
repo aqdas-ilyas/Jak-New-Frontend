@@ -33,24 +33,28 @@ const AddLoyaltyCard = props => {
   const [isUploadingBack, setIsUploadingBack] = useState(false);
 
   const validate = () => {
-    if (/\d/.test(name)) {
+    if (loyaltyName.trim().length < 2) {
       showMessage({
-        message: 'Name can only consists of alphabets between A to Z or a to z',
+        message: LocalizedStrings.please_enter_valid_loyalty_name,
         type: 'danger',
       });
       return false;
     }
 
-    if (loyaltyName.length < 2) {
-      showMessage({
-        message: 'Please select your Date of Birth',
-        type: 'danger',
-      });
-      return false;
-    }
+    const cleanCardNumber = cardNumber.replace(/\s/g, '');
 
-    if (cardNumber.length < 2) {
+    if (cleanCardNumber.length !== 16) {
       showMessage({ message: LocalizedStrings.please_add_valid_card_number, type: 'danger' });
+      return false;
+    }
+
+    if (!frontImage) {
+      showMessage({ message: LocalizedStrings.please_add_front_image, type: 'danger' });
+      return false;
+    }
+
+    if (!backImage) {
+      showMessage({ message: LocalizedStrings.please_add_back_image, type: 'danger' });
       return false;
     }
 
