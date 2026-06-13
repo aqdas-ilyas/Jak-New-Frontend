@@ -53,7 +53,7 @@ const AddLoyaltyCard = props => {
       showMessage({ message: LocalizedStrings.please_add_valid_card_number, type: 'danger' });
       return false;
     }
-    
+
     return true;
   };
 
@@ -271,7 +271,9 @@ const AddLoyaltyCard = props => {
         onleftIconPress={() => props.navigation.goBack()}
         title={LocalizedStrings['new_card']}
       />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={styles.scrollViewContent}
+        contentContainerStyle={styles.scrollContent}>
         {/* <Input
                     value={name}
                     onChangeText={(value) => setName(value)}
@@ -308,12 +310,7 @@ const AddLoyaltyCard = props => {
         </View>
 
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            marginTop: wp(5),
-          }}>
+          style={styles.imageRow}>
           {frontImage != '' ? (
             <View style={styles.imageContainer}>
               <TouchableOpacity
@@ -445,7 +442,7 @@ const AddLoyaltyCard = props => {
             paddingVertical: wp(2),
             alignItems: 'flex-start',
           }}
-          WholeContainer={{ marginTop: -wp(5) }}
+          WholeContainer={styles.notesContainer}
         />
       </ScrollView>
 
@@ -462,6 +459,23 @@ const AddLoyaltyCard = props => {
 export default AddLoyaltyCard;
 
 const styles = StyleSheet.create({
+  scrollViewContent: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: wp(8),
+  },
+  imageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: wp(5),
+    paddingHorizontal: wp(1),
+    // marginBottom: wp(3),
+  },
+  notesContainer: {
+    marginTop: wp(2),
+  },
   cameraBox: {
     backgroundColor: colors.offWhite,
     borderRadius: 12,

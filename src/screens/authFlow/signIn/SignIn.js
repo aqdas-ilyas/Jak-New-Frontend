@@ -899,6 +899,7 @@ const styles = StyleSheet.create({
     marginHorizontal: wp(3),
   },
   checbox: {
+    marginHorizontal: wp(2),
     height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
     width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
   },
