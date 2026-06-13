@@ -4,18 +4,13 @@ import { WebView } from 'react-native-webview';
 import { colors, hp, fontFamily, wp } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
 import Header from '../../../components/header';
+import DocumentViewer from '../../../components/documentViewer';
 import { LocalizationContext } from '../../../language/LocalizationContext';
 import { useRTL } from '../../../language/useRTL';
 
-const TermsConditions = (props) => {
-    const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
-    const { isRTL, rtlStyles } = useRTL();
+const TermsConditionsIOS = ({ termsUrl, LocalizedStrings, rtlStyles, isRTL }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-
-    const termsUrl = appLanguage === 'en'
-        ? 'https://docs.google.com/document/d/1Uc2Dk7TuWiw0eLZ-iYgUN_aYTkdBUIr-Ca88A3ncNiU/export?format=html'
-        : 'https://docs.google.com/document/d/1DxBa4Vr-7xJmLntiYQOiBVJajU5wSArR81DRcLlnf1E/export?format=html';
 
     const injectedJavaScript = `
       (function () {
@@ -29,7 +24,7 @@ const TermsConditions = (props) => {
           ' img, table { max-width: 100% !important; }'
         ));
         document.head.appendChild(style);
-        ${Platform.OS === 'ios' ? "document.documentElement.style.webkitTextSizeAdjust = '300%';" : ''}
+        document.documentElement.style.webkitTextSizeAdjust = '300%';
         document.documentElement.setAttribute('dir', direction);
         if (document.body) {
           document.body.setAttribute('dir', direction);
@@ -49,6 +44,61 @@ const TermsConditions = (props) => {
     };
 
     return (
+        <>
+            {loading && (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={colors.primaryColor} />
+                    <Text style={[styles.loadingText, rtlStyles.textAlign]}>{LocalizedStrings.loading}</Text>
+                </View>
+            )}
+
+            {error && (
+                <View style={styles.errorContainer}>
+                    <Text style={[styles.errorText, rtlStyles.textAlign]}>{LocalizedStrings.error_loading_document}</Text>
+                    <TouchableOpacity
+                        style={styles.retryButton}
+                        onPress={() => {
+                            setLoading(true);
+                            setError(false);
+                        }}
+                    >
+                        <Text style={styles.retryButtonText}>{LocalizedStrings.retry}</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+
+            {!error && (
+                <WebView
+                    source={{ uri: termsUrl }}
+                    style={styles.webView}
+                    onLoad={handleWebViewLoad}
+                    onError={handleWebViewError}
+                    startInLoadingState={true}
+                    scalesPageToFit={true}
+                    textZoom={300}
+                    javaScriptEnabled={true}
+                    domStorageEnabled={true}
+                    allowsInlineMediaPlayback={true}
+                    mediaPlaybackRequiresUserAction={false}
+                    injectedJavaScript={injectedJavaScript}
+                    onMessage={(event) => {
+                        console.log('WebView message:', event.nativeEvent.data);
+                    }}
+                />
+            )}
+        </>
+    );
+};
+
+const TermsConditions = (props) => {
+    const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const { isRTL, rtlStyles } = useRTL();
+
+    const termsUrl = appLanguage === 'en'
+        ? 'https://docs.google.com/document/d/1Uc2Dk7TuWiw0eLZ-iYgUN_aYTkdBUIr-Ca88A3ncNiU/export?format=html'
+        : 'https://docs.google.com/document/d/1DxBa4Vr-7xJmLntiYQOiBVJajU5wSArR81DRcLlnf1E/export?format=html';
+
+    return (
         <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, styles.screenContainer, Platform.OS === 'android' ? styles.androidTopPadding : null]}>
             <View style={styles.content}>
                 <Header
@@ -56,49 +106,18 @@ const TermsConditions = (props) => {
                     onleftIconPress={() => props.navigation.goBack()}
                     title={LocalizedStrings.terms}
                 />
-
-                {/* Loading Indicator */}
-                {loading && (
-                    <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color={colors.primaryColor} />
-                        <Text style={[styles.loadingText, rtlStyles.textAlign]}>{LocalizedStrings.loading}</Text>
-                    </View>
-                )}
-
-                {/* Error Message */}
-                {error && (
-                    <View style={styles.errorContainer}>
-                        <Text style={[styles.errorText, rtlStyles.textAlign]}>{LocalizedStrings.error_loading_document}</Text>
-                        <TouchableOpacity
-                            style={styles.retryButton}
-                            onPress={() => {
-                                setLoading(true);
-                                setError(false);
-                            }}
-                        >
-                            <Text style={styles.retryButtonText}>{LocalizedStrings.retry}</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-
-                {/* WebView */}
-                {!error && (
-                    <WebView
-                        source={{ uri: termsUrl }}
-                        style={styles.webView}
-                        onLoad={handleWebViewLoad}
-                        onError={handleWebViewError}
-                        startInLoadingState={true}
-                        scalesPageToFit={true}
-                        textZoom={300}
-                        javaScriptEnabled={true}
-                        domStorageEnabled={true}
-                        allowsInlineMediaPlayback={true}
-                        mediaPlaybackRequiresUserAction={false}
-                        injectedJavaScript={injectedJavaScript}
-                        onMessage={(event) => {
-                            console.log('WebView message:', event.nativeEvent.data);
-                        }}
+                {Platform.OS === 'android' ? (
+                    <DocumentViewer
+                        documentUrl={termsUrl}
+                        isRTL={isRTL}
+                        localizedStrings={LocalizedStrings}
+                    />
+                ) : (
+                    <TermsConditionsIOS
+                        termsUrl={termsUrl}
+                        LocalizedStrings={LocalizedStrings}
+                        rtlStyles={rtlStyles}
+                        isRTL={isRTL}
                     />
                 )}
             </View>

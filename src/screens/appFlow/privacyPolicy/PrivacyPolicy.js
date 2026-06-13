@@ -1,21 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, Platform, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { colors, hp, fontFamily, wp } from '../../../services';
 import appStyles from '../../../services/utilities/appStyles';
 import Header from '../../../components/header';
+import DocumentViewer from '../../../components/documentViewer';
 import { LocalizationContext } from '../../../language/LocalizationContext';
 import { useRTL } from '../../../language/useRTL';
 
-const PrivacyPolicy = (props) => {
-    const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
-    const { isRTL, rtlStyles } = useRTL();
+const PrivacyPolicyIOS = ({ privacyUrl, LocalizedStrings, rtlStyles, isRTL }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-
-    const privacyUrl = appLanguage === 'en'
-        ? 'https://docs.google.com/document/d/1o7UAJW5lu-1msK-P9KPQJMaRb-z19MgpriQlk00FTuk/export?format=html'
-        : 'https://docs.google.com/document/d/1FNW05ja9X2vjHcAfVHTcgYQH8pPcmockUj76DKN_zok/export?format=html';
 
     const injectedJavaScript = `
       (function () {
@@ -29,7 +24,7 @@ const PrivacyPolicy = (props) => {
           ' img, table { max-width: 100% !important; }'
         ));
         document.head.appendChild(style);
-        ${Platform.OS === 'ios' ? "document.documentElement.style.webkitTextSizeAdjust = '300%';" : ''}
+        document.documentElement.style.webkitTextSizeAdjust = '300%';
         document.documentElement.setAttribute('dir', direction);
         if (document.body) {
           document.body.setAttribute('dir', direction);
@@ -49,6 +44,61 @@ const PrivacyPolicy = (props) => {
     };
 
     return (
+        <>
+            {loading && (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={colors.primaryColor} />
+                    <Text style={[styles.loadingText, rtlStyles.textAlign]}>{LocalizedStrings.loading}</Text>
+                </View>
+            )}
+
+            {error && (
+                <View style={styles.errorContainer}>
+                    <Text style={[styles.errorText, rtlStyles.textAlign]}>{LocalizedStrings.error_loading_document}</Text>
+                    <TouchableOpacity
+                        style={styles.retryButton}
+                        onPress={() => {
+                            setLoading(true);
+                            setError(false);
+                        }}
+                    >
+                        <Text style={styles.retryButtonText}>{LocalizedStrings.retry}</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+
+            {!error && (
+                <WebView
+                    source={{ uri: privacyUrl }}
+                    style={styles.webView}
+                    onLoad={handleWebViewLoad}
+                    onError={handleWebViewError}
+                    startInLoadingState={true}
+                    scalesPageToFit={true}
+                    textZoom={300}
+                    javaScriptEnabled={true}
+                    domStorageEnabled={true}
+                    allowsInlineMediaPlayback={true}
+                    mediaPlaybackRequiresUserAction={false}
+                    injectedJavaScript={injectedJavaScript}
+                    onMessage={(event) => {
+                        console.log('WebView message:', event.nativeEvent.data);
+                    }}
+                />
+            )}
+        </>
+    );
+};
+
+const PrivacyPolicy = (props) => {
+    const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
+    const { isRTL, rtlStyles } = useRTL();
+
+    const privacyUrl = appLanguage === 'en'
+        ? 'https://docs.google.com/document/d/1o7UAJW5lu-1msK-P9KPQJMaRb-z19MgpriQlk00FTuk/export?format=html'
+        : 'https://docs.google.com/document/d/1FNW05ja9X2vjHcAfVHTcgYQH8pPcmockUj76DKN_zok/export?format=html';
+
+    return (
         <SafeAreaView style={[appStyles.safeContainer, rtlStyles.writingDirection, styles.screenContainer, Platform.OS === 'android' ? styles.androidTopPadding : null]}>
             <View style={styles.content}>
                 <Header
@@ -56,49 +106,18 @@ const PrivacyPolicy = (props) => {
                     onleftIconPress={() => props.navigation.goBack()}
                     title={LocalizedStrings.privacy}
                 />
-
-                {/* Loading Indicator */}
-                {loading && (
-                    <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color={colors.primaryColor} />
-                        <Text style={[styles.loadingText, rtlStyles.textAlign]}>{LocalizedStrings.loading}</Text>
-                    </View>
-                )}
-
-                {/* Error Message */}
-                {error && (
-                    <View style={styles.errorContainer}>
-                        <Text style={[styles.errorText, rtlStyles.textAlign]}>{LocalizedStrings.error_loading_document}</Text>
-                        <TouchableOpacity
-                            style={styles.retryButton}
-                            onPress={() => {
-                                setLoading(true);
-                                setError(false);
-                            }}
-                        >
-                            <Text style={styles.retryButtonText}>{LocalizedStrings.retry}</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-
-                {/* WebView */}
-                {!error && (
-                    <WebView
-                        source={{ uri: privacyUrl }}
-                        style={styles.webView}
-                        onLoad={handleWebViewLoad}
-                        onError={handleWebViewError}
-                        startInLoadingState={true}
-                        scalesPageToFit={true}
-                        textZoom={300}
-                        javaScriptEnabled={true}
-                        domStorageEnabled={true}
-                        allowsInlineMediaPlayback={true}
-                        mediaPlaybackRequiresUserAction={false}
-                        injectedJavaScript={injectedJavaScript}
-                        onMessage={(event) => {
-                            console.log('WebView message:', event.nativeEvent.data);
-                        }}
+                {Platform.OS === 'android' ? (
+                    <DocumentViewer
+                        documentUrl={privacyUrl}
+                        isRTL={isRTL}
+                        localizedStrings={LocalizedStrings}
+                    />
+                ) : (
+                    <PrivacyPolicyIOS
+                        privacyUrl={privacyUrl}
+                        LocalizedStrings={LocalizedStrings}
+                        rtlStyles={rtlStyles}
+                        isRTL={isRTL}
                     />
                 )}
             </View>
