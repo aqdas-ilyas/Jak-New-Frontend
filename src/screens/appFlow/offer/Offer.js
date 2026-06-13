@@ -224,20 +224,12 @@ export default Offer = (props) => {
     const [banks, setBanks] = useState([]);
     const [selectedBank, setSelectedBank] = useState(null);
     const refreshCounterRef = useRef(0);
+    const refreshKey = props?.route?.params?.refreshKey;
     const horizontalListContentStyle = {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: wp(0.5),
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            await getMyOfferCategory();
-            await getMyOffers();
-        };
-
-        fetchData();
-    }, []);
 
     // Reset to "All" filter when checkboxes are loaded
     useEffect(() => {
@@ -286,12 +278,12 @@ export default Offer = (props) => {
         setBanks(uniqueBanks);
     };
 
-    const getMyOfferCategory = () => {
+    const getMyOfferCategory = (onComplete = null) => {
         const onSuccess = (response) => {
             console.log('response get Map Category Home===', response?.categories);
             // setIsLoading(false);
 
-            const categories = response?.categories;
+            const categories = Array.isArray(response?.categories) ? response.categories : [];
             const uniqueCategories = Array.from(new Set(categories));
             const formattedCategories = uniqueCategories.map((category, index) => ({
                 id: index + 1,
@@ -307,11 +299,13 @@ export default Offer = (props) => {
 
             formattedCategories.unshift(allItem);
             setCheckboxes(formattedCategories);
+            onComplete?.();
         };
 
         const onError = error => {
             console.log('Error get Map Category Home===', error);
             // setIsLoading(false);
+            onComplete?.();
         };
 
         let endPoint = routs.getMyOffers + `categories?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
@@ -323,7 +317,7 @@ export default Offer = (props) => {
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     }
 
-    const getMyOffers = () => {
+    const getMyOffers = (onComplete = null) => {
         const onSuccess = (response) => {
             console.log('response getMyOffers===', response?.data);
             // Set loading to false immediately when response arrives
@@ -340,11 +334,13 @@ export default Offer = (props) => {
                 setMyOfferFilterArray('')
                 setBanks([]);
             }
+            onComplete?.();
         };
 
         const onError = error => {
             setIsLoading(false);
             console.log('Error getMyOffers===', error);
+            onComplete?.();
         };
 
         const endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
@@ -467,6 +463,37 @@ export default Offer = (props) => {
         setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     };
+
+    // Refetch on first mount and whenever preferences force a refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        let isActive = true;
+        let pendingRequests = 2;
+
+        const markDone = () => {
+            pendingRequests -= 1;
+            if (isActive && pendingRequests <= 0) {
+                setRefreshing(false);
+                setIsLoading(false);
+            }
+        };
+
+        setRefreshing(true);
+        setIsLoading(true);
+        setSelectedBank(null);
+        setMyOfferFilterArray([]);
+        setBanks([]);
+        setCheckboxes([]);
+        dispatch(saveMyOffer([]));
+        dispatch(saveCategoryOffers([]));
+
+        getMyOfferCategory(markDone);
+        getMyOffers(markDone);
+
+        return () => {
+            isActive = false;
+        };
+    }, [refreshKey]);
 
     useEffect(() => {
         const allChecked = checkboxes.find(cb => cb.checked && cb.title === LocalizedStrings.All);
@@ -817,7 +844,7 @@ export default Offer = (props) => {
                         }
                         initialNumToRender={10}
                         ListEmptyComponent={
-                            isLoading ? (
+                            isLoading || refreshing ? (
                                 <View style={styles.emptyContainer}>
                                     <AnimatedLoader />
                                     {/* <Text style={styles.loadingText}>{LocalizedStrings['Loading...'] || 'Loading...'}</Text> */}

@@ -183,11 +183,15 @@ const Preferences = (props) => {
             if (isSettingsFlow) {
                 setModalShow(false)
                 setPendingModalShow(false)
-                if (props?.navigation?.canGoBack?.()) {
-                    props?.navigation?.goBack()
-                } else {
-                    props?.navigation?.navigate(routes.tab, { screen: routes.settings })
-                }
+                props?.navigation?.navigate(routes.tab, {
+                    screen: LocalizedStrings.home,
+                    params: {
+                        screen: routes.offer,
+                        params: {
+                            refreshKey: Date.now(),
+                        },
+                    },
+                })
                 return
             }
 

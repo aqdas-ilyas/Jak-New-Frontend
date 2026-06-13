@@ -117,6 +117,8 @@ export const callApi = async (
             refreshFetchObject,
           );
 
+          console.log('Refresh token API response:', refreshResponse);
+
           if (!refreshResponse.ok) {
             console.log('Refresh token API failed - status:', refreshResponse.status);
             store.dispatch(logout());
