@@ -35,6 +35,10 @@ export default {
   session_expired_title: 'انتهت الجلسة',
   session_expired_message: 'انتهت الجلسة الخاصة بك. يرجى تسجيل الدخول مرة أخرى.',
   session_verification_failed: 'تعذر التحقق من الجلسة الآن. يرجى المحاولة مرة أخرى.',
+  checking_for_updates: 'جارٍ التحقق من التحديثات...',
+  force_update_title: 'يلزم تحديث التطبيق',
+  force_update_message: 'يوجد إصدار أحدث من تطبيق جاك. يرجى تحديث التطبيق للمتابعة.',
+  force_update_button: 'تحديث التطبيق',
 
   // Contact Form
   send_us_message: 'أرسل لنا رسالة',

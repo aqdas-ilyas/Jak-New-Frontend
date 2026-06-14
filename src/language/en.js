@@ -36,6 +36,10 @@ export default {
   session_expired_title: 'Session Expired',
   session_expired_message: 'Your session has expired. Please sign in again.',
   session_verification_failed: 'Unable to verify your session right now. Please try again.',
+  checking_for_updates: 'Checking for updates...',
+  force_update_title: 'Update Required',
+  force_update_message: 'A newer version of Jak is available. Please update the app to continue.',
+  force_update_button: 'Update App',
 
   // Contact Form
   send_us_message: 'Send us a Message',

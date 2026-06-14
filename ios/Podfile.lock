@@ -2012,6 +2012,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-version-check (3.5.0):
+    - React-Core
   - react-native-webview (13.16.0):
     - boost
     - DoubleConversion
@@ -2922,6 +2924,7 @@ DEPENDENCIES:
   - react-native-render-html (from `../node_modules/react-native-render-html`)
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-version-check (from `../node_modules/react-native-version-check`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -3094,6 +3097,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-version-check:
+    :path: "../node_modules/react-native-version-check"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-NativeModulesApple:
@@ -3260,6 +3265,7 @@ SPEC CHECKSUMS:
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: fea29ae0275beaa22f72d0a8be1eb0ab09c3feae
+  react-native-version-check: 54a471d70dadf0f72fc142e70f16e4bf473a91a5
   react-native-webview: 5887b6094417c75a9bee446261f89c32adf6b602
   React-NativeModulesApple: a4af348fce12730a7bc424559e8207b35e6ac046
   React-oscompat: 95875e81f5d4b3c7b2c888d5bd2c9d83450d8bdb
@@ -3311,7 +3317,7 @@ SPEC CHECKSUMS:
   RNShare: 86c49add1c8bf055bb5a8c980b82c5ce0d1a4f7d
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   TOCropViewController: 797deaf39c90e6e9ddd848d88817f6b9a8a09888
-  Yoga: 526f25666395d30c297d53154398ffd249eaf9e1
+  Yoga: 46ff53afcbeda2bae19c85b65e17487c3e3984dd
 
 PODFILE CHECKSUM: 37199445a77399f9d58d120b7a4fd4cab2a6cf97
 

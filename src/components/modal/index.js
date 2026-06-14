@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet, Pressable, Modal, TouchableOpacity } from 'react-native'
-import { appIcons, appImages, colors, fontFamily, fontPixel, heightPixel, hp, widthPixel, wp } from '../../services'
+import { appImages, colors, fontFamily, heightPixel, hp, widthPixel, wp } from '../../services'
 
 export default function CallModal({ 
     warningImage, 
@@ -9,14 +9,23 @@ export default function CallModal({
     title, 
     subTitle, 
     showButtons = false,
+    showCancelButton = true,
+    preventClose = false,
     confirmText = 'Yes',
     cancelText = 'No',
     onConfirm,
     onCancel
 }) {
     return (
-        <Modal style={{ flex: 1 }} statusBarTranslucent animationType="slide" transparent={true} visible={modalShow} onRequestClose={() => setModalShow(false)}>
-            <Pressable style={styles.container} onPress={showButtons ? null : () => setModalShow(false)}>
+        <Modal
+            style={{ flex: 1 }}
+            statusBarTranslucent
+            animationType="slide"
+            transparent={true}
+            visible={modalShow}
+            onRequestClose={preventClose ? () => {} : () => setModalShow(false)}
+        >
+            <Pressable style={styles.container} onPress={showButtons || preventClose ? null : () => setModalShow(false)}>
                 <View style={[styles.doneWrapper]}>
                     <Image source={warningImage ? warningImage : appImages.tick} style={{ resizeMode: "contain", alignSelf: "center", width: widthPixel(80), height: heightPixel(80) }} />
                     <Text style={{ color: colors.BlackSecondary, fontFamily: fontFamily.UrbanistBold, fontSize: hp(2.6), textAlign: "center", marginVertical: wp(5) }}>{title}</Text>
@@ -24,12 +33,14 @@ export default function CallModal({
                     
                     {showButtons && (
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity 
-                                style={[styles.button, styles.cancelButton]} 
-                                onPress={onCancel}
-                            >
-                                <Text style={styles.cancelButtonText}>{cancelText}</Text>
-                            </TouchableOpacity>
+                            {showCancelButton && (
+                                <TouchableOpacity 
+                                    style={[styles.button, styles.cancelButton]} 
+                                    onPress={onCancel}
+                                >
+                                    <Text style={styles.cancelButtonText}>{cancelText}</Text>
+                                </TouchableOpacity>
+                            )}
                             
                             <TouchableOpacity 
                                 style={[styles.button, styles.confirmButton]} 

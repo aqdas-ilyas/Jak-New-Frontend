@@ -39,6 +39,7 @@
     "react-native-confirmation-code-field": "^7.4.0",
     "react-native-date-picker": "^5.0.0",
     "react-native-device-info": "^10.13.1",
+    "react-native-version-check": "^3.5.0",
     "react-native-event-listeners": "^1.0.7",
     "react-native-flash-message": "^0.4.2",
     "react-native-fs": "^2.20.0",

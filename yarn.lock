@@ -6992,6 +6992,13 @@ react-native-device-info@^10.13.1:
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-10.13.1.tgz#f87f44ba7b67933248be10ca302a4f2f6dbbdd4f"
   integrity sha512-j/7Z+Yl9Cesjp8vKaVzbuJQKJSVs4ojXATt5WjwipZ0Ss0mBJjqtbc4x5dfZLmQ4y55VVa7c0v8KHca1iqY/TQ==
 
+react-native-version-check@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-version-check/-/react-native-version-check-3.5.0.tgz#129c5d2bb3abe757c7eec1e3b9ca4c907b960f12"
+  dependencies:
+    lodash "^4.17.21"
+    semver "^6.1.1"
+
 react-native-event-listeners@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/react-native-event-listeners/-/react-native-event-listeners-1.0.7.tgz#486d856dfebf295a7aeda97bc36d1cf81cee0623"
