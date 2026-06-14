@@ -340,6 +340,22 @@
 	[
 		{
 			"backtrace" : 4,
+			"id" : "react_codegen_RNVectorIconsSpec::@479809fae146501fd34d"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCGeolocation::@c3a2d2fea0635581bd06"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNDatePickerSpecs::@c00f981c6e74346c63d4"
+		},
+		{
+			"backtrace" : 4,
 			"id" : "react_codegen_rngesturehandler_codegen::@39f233abcd2c728bc6ec"
 		},
 		{
@@ -365,22 +381,6 @@
 		{
 			"backtrace" : 4,
 			"id" : "react_codegen_RNShareSpec::@e6c4c2b5aedb2ea213b7"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNVectorIconsSpec::@479809fae146501fd34d"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNCGeolocation::@c3a2d2fea0635581bd06"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNDatePickerSpecs::@c00f981c6e74346c63d4"
 		},
 		{
 			"backtrace" : 4,

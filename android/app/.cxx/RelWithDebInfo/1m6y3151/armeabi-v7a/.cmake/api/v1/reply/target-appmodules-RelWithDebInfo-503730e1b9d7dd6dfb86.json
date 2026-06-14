@@ -340,30 +340,6 @@
 	[
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNPermissionsSpec::@7ad697819b753921c957"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNShareSpec::@e6c4c2b5aedb2ea213b7"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNCWebViewSpec::@eb48929f9f7453740a6c"
-		},
-		{
-			"backtrace" : 4,
 			"id" : "react_codegen_RNVectorIconsSpec::@479809fae146501fd34d"
 		},
 		{
@@ -385,6 +361,30 @@
 		{
 			"backtrace" : 4,
 			"id" : "react_codegen_RNCImageCropPickerSpec::@702b02f8d2524609d414"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNPermissionsSpec::@7ad697819b753921c957"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNShareSpec::@e6c4c2b5aedb2ea213b7"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCWebViewSpec::@eb48929f9f7453740a6c"
 		}
 	],
 	"id" : "appmodules::@6890427a1f51a3e7e1df",
