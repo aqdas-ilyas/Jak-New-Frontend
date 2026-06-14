@@ -64,7 +64,8 @@ export default Setting = props => {
   const [subscriptionObj, setSubscriptionObj] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
-  const [toggle, setToggle] = useState(user?.isNotification);
+  const [notificationToggle, setNotificationToggle] = useState(Boolean(user?.isNotification));
+  const [isNotificationSaving, setIsNotificationSaving] = useState(false);
   const [language, setLanguage] = useState(isRTL);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
@@ -82,7 +83,6 @@ export default Setting = props => {
       onpress: () =>
         props.navigation.navigate(routes.preferences, { key: 'settings' }),
     },
-    // { id: 4, name: LocalizedStrings.Notification },
     {
       id: 5,
       name: LocalizedStrings.change_language,
@@ -93,6 +93,11 @@ export default Setting = props => {
       id: 6,
       name: LocalizedStrings.change_password,
       onpress: () => props.navigation.navigate(routes.changePassword),
+    },
+    {
+      id: 4,
+      name: LocalizedStrings.Notification,
+      type: 'notification',
     },
     {
       id: 7,
@@ -132,7 +137,7 @@ export default Setting = props => {
 
   useEffect(() => {
     // getSubscriptions(); // Get User Subscription
-    setToggle(user?.isNotification); // Get Notification is Enabled or Not?
+    setNotificationToggle(Boolean(user?.isNotification)); // Get Notification is Enabled or Not?
     checkBiometricAvailability(); // Check biometric availability
   }, [user]);
 
@@ -357,26 +362,44 @@ export default Setting = props => {
     setAppLanguage(lng);
   };
 
-  const UpdateProfile = e => {
+  const handleNotificationToggle = enabled => {
+    if (!user?._id) {
+      return;
+    }
+
+    const previousValue = notificationToggle;
+    setNotificationToggle(enabled);
+    setIsNotificationSaving(true);
+
     const onSuccess = response => {
-      console.log('Success while UpdateProfile====>', response);
-      setIsLoading(false);
-      dispatch(updateUser({ user: response?.data?.data }));
+      const updatedUser = response?.data?.data;
+      console.log('Success while updating notification setting====>', response);
+      setIsNotificationSaving(false);
+      setNotificationToggle(Boolean(updatedUser?.isNotification ?? enabled));
+      dispatch(updateUser({ user: updatedUser ?? { ...user, isNotification: enabled } }));
+      showMessage({
+        message: enabled ? 'Notifications enabled successfully' : 'Notifications disabled successfully',
+        type: 'success',
+      });
     };
 
     const onError = error => {
-      setIsLoading(false);
-      console.log('error while UpdateProfile====>', error);
+      console.log('error while updating notification setting====>', error);
+      setIsNotificationSaving(false);
+      setNotificationToggle(previousValue);
+      showMessage({
+        message: 'Failed to update notification setting',
+        type: 'danger',
+      });
     };
 
     const method = Method.PATCH;
     const endPoint = routs.updateProfile + `${user?._id}`;
 
     const body = {
-      isNotification: e,
+      isNotification: enabled,
     };
 
-    setIsLoading(true);
     callApi(method, endPoint, body, onSuccess, onError);
   };
 
@@ -482,7 +505,7 @@ export default Setting = props => {
 
           <FlatList
             data={settingsArray}
-            keyExtractor={(item, index) => index}
+            keyExtractor={(item, index) => `${item?.id ?? index}`}
             showsVerticalScrollIndicator={false}
             renderItem={({ item, index }) => {
               return (
@@ -531,14 +554,15 @@ export default Setting = props => {
                     </Text>
                   </Text>
 
-                  {item.name === LocalizedStrings.Notification ? (
+                  {item.type === 'notification' ? (
                     <ToggleSwitch
-                      isOn={toggle}
+                      isOn={notificationToggle}
                       onColor={colors.primaryColor}
                       offColor={colors.borderColor}
                       labelStyle={{ display: 'none' }}
                       size="small"
-                      onToggle={e => [setToggle(e), UpdateProfile(e)]}
+                      onToggle={handleNotificationToggle}
+                      disabled={isNotificationSaving}
                     />
                   ) : item.name == LocalizedStrings.change_language ? (
                     <ToggleSwitch
