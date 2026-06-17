@@ -1,3 +1,4 @@
+// export const BASE_URL = 'http://localhost:4700/api/v1/';
 export const BASE_URL = 'https://api.jak-app.com/api/v1/';
 
 export default {

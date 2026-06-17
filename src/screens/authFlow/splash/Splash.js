@@ -300,6 +300,7 @@ export default function Splash(props) {
         latestVersion: '',
     });
     const bootStartedRef = useRef(false);
+    const splashTimerRef = useRef(null);
 
     // Loading animation values
     const loadingOpacity = useRef(new Animated.Value(0)).current;
@@ -707,12 +708,19 @@ export default function Splash(props) {
         }
 
         // Minimum splash time
-        const minSplashTime = setTimeout(() => {
+        splashTimerRef.current = setTimeout(() => {
             setIsLoading(false);
         }, 1500);
-
-        return () => clearTimeout(minSplashTime);
     }, [isCheckingUpdate, isForceUpdateVisible, islogin, user]);
+
+    useEffect(() => {
+        return () => {
+            if (splashTimerRef.current) {
+                clearTimeout(splashTimerRef.current);
+                splashTimerRef.current = null;
+            }
+        };
+    }, []);
 
     // Handle navigation after API completion and minimum splash time
     useEffect(() => {
