@@ -766,6 +766,11 @@ export default function Splash(props) {
         }
     }, [isCheckingUpdate, isForceUpdateVisible, islogin, biometricEnabled, apiCompleted, biometricChecked, biometricInProgress]);
 
+    useEffect(() => {
+        requestUserPermission()
+        notificationListeners()
+    }, [])
+
     return (
         <>
             <StatusBar
