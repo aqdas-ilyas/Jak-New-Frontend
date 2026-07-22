@@ -1,28 +1,306 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View, ActivityIndicator, StatusBar, Platform, Animated, Easing } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, View, ActivityIndicator, StatusBar, Platform, Animated, Easing, Linking } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
 import { LocalizationContext } from '../../../language/LocalizationContext'
 import { fontFamily } from '../../../services'
-import { hp, routes, wp } from '../../../services/constants'
+import { hp, routes, wp, APP_STORE_LINK, PLAY_STORE_LINK } from '../../../services/constants'
 import { appIcons, appImages } from '../../../services/utilities/assets'
 import { colors } from '../../../services/utilities/colors'
 import { logout, updateUser, migrateState } from '../../../store/reducers/userDataSlice'
 import { saveMyOffer, saveMyOfferPageNo, saveTotalMyOfferPagesCount } from '../../../store/reducers/OfferSlice'
 import ReactNativeBiometrics from 'react-native-biometrics'
+import DeviceInfo from 'react-native-device-info'
+import VersionCheck from 'react-native-version-check'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { notificationListeners, requestUserPermission } from '../../../services/pushNotification';
+import { showMessage } from 'react-native-flash-message'
+import { resolveMessage } from '../../../language/helpers'
+import CallModal from '../../../components/modal'
+
+const UPDATE_CHECK_TIMEOUT_MS = 10000;
+const UPDATE_LOG_PREFIX = '[AppUpdate]';
+
+const waitWithTimeout = (promise, timeoutMs = UPDATE_CHECK_TIMEOUT_MS) => {
+    let timeoutId;
+
+    const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('Update check timed out')), timeoutMs);
+    });
+
+    return Promise.race([
+        Promise.resolve(promise).finally(() => clearTimeout(timeoutId)),
+        timeoutPromise,
+    ]);
+};
+
+const normalizeVersion = (version) =>
+    String(version || '')
+        .split('.')
+        .map(part => {
+            const parsed = parseInt(part, 10);
+            return Number.isNaN(parsed) ? 0 : parsed;
+        });
+
+const isVersionLower = (currentVersion, latestVersion) => {
+    if (!currentVersion || !latestVersion) {
+        return false;
+    }
+
+    const currentParts = normalizeVersion(currentVersion);
+    const latestParts = normalizeVersion(latestVersion);
+    const partsLength = Math.max(currentParts.length, latestParts.length);
+
+    for (let index = 0; index < partsLength; index += 1) {
+        const currentPart = currentParts[index] ?? 0;
+        const latestPart = latestParts[index] ?? 0;
+
+        if (currentPart < latestPart) {
+            return true;
+        }
+
+        if (currentPart > latestPart) {
+            return false;
+        }
+    }
+
+    return false;
+};
+
+const logUpdate = (...args) => {
+    console.log(UPDATE_LOG_PREFIX, ...args);
+};
+
+const getAppStoreId = () => {
+    const match = APP_STORE_LINK.match(/id(\d+)/);
+    return match?.[1] || '';
+};
+
+const getAppStoreCountry = () => {
+    const match = APP_STORE_LINK.match(/apps\.apple\.com\/([a-z]{2})\//i);
+    return (match?.[1] || 'sa').toLowerCase();
+};
+
+const getDirectAppStoreUrl = () => {
+    return APP_STORE_LINK.replace(/^https:/, 'itms-apps:');
+};
+
+const getAndroidStoreUrl = () => {
+    const packageName = VersionCheck.getPackageName?.();
+    if (!packageName) {
+        return PLAY_STORE_LINK;
+    }
+
+    return `market://details?id=${packageName}`;
+};
+
+const fetchAppStoreLookup = async ({ label, url }) => {
+    logUpdate(`iOS lookup request (${label})`, url);
+
+    const response = await waitWithTimeout(fetch(url));
+    const json = await response.json();
+    const result = json?.results?.[0];
+    const latestVersion = result?.version?.trim() || '';
+
+    logUpdate(`iOS lookup response (${label})`, {
+        resultCount: json?.resultCount || 0,
+        trackId: result?.trackId || null,
+        trackName: result?.trackName || '',
+        latestVersion,
+    });
+
+    if (!latestVersion) {
+        return null;
+    }
+
+    return {
+        latestVersion,
+        trackId: result?.trackId || null,
+        trackName: result?.trackName || '',
+        source: label,
+        url,
+    };
+};
+
+// Android version gate uses react-native-version-check against Play Store.
+const getAndroidUpdateInfo = async () => {
+    const currentVersion = VersionCheck.getCurrentVersion?.() || '';
+    const packageName = VersionCheck.getPackageName?.() || '';
+
+    logUpdate('Android update check started', {
+        currentVersion,
+        packageName,
+    });
+
+    const result = await waitWithTimeout(
+        VersionCheck.needUpdate({
+            provider: 'playStore',
+            ignoreErrors: false,
+        })
+    );
+
+    if (!result) {
+        logUpdate('Android update check returned no result, continuing without blocking');
+        return null;
+    }
+
+    logUpdate('Android update check finished', {
+        currentVersion: result.currentVersion || currentVersion,
+        latestVersion: result.latestVersion || '',
+        isNeeded: Boolean(result.isNeeded),
+        storeUrl: getAndroidStoreUrl(),
+    });
+
+    return {
+        isNeeded: Boolean(result.isNeeded),
+        currentVersion: result.currentVersion || VersionCheck.getCurrentVersion?.() || '',
+        latestVersion: result.latestVersion || '',
+        storeUrl: getAndroidStoreUrl(),
+        fallbackStoreUrl: result.storeUrl || PLAY_STORE_LINK,
+    };
+};
+
+// iOS version gate uses react-native-device-info for installed version/build and App Store lookup for latest version.
+const getIosUpdateInfo = async () => {
+    const currentVersion = DeviceInfo.getVersion();
+    const currentBuildNumber = DeviceInfo.getBuildNumber?.();
+    const bundleId = DeviceInfo.getBundleId();
+    const appStoreId = getAppStoreId();
+    const appStoreCountry = getAppStoreCountry();
+
+    logUpdate('iOS update check started', {
+        currentVersion,
+        currentBuildNumber,
+        bundleId,
+        appStoreId,
+        appStoreCountry,
+    });
+
+    if (!appStoreId) {
+        logUpdate('iOS update check skipped because App Store id could not be derived');
+        return null;
+    }
+
+    const lookupAttempts = [
+        {
+            label: 'id-country',
+            url: `https://itunes.apple.com/lookup?id=${appStoreId}&country=${appStoreCountry}`,
+        },
+    ];
+
+    if (bundleId) {
+        lookupAttempts.push({
+            label: 'bundleId-country',
+            url: `https://itunes.apple.com/lookup?bundleId=${encodeURIComponent(bundleId)}&country=${appStoreCountry}`,
+        });
+    }
+
+    lookupAttempts.push({
+        label: 'id-default-countryless',
+        url: `https://itunes.apple.com/lookup?id=${appStoreId}`,
+    });
+
+    let lookupResult = null;
+    for (const attempt of lookupAttempts) {
+        try {
+            lookupResult = await fetchAppStoreLookup(attempt);
+            if (lookupResult?.latestVersion) {
+                break;
+            }
+        } catch (error) {
+            logUpdate(`iOS lookup failed (${attempt.label})`, error);
+        }
+    }
+
+    if (!lookupResult?.latestVersion) {
+        logUpdate('iOS latest version not found after all lookup attempts, allowing app to continue', {
+            currentVersion,
+            currentBuildNumber,
+            bundleId,
+            appStoreId,
+            appStoreCountry,
+        });
+        return {
+            isNeeded: false,
+            currentVersion,
+            latestVersion: '',
+            storeUrl: getDirectAppStoreUrl(),
+            fallbackStoreUrl: APP_STORE_LINK,
+        };
+    }
+
+    const isNeeded = isVersionLower(currentVersion, lookupResult.latestVersion);
+
+    logUpdate('iOS version comparison complete', {
+        currentVersion,
+        currentBuildNumber,
+        latestVersion: lookupResult.latestVersion,
+        isNeeded,
+        lookupSource: lookupResult.source,
+    });
+
+    return {
+        isNeeded,
+        currentVersion,
+        latestVersion: lookupResult.latestVersion,
+        storeUrl: getDirectAppStoreUrl(),
+        fallbackStoreUrl: APP_STORE_LINK,
+    };
+};
+
+const checkForAppUpdate = async () => {
+    logUpdate('Update gate invoked', {
+        platform: Platform.OS,
+    });
+
+    if (Platform.OS === 'android') {
+        return getAndroidUpdateInfo();
+    }
+
+    if (Platform.OS === 'ios') {
+        return getIosUpdateInfo();
+    }
+
+    return null;
+};
+
+const openStoreUrl = async (primaryUrl, fallbackUrl) => {
+    const urls = [primaryUrl, fallbackUrl].filter(Boolean);
+
+    for (const url of urls) {
+        try {
+            logUpdate('Opening store url', url);
+            await Linking.openURL(url);
+            return true;
+        } catch (error) {
+            logUpdate('Failed to open store URL', url, error);
+        }
+    }
+
+    return false;
+};
 
 export default function Splash(props) {
     const dispatch = useDispatch()
     const insets = useSafeAreaInsets();
 
     const { LocalizedStrings, isRTL } = React.useContext(LocalizationContext);
+    const [isCheckingUpdate, setIsCheckingUpdate] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [apiCompleted, setApiCompleted] = useState(false);
     const [biometricChecked, setBiometricChecked] = useState(false);
     const [biometricInProgress, setBiometricInProgress] = useState(false);
+    const [updateState, setUpdateState] = useState({
+        visible: false,
+        storeUrl: '',
+        fallbackStoreUrl: '',
+        currentVersion: '',
+        latestVersion: '',
+    });
+    const bootStartedRef = useRef(false);
+    const splashTimerRef = useRef(null);
 
     // Loading animation values
     const loadingOpacity = useRef(new Animated.Value(0)).current;
@@ -37,6 +315,12 @@ export default function Splash(props) {
     const splash = useSelector(state => state?.user?.splash)
     const user = useSelector(state => state?.user?.user?.user)
     const biometricEnabled = useSelector(state => state?.user?.biometricEnabled || false)
+    const isForceUpdateVisible = updateState.visible;
+    const loadingText = isCheckingUpdate
+        ? (LocalizedStrings.checking_for_updates || 'Checking for updates...')
+        : (biometricInProgress || (!biometricChecked && biometricEnabled && islogin)
+            ? (LocalizedStrings.biometric_app_open_prompt || 'Authenticate to open the app')
+            : (LocalizedStrings.loading || 'Loading'));
 
     console.log("*********** Remember Me *************", islogin)
     console.log("*********** Checking User *************", user)
@@ -92,6 +376,10 @@ export default function Splash(props) {
             if (islogin) {
                 // If biometric check fails for logged in user, logout
                 console.log('Biometric check error for logged in user - logging out');
+                showMessage({
+                    message: LocalizedStrings.biometric_login_error || 'Biometric authentication failed',
+                    type: 'danger',
+                });
                 dispatch(logout());
                 setBiometricChecked(false);
                 props.navigation.replace(routes.login);
@@ -114,7 +402,18 @@ export default function Splash(props) {
 
         const onError = error => {
             console.log('error while getUserProfile====>', error);
-            dispatch(logout())
+            if (
+                error?.status === 401 ||
+                error?.errorType === 'session-expired' ||
+                error?.errorType === 'session-expired-device'
+            ) {
+                return;
+            }
+
+            showMessage({
+                message: resolveMessage(LocalizedStrings, error?.message, LocalizedStrings.session_verification_failed),
+                type: 'danger',
+            });
             setApiCompleted(true);
         };
 
@@ -124,6 +423,14 @@ export default function Splash(props) {
 
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     }
+
+    const handleUpdatePress = async () => {
+        logUpdate('Update button pressed', {
+            currentVersion: updateState.currentVersion,
+            latestVersion: updateState.latestVersion,
+        });
+        await openStoreUrl(updateState.storeUrl, updateState.fallbackStoreUrl);
+    };
 
     const navigateBasedOnUserState = (currentUser) => {
         console.log("*********** Navigating based on user state *************", currentUser);
@@ -186,7 +493,7 @@ export default function Splash(props) {
 
     // Loading animations
     useEffect(() => {
-        if (isLoading || !apiCompleted || !biometricChecked || biometricInProgress) {
+        if (isCheckingUpdate || isLoading || !apiCompleted || !biometricChecked || biometricInProgress) {
             // Slide down and fade in animation
             Animated.parallel([
                 Animated.timing(loadingTranslateY, {
@@ -330,15 +637,67 @@ export default function Splash(props) {
                 }),
             ]).start();
         }
-    }, [isLoading, apiCompleted, biometricChecked, biometricInProgress]);
+    }, [isCheckingUpdate, isLoading, apiCompleted, biometricChecked, biometricInProgress]);
 
     useEffect(() => {
+        let isActive = true;
+
+        const runUpdateCheck = async () => {
+            try {
+                const updateInfo = await checkForAppUpdate();
+                if (!isActive) {
+                    return;
+                }
+
+                if (updateInfo?.isNeeded) {
+                    logUpdate('Update required, showing modal', {
+                        currentVersion: updateInfo.currentVersion,
+                        latestVersion: updateInfo.latestVersion,
+                    });
+                    setUpdateState({
+                        visible: true,
+                        storeUrl: updateInfo.storeUrl,
+                        fallbackStoreUrl: updateInfo.fallbackStoreUrl,
+                        currentVersion: updateInfo.currentVersion || '',
+                        latestVersion: updateInfo.latestVersion || '',
+                    });
+                    return;
+                }
+
+                logUpdate('No update required, continuing to app');
+                setIsCheckingUpdate(false);
+            } catch (error) {
+                logUpdate('Update check failed, allowing app to continue', error);
+                if (isActive) {
+                    setIsCheckingUpdate(false);
+                }
+            }
+        };
+
+        runUpdateCheck();
+
+        return () => {
+            isActive = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        if (isCheckingUpdate || isForceUpdateVisible || bootStartedRef.current) {
+            return;
+        }
+
+        bootStartedRef.current = true;
+
         // Migrate state to ensure new properties exist
         dispatch(migrateState());
 
         dispatch(saveMyOffer(null));
         dispatch(saveTotalMyOfferPagesCount(1));
         dispatch(saveMyOfferPageNo(1));
+
+        // Keep notification setup behind the update gate.
+        requestUserPermission();
+        notificationListeners();
 
         // If user is logged in, get fresh profile data
         if (islogin && user) {
@@ -349,15 +708,26 @@ export default function Splash(props) {
         }
 
         // Minimum splash time
-        const minSplashTime = setTimeout(() => {
+        splashTimerRef.current = setTimeout(() => {
             setIsLoading(false);
         }, 1500);
+    }, [isCheckingUpdate, isForceUpdateVisible, islogin, user]);
 
-        return () => clearTimeout(minSplashTime);
-    }, [])
+    useEffect(() => {
+        return () => {
+            if (splashTimerRef.current) {
+                clearTimeout(splashTimerRef.current);
+                splashTimerRef.current = null;
+            }
+        };
+    }, []);
 
     // Handle navigation after API completion and minimum splash time
     useEffect(() => {
+        if (isCheckingUpdate || isForceUpdateVisible) {
+            return;
+        }
+
         if (!isLoading && apiCompleted && biometricChecked) {
             console.log("*********** Starting navigation *************");
             console.log("Navigation conditions - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
@@ -372,10 +742,14 @@ export default function Splash(props) {
         } else {
             console.log("Navigation blocked - isLoading:", isLoading, "apiCompleted:", apiCompleted, "biometricChecked:", biometricChecked);
         }
-    }, [isLoading, apiCompleted, biometricChecked, user]);
+    }, [isCheckingUpdate, isForceUpdateVisible, isLoading, apiCompleted, biometricChecked, user]);
 
     // Check biometric authentication - mandatory for logged in users, optional for logged out users
     useEffect(() => {
+        if (isCheckingUpdate || isForceUpdateVisible) {
+            return;
+        }
+
         // Only run biometric check once when conditions are met and not already in progress
         if (islogin && biometricEnabled && apiCompleted && !biometricChecked && !biometricInProgress) {
             // User is logged in and biometric is enabled - MANDATORY biometric check
@@ -390,7 +764,7 @@ export default function Splash(props) {
             console.log('Skipping biometric check - biometricEnabled:', biometricEnabled, 'islogin:', islogin);
             setBiometricChecked(true);
         }
-    }, [islogin, biometricEnabled, apiCompleted, biometricChecked, biometricInProgress]);
+    }, [isCheckingUpdate, isForceUpdateVisible, islogin, biometricEnabled, apiCompleted, biometricChecked, biometricInProgress]);
 
     useEffect(() => {
         requestUserPermission()
@@ -414,18 +788,13 @@ export default function Splash(props) {
                             transform: [{ translateY: loadingTranslateY }],
                         },
                     ]}
-                    pointerEvents={(isLoading || !apiCompleted || !biometricChecked || biometricInProgress) ? 'auto' : 'none'}
+                    pointerEvents={(isCheckingUpdate || isLoading || !apiCompleted || !biometricChecked || biometricInProgress) ? 'auto' : 'none'}
                 >
                     <View style={[styles.loadingContent, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                         <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
                             <ActivityIndicator size="small" color={colors.primaryColor} />
                         </Animated.View>
-                        <Text style={styles.loadingText}>
-                            {biometricInProgress || (!biometricChecked && biometricEnabled && islogin)
-                                ? (LocalizedStrings.biometric_app_open_prompt || 'Authenticate to open the app')
-                                : (LocalizedStrings.loading || 'Loading')
-                            }
-                        </Text>
+                        <Text style={styles.loadingText}>{loadingText}</Text>
                         {/* Animated dots */}
                         <View style={styles.dotsContainer}>
                             <Animated.View style={[styles.dot, { opacity: dot1Opacity }]} />
@@ -442,6 +811,19 @@ export default function Splash(props) {
                     <Text style={[styles.logoText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Jak App']}</Text>
                     <Text style={[styles.promotionText, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings['Your one stop app for your promotions.']}</Text>
                 </View>
+
+                <CallModal
+                    modalShow={isForceUpdateVisible}
+                    setModalShow={() => {}}
+                    warningImage={appImages.warning}
+                    title={LocalizedStrings.force_update_title || 'Update Required'}
+                    subTitle={LocalizedStrings.force_update_message || 'A newer version of Jak is available. Please update the app to continue.'}
+                    showButtons={true}
+                    showCancelButton={false}
+                    preventClose={true}
+                    confirmText={LocalizedStrings.force_update_button || 'Update App'}
+                    onConfirm={handleUpdatePress}
+                />
             </ImageBackground>
         </>
     )

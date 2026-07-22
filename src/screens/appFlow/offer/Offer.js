@@ -224,15 +224,12 @@ export default Offer = (props) => {
     const [banks, setBanks] = useState([]);
     const [selectedBank, setSelectedBank] = useState(null);
     const refreshCounterRef = useRef(0);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            await getMyOfferCategory();
-            await getMyOffers();
-        };
-
-        fetchData();
-    }, []);
+    const refreshKey = props?.route?.params?.refreshKey;
+    const horizontalListContentStyle = {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: wp(0.5),
+    };
 
     // Reset to "All" filter when checkboxes are loaded
     useEffect(() => {
@@ -281,12 +278,12 @@ export default Offer = (props) => {
         setBanks(uniqueBanks);
     };
 
-    const getMyOfferCategory = () => {
+    const getMyOfferCategory = (onComplete = null) => {
         const onSuccess = (response) => {
             console.log('response get Map Category Home===', response?.categories);
             // setIsLoading(false);
 
-            const categories = response?.categories;
+            const categories = Array.isArray(response?.categories) ? response.categories : [];
             const uniqueCategories = Array.from(new Set(categories));
             const formattedCategories = uniqueCategories.map((category, index) => ({
                 id: index + 1,
@@ -302,11 +299,13 @@ export default Offer = (props) => {
 
             formattedCategories.unshift(allItem);
             setCheckboxes(formattedCategories);
+            onComplete?.();
         };
 
         const onError = error => {
             console.log('Error get Map Category Home===', error);
             // setIsLoading(false);
+            onComplete?.();
         };
 
         let endPoint = routs.getMyOffers + `categories?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
@@ -318,7 +317,7 @@ export default Offer = (props) => {
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     }
 
-    const getMyOffers = () => {
+    const getMyOffers = (onComplete = null) => {
         const onSuccess = (response) => {
             console.log('response getMyOffers===', response?.data);
             // Set loading to false immediately when response arrives
@@ -335,11 +334,13 @@ export default Offer = (props) => {
                 setMyOfferFilterArray('')
                 setBanks([]);
             }
+            onComplete?.();
         };
 
         const onError = error => {
             setIsLoading(false);
             console.log('Error getMyOffers===', error);
+            onComplete?.();
         };
 
         const endPoint = routs.getMyOffers + `user/all?language=${appLanguage === 'ar' ? 'arabic' : 'english'}`
@@ -462,6 +463,37 @@ export default Offer = (props) => {
         setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
     };
+
+    // Refetch on first mount and whenever preferences force a refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        let isActive = true;
+        let pendingRequests = 2;
+
+        const markDone = () => {
+            pendingRequests -= 1;
+            if (isActive && pendingRequests <= 0) {
+                setRefreshing(false);
+                setIsLoading(false);
+            }
+        };
+
+        setRefreshing(true);
+        setIsLoading(true);
+        setSelectedBank(null);
+        setMyOfferFilterArray([]);
+        setBanks([]);
+        setCheckboxes([]);
+        dispatch(saveMyOffer([]));
+        dispatch(saveCategoryOffers([]));
+
+        getMyOfferCategory(markDone);
+        getMyOffers(markDone);
+
+        return () => {
+            isActive = false;
+        };
+    }, [refreshKey]);
 
     useEffect(() => {
         const allChecked = checkboxes.find(cb => cb.checked && cb.title === LocalizedStrings.All);
@@ -613,17 +645,21 @@ export default Offer = (props) => {
 
                 <View style={styles.tabTopView}>
                     <TouchableOpacity
-                        activeOpacity={0.8}
+                        activeOpacity={1}
                         onPress={() => props.navigation.navigate(routes.search, { discount: '', location: '', category: getCheckedLocalizedStrings() })}
                         style={styles.searchContainer}
                     >
-                        <View style={styles.searchView}>
+                        <View style={[styles.searchView, rtlStyles.row, isRTL && styles.searchViewRTL]}>
                             <Image
                                 source={appIcons.search}
-                                style={[styles.searchIcon, { tintColor: colors.BlackSecondary }]}
+                                style={[
+                                    styles.searchIcon,
+                                    isRTL ? styles.searchIconRTL : styles.searchIconLTR,
+                                    { tintColor: colors.BlackSecondary }
+                                ]}
                                 resizeMode="contain"
                             />
-                            <Text style={[styles.searchPlaceholder, rtlStyles.writingDirection]}>
+                            <Text style={[styles.searchPlaceholder, rtlStyles.writingDirection, rtlStyles.textAlign]}>
                                 {LocalizedStrings.search}
                             </Text>
                             {/* <TouchableOpacity 
@@ -640,15 +676,17 @@ export default Offer = (props) => {
                         </View>
                     </TouchableOpacity>
 
-                    <View style={{ alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
+                    <View style={{ width: '100%', alignItems: isRTL ? 'flex-end' : 'flex-start' }}>
                         <FlatList
+                            key={`offer-categories-${isRTL ? 'rtl' : 'ltr'}`}
                             data={checkboxes}
                             horizontal
+                            inverted={isRTL}
+                            nestedScrollEnabled
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index.toString()}
-                            contentContainerStyle={{
-                                flexDirection: isRTL ? 'row-reverse' : 'row'
-                            }}
+                            style={{ width: '100%' }}
+                            contentContainerStyle={horizontalListContentStyle}
                             renderItem={({ item, index }) => {
                                 return (
                                     item.title != null && (
@@ -656,10 +694,11 @@ export default Offer = (props) => {
                                             key={index}
                                             onPress={() => handleCheckboxChange(item.id)}
                                             style={{
-                                                flexDirection: isRTL ? "row-reverse" : "row",
+                                                flexDirection: "row",
                                                 alignItems: "center",
                                                 marginHorizontal: wp(1),
-                                                alignSelf: isRTL ? 'flex-end' : 'flex-start'
+                                                alignSelf: 'flex-start',
+                                                flexShrink: 0,
                                             }}>
                                             <View
                                                 style={[
@@ -667,7 +706,7 @@ export default Offer = (props) => {
                                                     {
                                                         borderColor: item.checked ? colors.primaryColor : colors.borderColor,
                                                         borderWidth: 1,
-                                                        flexDirection: isRTL ? "row-reverse" : "row"
+                                                        flexDirection: "row"
                                                     }
                                                 ]}>
                                                 <Text style={[styles.filterText, { textAlign: isRTL ? 'right' : 'left' }]}>{item.title}</Text>
@@ -681,14 +720,16 @@ export default Offer = (props) => {
 
                     {/* Banks List - Always visible */}
                     {banks.length > 0 && (
-                        <View style={[styles.banksContainer, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
+                        <View style={[styles.banksContainer, { width: '100%', alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
                             <FlatList
+                                key={`offer-banks-${isRTL ? 'rtl' : 'ltr'}`}
                                 data={[{ id: 'all', name: LocalizedStrings.All, isAll: true }, ...banks]}
                                 horizontal
+                                inverted={isRTL}
+                                nestedScrollEnabled
                                 showsHorizontalScrollIndicator={false}
-                                contentContainerStyle={{
-                                    flexDirection: isRTL ? 'row-reverse' : 'row'
-                                }}
+                                style={{ width: '100%' }}
+                                contentContainerStyle={horizontalListContentStyle}
                                 keyExtractor={(item, index) => item.isAll ? 'bank-all' : `bank-${item.id || index}-${item.name || ''}`}
                                 removeClippedSubviews={false}
                                 initialNumToRender={banks.length + 1}
@@ -701,15 +742,18 @@ export default Offer = (props) => {
                                         <Pressable
                                             key={item.isAll ? 'bank-pressable-all' : `bank-pressable-${item.id || index}`}
                                             onPress={() => handleBankSelect(item.isAll ? null : item)}
-                                            style={{ alignSelf: isRTL ? 'flex-end' : 'flex-start' }}>
+                                            style={{
+                                                alignSelf: 'flex-start',
+                                                flexShrink: 0,
+                                                marginHorizontal: wp(1),
+                                            }}>
                                             <View style={[
                                                 styles.bankView,
                                                 {
-                                                    flexDirection: isRTL ? 'row-reverse' : 'row',
+                                                    flexDirection: 'row',
                                                     borderColor: isSelected ? colors.primaryColor : colors.borderColor,
                                                     borderWidth: 1,
                                                     backgroundColor: isSelected ? colors.primaryColor + '10' : colors.fullWhite,
-                                                    marginHorizontal: wp(1),
                                                     paddingVertical: (item.id == 'all' && appLanguage == 'ar' && Platform.OS == 'android') ? wp(1.3) : wp(0)
                                                 }
                                             ]}>
@@ -800,7 +844,7 @@ export default Offer = (props) => {
                         }
                         initialNumToRender={10}
                         ListEmptyComponent={
-                            isLoading ? (
+                            isLoading || refreshing ? (
                                 <View style={styles.emptyContainer}>
                                     <AnimatedLoader />
                                     {/* <Text style={styles.loadingText}>{LocalizedStrings['Loading...'] || 'Loading...'}</Text> */}
@@ -831,7 +875,6 @@ const styles = StyleSheet.create({
         marginVertical: wp(2),
     },
     searchView: {
-        flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: colors.fullWhite,
         borderRadius: 15,
@@ -847,10 +890,18 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
+    searchViewRTL: {
+        paddingVertical: wp(2),
+    },
     searchIcon: {
         width: wp(5),
         height: wp(5),
+    },
+    searchIconLTR: {
         marginRight: wp(3),
+    },
+    searchIconRTL: {
+        marginLeft: wp(3),
     },
     searchPlaceholder: {
         flex: 1,

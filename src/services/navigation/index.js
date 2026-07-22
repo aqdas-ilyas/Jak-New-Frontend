@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { EventRegister } from 'react-native-event-listeners';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, DefaultTheme, CommonActions } from '@react-navigation/native';
-import { colors, routes, wp } from '..';
+import { routes, wp } from '../constants';
+import { colors } from '../utilities';
 import { AuthNavigation } from './authFlow';
 import themeContext from '../config/themeContext';
 import theme from '../config/theme';
@@ -10,7 +11,10 @@ import { TabNavigation } from './tabFlow';
 import * as App from '../../screens/appFlow';
 import * as Auth from '../../screens/authFlow';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import FlashMessage from 'react-native-flash-message';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
+import { LocalizationContext } from '../../language/LocalizationContext';
+import { store } from '../../store/store';
+import { logout } from '../../store/reducers/userDataSlice';
 
 const MyStack = createNativeStackNavigator();
 
@@ -18,6 +22,9 @@ export const MainNavigator = () => {
   const [mode, setMode] = useState();
   const insets = useSafeAreaInsets();
   const navigationRef = useRef(null);
+  const { LocalizedStrings } = React.useContext(LocalizationContext);
+  const sessionExpiredTitle = LocalizedStrings.session_expired_title || 'Session Expired';
+  const sessionExpiredMessage = LocalizedStrings.session_expired_message || 'Your session has expired. Please sign in again.';
 
   const paddedContentStyle = useMemo(() => ({
     backgroundColor: colors.fullWhite,
@@ -29,9 +36,16 @@ export const MainNavigator = () => {
     
     // Listen for force logout event
     let logoutEventListener = EventRegister.addEventListener('forceLogout', () => {
-      // Use setTimeout to ensure navigation is ready and avoid iOS crash
+      showMessage({
+        message: sessionExpiredTitle,
+        description: sessionExpiredMessage,
+        type: 'danger',
+        duration: 3500,
+      });
+
       setTimeout(() => {
         try {
+          store.dispatch(logout());
           if (navigationRef.current?.isReady()) {
             const currentRoute = navigationRef.current?.getCurrentRoute();
             // Only navigate if we're not already on auth screen
@@ -47,14 +61,14 @@ export const MainNavigator = () => {
         } catch (error) {
           console.log('Navigation error during force logout:', error);
         }
-      }, 100);
+      }, 1200);
     });
 
     return () => {
       EventRegister.removeEventListener(themeEventListener);
       EventRegister.removeEventListener(logoutEventListener);
     };
-  }, []);
+  }, [sessionExpiredMessage, sessionExpiredTitle]);
 
   const MyTheme = {
     ...DefaultTheme,

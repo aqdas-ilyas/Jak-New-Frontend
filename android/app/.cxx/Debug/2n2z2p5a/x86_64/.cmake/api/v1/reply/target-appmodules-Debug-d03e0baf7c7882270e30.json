@@ -1,0 +1,965 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/Debug/2n2z2p5a/obj/x86_64/libappmodules.so"
+		}
+	],
+	"backtrace" : 3,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"include",
+			"target_link_libraries",
+			"target_compile_options",
+			"target_compile_reactnative_options",
+			"target_compile_definitions",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake",
+			"CMakeLists.txt",
+			"/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native/ReactCommon/cmake-utils/react-native-flags.cmake",
+			"/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+			"/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 31,
+				"parent" : 0
+			},
+			{
+				"file" : 0,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 64,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 95,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 81,
+				"parent" : 2
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 71,
+				"parent" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 30,
+				"parent" : 6
+			},
+			{
+				"command" : 5,
+				"file" : 2,
+				"line" : 33,
+				"parent" : 6
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 66,
+				"parent" : 2
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 6,
+				"file" : 3,
+				"line" : 62,
+				"parent" : 10
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 6,
+				"file" : 4,
+				"line" : 85,
+				"parent" : 12
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "-Werror"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "-fexceptions"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "-frtti"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "-std=c++20"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "-DFOLLY_NO_CONFIG=1"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "-DLOG_TAG=\\\"ReactNative\\\""
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_CLOCK_GETTIME=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_USE_LIBCPP=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_CFG_NO_COROUTINES=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_MOBILE=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_RECVMMSG=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_PTHREAD=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_XSI_STRERROR_R=1"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 8,
+					"define" : "RN_SERIALIZABLE_STATE"
+				},
+				{
+					"define" : "appmodules_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 9,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/generated/autolinking/src/main/jni"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-screens/android/src/main/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/react/renderer/components/RNVectorIconsSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/react/renderer/components/rnasyncstorage"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-community/geolocation/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-community/geolocation/android/build/generated/source/codegen/jni/react/renderer/components/RNCGeolocation"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-date-picker/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-date-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNDatePickerSpecs"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/react/renderer/components/rngesturehandler_codegen"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-localize/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-localize/android/build/generated/source/codegen/jni/react/renderer/components/RNLocalizeSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-permissions/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-permissions/android/build/generated/source/codegen/jni/react/renderer/components/RNPermissionsSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni/../../../../common/cpp"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni/../../../build/generated/source/codegen/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/safeareacontext"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-screens/android/src/main/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-screens/android/src/main/jni/../../../../common/cpp"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnscreens"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-share/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-share/android/build/generated/source/codegen/jni/react/renderer/components/RNShareSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-webview/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-webview/android/build/generated/source/codegen/jni/react/renderer/components/RNCWebViewSpec"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/aqdas/.gradle/caches/9.0.0/transforms/9da3c9ab4a72a9b749adc29775354b14/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/aqdas/.gradle/caches/9.0.0/transforms/6ec4e7717edfe0130c9aa77d8dca9b67/transformed/jetified-react-android-0.82.1-debug/prefab/modules/jsi/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/aqdas/.gradle/caches/9.0.0/transforms/6ec4e7717edfe0130c9aa77d8dca9b67/transformed/jetified-react-android-0.82.1-debug/prefab/modules/reactnative/include"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			],
+			"sysroot" : 
+			{
+				"path" : "/Users/aqdas/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/sysroot"
+			}
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCGeolocation::@c3a2d2fea0635581bd06"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNVectorIconsSpec::@479809fae146501fd34d"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNDatePickerSpecs::@c00f981c6e74346c63d4"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rngesturehandler_codegen::@39f233abcd2c728bc6ec"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCImageCropPickerSpec::@702b02f8d2524609d414"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNPermissionsSpec::@7ad697819b753921c957"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNShareSpec::@e6c4c2b5aedb2ea213b7"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCWebViewSpec::@eb48929f9f7453740a6c"
+		}
+	],
+	"id" : "appmodules::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-Wl,-z,max-page-size=16384 -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/Debug/2n2z2p5a/obj/x86_64/libreact_codegen_safeareacontext.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/Debug/2n2z2p5a/obj/x86_64/libreact_codegen_rnscreens.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/aqdas/.gradle/caches/9.0.0/transforms/9da3c9ab4a72a9b749adc29775354b14/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/libs/android.x86_64/libfbjni.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/aqdas/.gradle/caches/9.0.0/transforms/6ec4e7717edfe0130c9aa77d8dca9b67/transformed/jetified-react-android-0.82.1-debug/prefab/modules/jsi/libs/android.x86_64/libjsi.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/aqdas/.gradle/caches/9.0.0/transforms/6ec4e7717edfe0130c9aa77d8dca9b67/transformed/jetified-react-android-0.82.1-debug/prefab/modules/reactnative/libs/android.x86_64/libreactnative.so",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-latomic -lm",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX",
+		"sysroot" : 
+		{
+			"path" : "/Users/aqdas/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/sysroot"
+		}
+	},
+	"name" : "appmodules",
+	"nameOnDisk" : "libappmodules.so",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		},
+		{
+			"name" : "Object Libraries",
+			"sourceIndexes" : 
+			[
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				48,
+				49,
+				50,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 3,
+			"compileGroupIndex" : 0,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 3,
+			"compileGroupIndex" : 0,
+			"path" : "OnLoad.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/RNVectorIconsSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/RNVectorIconsSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/rnasyncstorageJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/rnasyncstorage-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCGeolocation_autolinked_build/CMakeFiles/react_codegen_RNCGeolocation.dir/RNCGeolocation-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCGeolocation_autolinked_build/CMakeFiles/react_codegen_RNCGeolocation.dir/react/renderer/components/RNCGeolocation/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCGeolocation_autolinked_build/CMakeFiles/react_codegen_RNCGeolocation.dir/react/renderer/components/RNCGeolocation/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCGeolocation_autolinked_build/CMakeFiles/react_codegen_RNCGeolocation.dir/react/renderer/components/RNCGeolocation/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCGeolocation_autolinked_build/CMakeFiles/react_codegen_RNCGeolocation.dir/react/renderer/components/RNCGeolocation/RNCGeolocationJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCGeolocation_autolinked_build/CMakeFiles/react_codegen_RNCGeolocation.dir/react/renderer/components/RNCGeolocation/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCGeolocation_autolinked_build/CMakeFiles/react_codegen_RNCGeolocation.dir/react/renderer/components/RNCGeolocation/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/RNDatePickerSpecs-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/RNDatePickerSpecsJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/rngesturehandler_codegenJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/rngesturehandler_codegen-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCImageCropPickerSpec_autolinked_build/CMakeFiles/react_codegen_RNCImageCropPickerSpec.dir/RNCImageCropPickerSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCImageCropPickerSpec_autolinked_build/CMakeFiles/react_codegen_RNCImageCropPickerSpec.dir/react/renderer/components/RNCImageCropPickerSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCImageCropPickerSpec_autolinked_build/CMakeFiles/react_codegen_RNCImageCropPickerSpec.dir/react/renderer/components/RNCImageCropPickerSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCImageCropPickerSpec_autolinked_build/CMakeFiles/react_codegen_RNCImageCropPickerSpec.dir/react/renderer/components/RNCImageCropPickerSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCImageCropPickerSpec_autolinked_build/CMakeFiles/react_codegen_RNCImageCropPickerSpec.dir/react/renderer/components/RNCImageCropPickerSpec/RNCImageCropPickerSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCImageCropPickerSpec_autolinked_build/CMakeFiles/react_codegen_RNCImageCropPickerSpec.dir/react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCImageCropPickerSpec_autolinked_build/CMakeFiles/react_codegen_RNCImageCropPickerSpec.dir/react/renderer/components/RNCImageCropPickerSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNLocalizeSpec_autolinked_build/CMakeFiles/react_codegen_RNLocalizeSpec.dir/RNLocalizeSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNLocalizeSpec_autolinked_build/CMakeFiles/react_codegen_RNLocalizeSpec.dir/react/renderer/components/RNLocalizeSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNLocalizeSpec_autolinked_build/CMakeFiles/react_codegen_RNLocalizeSpec.dir/react/renderer/components/RNLocalizeSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNLocalizeSpec_autolinked_build/CMakeFiles/react_codegen_RNLocalizeSpec.dir/react/renderer/components/RNLocalizeSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNLocalizeSpec_autolinked_build/CMakeFiles/react_codegen_RNLocalizeSpec.dir/react/renderer/components/RNLocalizeSpec/RNLocalizeSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNLocalizeSpec_autolinked_build/CMakeFiles/react_codegen_RNLocalizeSpec.dir/react/renderer/components/RNLocalizeSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNLocalizeSpec_autolinked_build/CMakeFiles/react_codegen_RNLocalizeSpec.dir/react/renderer/components/RNLocalizeSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNPermissionsSpec_autolinked_build/CMakeFiles/react_codegen_RNPermissionsSpec.dir/RNPermissionsSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNPermissionsSpec_autolinked_build/CMakeFiles/react_codegen_RNPermissionsSpec.dir/react/renderer/components/RNPermissionsSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNPermissionsSpec_autolinked_build/CMakeFiles/react_codegen_RNPermissionsSpec.dir/react/renderer/components/RNPermissionsSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNPermissionsSpec_autolinked_build/CMakeFiles/react_codegen_RNPermissionsSpec.dir/react/renderer/components/RNPermissionsSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNPermissionsSpec_autolinked_build/CMakeFiles/react_codegen_RNPermissionsSpec.dir/react/renderer/components/RNPermissionsSpec/RNPermissionsSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNPermissionsSpec_autolinked_build/CMakeFiles/react_codegen_RNPermissionsSpec.dir/react/renderer/components/RNPermissionsSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNPermissionsSpec_autolinked_build/CMakeFiles/react_codegen_RNPermissionsSpec.dir/react/renderer/components/RNPermissionsSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNShareSpec_autolinked_build/CMakeFiles/react_codegen_RNShareSpec.dir/RNShareSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNShareSpec_autolinked_build/CMakeFiles/react_codegen_RNShareSpec.dir/react/renderer/components/RNShareSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNShareSpec_autolinked_build/CMakeFiles/react_codegen_RNShareSpec.dir/react/renderer/components/RNShareSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNShareSpec_autolinked_build/CMakeFiles/react_codegen_RNShareSpec.dir/react/renderer/components/RNShareSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNShareSpec_autolinked_build/CMakeFiles/react_codegen_RNShareSpec.dir/react/renderer/components/RNShareSpec/RNShareSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNShareSpec_autolinked_build/CMakeFiles/react_codegen_RNShareSpec.dir/react/renderer/components/RNShareSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNShareSpec_autolinked_build/CMakeFiles/react_codegen_RNShareSpec.dir/react/renderer/components/RNShareSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/RNCWebViewSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/RNCWebViewSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

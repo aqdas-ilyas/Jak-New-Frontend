@@ -17,7 +17,7 @@ import { callApi, Method } from '../../../api/apiCaller';
 import { Loader } from '../../../components/loader/Loader';
 import { isPossiblePhoneNumber } from 'libphonenumber-js'
 import { useDispatch, useSelector } from 'react-redux';
-import { setToken, updateUser } from '../../../store/reducers/userDataSlice';
+import { setToken, updateUser, saveLoginRemember } from '../../../store/reducers/userDataSlice';
 import { showMessage } from 'react-native-flash-message';
 import { getDeviceId } from 'react-native-device-info';
 import { _fetchCountryAbbrevicationCode } from '../../../services/helpingMethods';
@@ -230,6 +230,7 @@ const CreateProfile = (props) => {
                 token: response?.data?.token,
                 refreshToken: response?.data?.refreshToken,
             }))
+            dispatch(saveLoginRemember(true))
 
             // props?.navigation?.navigate(routes.preferences);
             props.navigation.replace(routes.tab, { screen: routes.home })

@@ -14,11 +14,12 @@
       android:icon="@mipmap/ic_launcher"
       android:allowBackup="false"
       android:theme="@style/AppTheme"
-      android:usesCleartextTraffic="true">
+      android:usesCleartextTraffic="true"
+      android:supportsRtl="true"
+      android:enableOnBackInvokedCallback="false">
       <meta-data  
        android:name="com.google.android.geo.API_KEY" 
        android:value="AIzaSyCv3ww-4pSHJ0K9JXyQ6G64cf0uKfERgD8"/>
-
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

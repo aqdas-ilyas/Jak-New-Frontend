@@ -15,9 +15,10 @@ import routs from '../../../api/routs'
 import { Loader } from '../../../components/loader/Loader'
 import { getDeviceId } from 'react-native-device-info'
 import { useDispatch } from 'react-redux'
-import { updateUser, setToken } from '../../../store/reducers/userDataSlice'
+import { updateUser, setToken, saveLoginRemember } from '../../../store/reducers/userDataSlice'
 import { resolveMessage } from '../../../language/helpers';
 import { store } from '../../../store/store'
+import { CommonActions } from '@react-navigation/native'
 
 const SendOtp = (props) => {
     const { number, email, key } = props?.route?.params ?? {}
@@ -55,6 +56,7 @@ const SendOtp = (props) => {
                         token: response?.data?.token,
                         refreshToken: response?.data?.refreshToken,
                     }))
+                    dispatch(saveLoginRemember(true))
                     if (number) {
                         props.navigation.navigate(routes.createProfile, { number: number })
                     } else {
@@ -175,9 +177,18 @@ const SendOtp = (props) => {
             </View>
 
             <View style={[appStyles.ph20, appStyles.mb5]}>
-                <Button deleteButton={key === 'delete' ? true : false} onPress={() => { key === 'delete' ? props.navigation.navigate(routes.auth, { screen: routes.login }) : (key === 'auth' || key === 'forget') ? verifyOTP() : null }}>{key === 'delete' ? LocalizedStrings.delete_account : LocalizedStrings.verify}</Button>
+                <Button deleteButton={key === 'delete' ? true : false} onPress={() => {
+                    key === 'delete'
+                        ? props.navigation.dispatch(
+                            CommonActions.reset({
+                                index: 0,
+                                routes: [{ name: routes.auth, params: { screen: routes.welcome } }],
+                            })
+                        )
+                        : (key === 'auth' || key === 'forget') ? verifyOTP() : null
+                }}>{key === 'delete' ? LocalizedStrings.delete_account : LocalizedStrings.verify}</Button>
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 

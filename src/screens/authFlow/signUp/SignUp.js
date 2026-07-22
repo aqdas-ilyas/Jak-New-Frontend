@@ -40,6 +40,19 @@ const SignUp = props => {
   const [countryCode, setCountryCode] = useState('966');
   const [countryAbbreviationCode, setCountryAbbrivaitionCode] = useState('SA');
   const [acceptPolicies, setAcceptPolicies] = useState(false);
+  const checkboxPlatformProps = Platform.OS === 'ios'
+    ? {
+      boxType: 'square',
+      onFillColor: colors.primaryColor,
+      onCheckColor: 'white',
+      onTintColor: colors.primaryColor,
+    }
+    : {
+      tintColors: {
+        true: colors.primaryColor,
+        false: colors.placeholderColor,
+      },
+    };
 
   // Fetch and set the State's
   const fetchCountryAbbrivaition = async code => {
@@ -169,7 +182,7 @@ const SignUp = props => {
           refreshToken: response?.data?.refreshToken,
         }),
       );
-      // dispatch(saveLoginRemember(true));
+      dispatch(saveLoginRemember(true));
 
       // Save credentials for biometric login if biometric is enabled
       if (biometricEnabled) {
@@ -185,7 +198,7 @@ const SignUp = props => {
       }
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       } else if (response?.act === 'email-unverified') {
         props.navigation.navigate(routes.otp, {
           email: user?.email.toLowerCase(),
@@ -197,14 +210,14 @@ const SignUp = props => {
           userName: user?.userFirstName + ' ' + user?.userLastName
         });
       } else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
       //     props?.navigation?.navigate(routes.preferences);
       //   } else {
       //     if (response?.act == 'admin-pending') {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
 
       //       // props?.navigation?.navigate(routes.preferences);
       //       // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
@@ -217,7 +230,7 @@ const SignUp = props => {
       //     }
       //   }
       // } else if (response?.act == 'admin-pending') {
-      //   props.navigation.navigate(routes.tab, { screen: routes.home });
+      //   props.navigation.replace(routes.tab, { screen: routes.home });
       //   // props?.navigation?.navigate(routes.preferences);
       //   // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
       // } else if (response?.act == 'incomplete-subscription') {
@@ -357,17 +370,21 @@ const SignUp = props => {
           </Input>
         </View>
 
-        <View style={[styles.termsRow, rtlStyles.row, { marginTop: wp(4) }]}>
-          <CheckBox
-            value={acceptPolicies}
-            onValueChange={setAcceptPolicies}
-            boxType="square"
-            onFillColor={colors.primaryColor}
-            onCheckColor="white"
-            onTintColor={colors.primaryColor}
-            tintColors={{ true: colors.primaryColor, false: colors.placeholderColor }}
-            style={styles.checbox}
-          />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => setAcceptPolicies(prev => !prev)}
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: acceptPolicies }}
+          style={[styles.termsRow, rtlStyles.row, styles.termsRowPressable, { marginTop: wp(4) }]}
+        >
+          <View pointerEvents="none">
+            <CheckBox
+              value={acceptPolicies}
+              onValueChange={setAcceptPolicies}
+              style={styles.checbox}
+              {...checkboxPlatformProps}
+            />
+          </View>
           <Text style={[styles.termsText, rtlStyles.textAlign, rtlStyles.writingDirection]}>
             {(LocalizedStrings.accept_terms_prefix || 'I accept the ')}
             <Text
@@ -382,7 +399,7 @@ const SignUp = props => {
               {LocalizedStrings.privacy || 'Privacy Policy'}
             </Text>
           </Text>
-        </View>
+        </TouchableOpacity>
 
         <View style={[rtlStyles.row, appStyles.jcCenter, appStyles.mt20]}>
           <Text style={[styles.dontAccountTextStyle, rtlStyles.textAlign, rtlStyles.writingDirection]}>
@@ -491,6 +508,10 @@ const styles = StyleSheet.create({
   termsRow: {
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  termsRowPressable: {
+    flex: 1,
+    paddingVertical: wp(1),
   },
   termsText: {
     flex: 1,

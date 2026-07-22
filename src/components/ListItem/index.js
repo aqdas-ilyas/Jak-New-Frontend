@@ -31,6 +31,7 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const { isRTL } = useRTL();
     const navigation = useNavigation()
+    const actionSideOffset = isRTL ? { marginRight: wp(1.5) } : { marginLeft: wp(1.5) };
     // const [hasCoordinates, setHasCoordinates] = useState(false);
     // const [coordinates, setCoordinates] = useState(null);
     // const [region, setRegion] = useState({
@@ -97,19 +98,16 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                                 {item?.['store name'].length > 20 ? item?.['store name'].slice(0, 12) + '...' : item?.['store name']}
                             </Text>
 
-                            <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center' }}>
-                                <TouchableOpacity
-                                    style={{
-                                        padding: wp(2),
-                                        marginTop: -hp(0.5),
-                                        marginRight: isRTL ? 0 : wp(1.5),
-                                        marginLeft: isRTL ? wp(1.5) : 0
-                                    }}
-                                    activeOpacity={0.8}
-                                    onPress={() => IsFavourites(item)}
-                                >
-                                    <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
-                                </TouchableOpacity>
+                            <View style={{ flexDirection: isRTL ? "row-reverse" : "row", alignItems: 'center', ...actionSideOffset }}>
+                                <View style={styles.actionSlot}>
+                                    <TouchableOpacity
+                                        style={styles.heartButton}
+                                        activeOpacity={0.8}
+                                        onPress={() => IsFavourites(item)}
+                                    >
+                                        <Image source={item?.isLiked ? appIcons.heartFill : appIcons.heartUnfill} style={[styles.IconStyle]} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                         {/* <View style={{ flexDirection: "row", alignItems: 'center', marginVertical: wp(1) }}>
@@ -140,7 +138,7 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                             <View style={{
                                 flexDirection: isRTL ? "row-reverse" : "row",
                                 alignItems: 'center',
-                                marginRight: wp(2.3)
+                                ...actionSideOffset
                             }}>
                                 {
                                     item?.['discount %'] > 0 && (
@@ -157,7 +155,9 @@ export default function ListItem({ buttonEnable, search, item, isLiked, IsFavour
                                     )
                                 }
 
-                                <Image source={{ uri: item?.employer?.image }} style={{ width: wp(7), height: wp(6), borderRadius: wp(6) }} />
+                                <View style={styles.actionSlot}>
+                                    <Image source={{ uri: item?.employer?.image }} style={styles.employerLogo} />
+                                </View>
                             </View>
                         </View>
 
@@ -202,6 +202,21 @@ const styles = StyleSheet.create({
         width: wp(5),
         height: wp(5),
         tintColor: colors.primaryColor
+    },
+    actionSlot: {
+        width: wp(9),
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    heartButton: {
+        padding: wp(1.6),
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    employerLogo: {
+        width: wp(7),
+        height: wp(6),
+        borderRadius: wp(6),
     },
     mapIcon: {
         width: wp(8),

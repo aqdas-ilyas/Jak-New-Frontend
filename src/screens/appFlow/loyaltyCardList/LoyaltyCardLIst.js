@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel, appImages } from '../../../services'
 import appStyles from '../../../services/utilities/appStyles'
@@ -22,11 +22,7 @@ const LoyalyCardList = (props) => {
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const [isLoading, setIsLoading] = useState(false)
 
-    useEffect(() => {
-        getLoyaltyCards()
-    }, [])
-
-    const getLoyaltyCards = () => {
+    const getLoyaltyCards = useCallback(() => {
         const onSuccess = response => {
             console.log('response getLoyaltyCards===', JSON.stringify(response?.data, ' ', 2));
             setIsLoading(false);
@@ -45,7 +41,11 @@ const LoyalyCardList = (props) => {
 
         setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
-    };
+    }, [dispatch, user?._id]);
+
+    useEffect(() => {
+        getLoyaltyCards()
+    }, [getLoyaltyCards])
 
     return (
         <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
@@ -62,9 +62,15 @@ const LoyalyCardList = (props) => {
                     <Text style={styles.imageText}>{LocalizedStrings['No Card Found!']}</Text>
                 }
                 renderItem={({ item, index }) => {
+                    const hasBackImage = typeof item?.backImage === 'string' && item.backImage.trim().length > 0;
+
                     return (
                         <View key={index} style={{ marginHorizontal: wp(2), marginTop: wp(2) }}>
-                            <Image source={{ uri: item.backImage }} style={[styles.imageStyle, { borderRadius: 10 }]} />
+                            {hasBackImage ? (
+                                <Image source={{ uri: item.backImage }} style={[styles.imageStyle, { borderRadius: 10 }]} />
+                            ) : (
+                                <View style={[styles.imageStyle, styles.imagePlaceholder]} />
+                            )}
                         </View>
                     )
                 }}
@@ -80,6 +86,10 @@ const styles = StyleSheet.create({
         width: wp(42),
         height: wp(28),
         // resizeMode: 'contain'
+    },
+    imagePlaceholder: {
+        backgroundColor: colors.primaryColorOpacity,
+        borderRadius: 10,
     },
     imageText: {
         fontSize: hp(1.6),

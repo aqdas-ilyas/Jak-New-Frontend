@@ -29,7 +29,7 @@ export default Search = (props) => {
     const searchOfferArray = useSelector(state => state.offer.searchOfferArray)
     const CategoriesOffers = useSelector(state => state.offer.CategoriesOffers)
     const { LocalizedStrings, appLanguage } = React.useContext(LocalizationContext);
-    const { rtlStyles } = useRTL();
+    const { isRTL, rtlStyles } = useRTL();
     const [modalShow, setModalShow] = useState(false)
     const [search, setSearch] = useState('')
     const [searchArray, setSearchArray] = useState([])
@@ -312,8 +312,8 @@ export default Search = (props) => {
                         backgroundColor: colors.primaryColorOpacity,
                         width: wp(85),
                         marginTop: -wp(4),
-                        marginRight: wp(5),
-                        marginLeft: wp(2),
+                        marginRight: isRTL ? wp(5) : wp(2),
+                        marginLeft: !isRTL ? wp(2) : wp(5),
                     }}
                     inputStyle={{
                         backgroundColor: colors.primaryColorOpacity,

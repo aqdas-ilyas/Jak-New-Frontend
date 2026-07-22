@@ -1,0 +1,42 @@
+{
+  "buildFiles": [
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/aqdas/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/aqdas/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "appmodules::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "appmodules",
+      "output": "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/Debug/2n2z2p5a/obj/x86/libappmodules.so",
+      "runtimeFiles": [
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/9da3c9ab4a72a9b749adc29775354b14/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/libs/android.x86/libfbjni.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/6ec4e7717edfe0130c9aa77d8dca9b67/transformed/jetified-react-android-0.82.1-debug/prefab/modules/jsi/libs/android.x86/libjsi.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/6ec4e7717edfe0130c9aa77d8dca9b67/transformed/jetified-react-android-0.82.1-debug/prefab/modules/reactnative/libs/android.x86/libreactnative.so"
+      ]
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/aqdas/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/aqdas/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

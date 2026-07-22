@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Platform, ScrollView } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Platform } from 'react-native'
 import { colors, hp, fontFamily, wp, routes, heightPixel, widthPixel } from '../../../services'
-import { appIcons, appImages } from '../../../services/utilities/assets'
+import { appImages } from '../../../services/utilities/assets'
 import appStyles from '../../../services/utilities/appStyles'
 import Button from '../../../components/button';
 import Header from '../../../components/header'
-import { Input } from '../../../components/input'
 import CallModal from '../../../components/modal'
 import { LocalizationContext } from '../../../language/LocalizationContext'
 import { useRTL } from '../../../language/useRTL';
-import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect from React Navigation
 import { callApi, Method } from '../../../api/apiCaller'
 import routs from '../../../api/routs'
 import { Loader } from '../../../components/loader/Loader'
@@ -21,19 +19,92 @@ import CheckBox from '@react-native-community/checkbox';
 import { resolveMessage } from '../../../language/helpers';
 import { store } from '../../../store/store'
 
+const MAX_SELECTED_BANKS = 3;
+
+const resolveUserData = (candidate) => {
+    if (!candidate) {
+        return {};
+    }
+
+    if (
+        candidate._id ||
+        candidate.employer ||
+        candidate.isComplete !== undefined ||
+        candidate.isAdminApproved !== undefined
+    ) {
+        return candidate;
+    }
+
+    if (
+        candidate.user &&
+        (candidate.user._id ||
+            candidate.user.employer ||
+            candidate.user.isComplete !== undefined ||
+            candidate.user.isAdminApproved !== undefined)
+    ) {
+        return candidate.user;
+    }
+
+    if (candidate.data?.user) {
+        return candidate.data.user;
+    }
+
+    if (candidate.data) {
+        return candidate.data;
+    }
+
+    return candidate;
+};
+
+const normalizeEmployerIds = (employers) => {
+    if (!employers) {
+        return [];
+    }
+
+    const employerList = Array.isArray(employers) ? employers : [employers];
+
+    return employerList
+        .map((item) => {
+            if (typeof item === 'string') {
+                return item;
+            }
+
+            if (item && typeof item === 'object') {
+                return item._id || item.id || item.value || item.employerId || null;
+            }
+
+            return null;
+        })
+        .filter(Boolean);
+};
+
 const Preferences = (props) => {
     const dispatch = useDispatch()
-    const user = useSelector(state => state.user.user.user)
+    const rawUser = useSelector(state => state.user.user.user)
+    const user = useMemo(() => resolveUserData(rawUser), [rawUser])
     const { LocalizedStrings } = React.useContext(LocalizationContext);
     const { isRTL } = useRTL();
+    const isSettingsFlow = props?.route?.params?.key === 'settings';
 
     const [employeeArray, setEmployeeArray] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
     const [modalShow, setModalShow] = useState(false)
     const [pendingModalShow, setPendingModalShow] = useState(false)
-    const [confimationModalShow, setConfimationModalShow] = useState(false)
 
     const [isLoading, setIsLoading] = useState(false);
+    const checkboxPlatformProps = Platform.OS === 'ios'
+        ? {
+            boxType: 'square',
+            onFillColor: colors.primaryColor,
+            onCheckColor: 'white',
+            onTintColor: colors.primaryColor,
+        }
+        : {
+            tintColors: {
+                true: colors.primaryColor,
+                false: colors.placeholderColor,
+            },
+        };
 
     // // Define the effect to be executed when the screen gains focus
     // useFocusEffect(
@@ -60,29 +131,11 @@ const Preferences = (props) => {
     // );
 
     // Get API
-    useEffect(() => {
-        getCompany()
-    }, [])
-
-    const getCompany = async () => {
+    const getCompany = useCallback(async () => {
         const onSuccess = async (response) => {
             setIsLoading(false);
-            console.log('res while getCompany====>', JSON.stringify(response, "", 2));
-            setEmployeeArray(response?.data?.data)
-
-            if (user?.employer.length > 0) {
-                for (let index = 0; index < user?.employer.length; index++) {
-                    setSelectedItems(prevState => {
-                        if (prevState.includes(user?.employer[index])) {
-                            // If the item is already selected, remove it from the selection
-                            return prevState.filter(i => i !== user?.employer[index]);
-                        } else {
-                            // If the item is not selected, add it to the selection
-                            return [...prevState, user?.employer[index]];
-                        }
-                    });
-                }
-            }
+            const companies = Array.isArray(response?.data?.data) ? response.data.data : [];
+            setEmployeeArray(companies)
         };
 
         const onError = error => {
@@ -96,44 +149,59 @@ const Preferences = (props) => {
 
         setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
-    }
+    }, [])
+
+    useEffect(() => {
+        getCompany()
+    }, [getCompany])
+
+    useEffect(() => {
+        setSelectedItems(normalizeEmployerIds(user?.employer));
+    }, [user?.employer])
 
     // Create Preference API
     const createPreference = (skip) => {
+        if (!skip && selectedItems.length > MAX_SELECTED_BANKS) {
+            showMessage({
+                message: `You can select up to ${MAX_SELECTED_BANKS} banks only.`,
+                type: "danger"
+            });
+            return;
+        }
+
         const onSuccess = response => {
             setIsLoading(false)
             console.log('res while createPreference====>', response);
-            const fallbackMessage = props?.route?.params?.key === 'settings'
+            const fallbackMessage = isSettingsFlow
                 ? LocalizedStrings.preferences_updated
                 : LocalizedStrings.preferences_created;
 
             showMessage({ message: resolveMessage(LocalizedStrings, response?.message, fallbackMessage), type: "success" })
-            props?.route?.params?.key === 'settings' ? null : setModalShow(true)
 
             dispatch(updateUser(response?.data))
 
-            setTimeout(() => {
-                // if (!user.isAdminApproved) {
-                //     if (props?.route?.params?.key === 'settings') {
-                //         setPendingModalShow(false); // Show a pending modal
-                //     } else {
-                //         setPendingModalShow(true); // Show a pending modal
-                //     }
-                // } else {
-                //     setModalShow(false)
-                // }
-
+            if (isSettingsFlow) {
                 setModalShow(false)
+                setPendingModalShow(false)
+                props?.navigation?.navigate(routes.tab, {
+                    screen: LocalizedStrings.home,
+                    params: {
+                        screen: routes.offer,
+                        params: {
+                            refreshKey: Date.now(),
+                        },
+                    },
+                })
+                return
+            }
 
-                setTimeout(() => {
-                    // if (response?.act == 'admin-pending') {
-                    props?.route?.params?.key === 'settings' ? null : props?.navigation?.navigate(routes.subscription) // Navigate to login page if response indicates admin pending action
-                    setPendingModalShow(false); // Show a pending modal
-                    setModalShow(false); // Show a Profile Created modal
-                    setConfimationModalShow(false); // Show a Profile Created modal
-                    // }
-                }, 2000); // Delay this inner action for 2000 milliseconds (2 seconds)
-            }, 2000); // Delay the outer action for 2000 milliseconds (2 seconds)
+            setModalShow(true)
+
+            setTimeout(() => {
+                setModalShow(false)
+                setPendingModalShow(false)
+                props?.navigation?.navigate(routes.subscription)
+            }, 2000)
         };
 
         const onError = error => {
@@ -163,34 +231,58 @@ const Preferences = (props) => {
     }
 
     const handleToggle = (item) => {
+        const itemId = item?._id || item?.id || item?.value;
+
+        if (!itemId) {
+            return;
+        }
+
         setSelectedItems(prevState => {
-            if (prevState.includes(item._id)) {
-                // If the item is already selected, remove it from the selection
-                return prevState.filter(i => i !== item._id);
-            } else {
-                // If the item is not selected, add it to the selection
-                return [...prevState, item._id];
+            const isSelected = prevState.includes(itemId);
+
+            if (isSelected) {
+                return prevState.filter(i => i !== itemId);
             }
+
+            if (prevState.length >= MAX_SELECTED_BANKS) {
+                showMessage({
+                    message: `You can select up to ${MAX_SELECTED_BANKS} banks only.`,
+                    type: "danger"
+                });
+                return prevState;
+            }
+
+            return [...prevState, itemId];
         });
     };
 
     const renderItem = ({ item }) => {
-        const isSelected = selectedItems.includes(item._id);
+        const itemId = item?._id || item?.id || item?.value;
+        const isSelected = selectedItems.includes(itemId);
         return (
-            <View key={item._id}>
+            <View>
                 <TouchableOpacity activeOpacity={0.9} onPress={() => handleToggle(item)} style={[styles.Item, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-                    <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: "center" }}>
+                    <View style={[styles.itemContent, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                         <Image source={{ uri: item.image }} style={[styles.Icon, { marginLeft: isRTL ? wp(2) : 0, marginRight: isRTL ? 0 : wp(2) }]} />
-                        <Text style={[styles.mainDes, { marginLeft: isRTL ? 0 : wp(4), marginRight: isRTL ? wp(4) : 0, textAlign: isRTL ? 'right' : 'left' }]}>{item.name}</Text>
+                        <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={[
+                                styles.mainDes,
+                                {
+                                    marginLeft: isRTL ? 0 : wp(4),
+                                    marginRight: isRTL ? wp(4) : 0,
+                                    textAlign: isRTL ? 'right' : 'left'
+                                }
+                            ]}
+                        >
+                            {item.name}
+                        </Text>
                     </View>
                     <CheckBox
                         value={isSelected}
-                        boxType='square'
-                        onFillColor={colors.primaryColor}
-                        onCheckColor='white'
-                        onTintColor={colors.primaryColor}
                         style={styles.checbox}
-                        tintColors={{ true: colors.primaryColor, false: colors.placeholderColor }}
+                        {...checkboxPlatformProps}
                     />
                 </TouchableOpacity>
             </View>
@@ -198,39 +290,43 @@ const Preferences = (props) => {
     };
 
     return (
-        <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
-            <Loader loading={isLoading} />
-            <Header
-                leftIcon
-                onleftIconPress={() => props.navigation.goBack()}
-                title={props?.route?.params?.key === 'settings' ? LocalizedStrings.preferences_title : LocalizedStrings.preferences_title}
-            // rightTitle={props?.route?.params?.key === 'settings' ? '' : LocalizedStrings.skip} 
-            // onPressRightTitle={() => createPreference('skip')}
-            />
+            <SafeAreaView style={[appStyles.safeContainer, { margin: wp(4) }]}>
+                <Loader loading={isLoading} />
+                <Header
+                    leftIcon
+                    onleftIconPress={() => props.navigation.goBack()}
+                    title={LocalizedStrings.preferences_title}
+                />
 
-            <ScrollView style={{ flex: 1 }}>
-                <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.PreferenceDes}</Text>
+            <View style={{ flex: 1 }}>
                 <FlatList
                     data={employeeArray}
-                    keyExtractor={(item) => item.name}
+                    keyExtractor={(item) => String(item?._id || item?.id || item?.value || item?.name)}
                     ListHeaderComponent={
-                        <Text style={[styles.titleStyle, { marginBottom: wp(2), textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.select_your_bank}</Text>
+                        <View>
+                            <Text style={[styles.mainTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.PreferenceDes}</Text>
+                            <Text style={[styles.titleStyle, { marginBottom: wp(2), textAlign: isRTL ? 'right' : 'left' }]}>{LocalizedStrings.select_your_bank}</Text>
+                        </View>
                     }
-                    nestedScrollEnabled
                     showsVerticalScrollIndicator={false}
                     renderItem={renderItem}
+                    extraData={selectedItems}
                     contentContainerStyle={{ paddingBottom: wp(5) }}
+                    initialNumToRender={8}
+                    maxToRenderPerBatch={8}
+                    windowSize={5}
+                    removeClippedSubviews={Platform.OS === 'android'}
+                    style={{ flex: 1 }}
                 />
-            </ScrollView>
 
-            <View style={[appStyles.ph20, appStyles.mb5]}>
-                <Button onPress={() => createPreference()}>{props?.route?.params?.key === 'settings' ? LocalizedStrings.save_changes : LocalizedStrings.continue}</Button>
+                <View style={[appStyles.ph20, appStyles.mb5]}>
+                    <Button onPress={() => createPreference()}>{isSettingsFlow ? LocalizedStrings.save_changes : LocalizedStrings.continue}</Button>
+                </View>
             </View>
 
             <CallModal
                 warningImage={pendingModalShow ? appImages.warning : appImages.tick}
                 modalShow={modalShow || pendingModalShow}
-                // setModalShow={() => [setModalShow(!modalShow), setPendingModalShow(!pendingModalShow), setConfimationModalShow(!confimationModalShow)]}
                 setModalShow={() => console.log('On Back Press')}
                 title={pendingModalShow ? LocalizedStrings['Pending Approval From Admin!'] : modalShow ? LocalizedStrings.profile_created_successfully : LocalizedStrings['Congratulation Your Account has Approved!']}
                 subTitle={LocalizedStrings.modalDes}
@@ -243,8 +339,8 @@ export default Preferences
 
 const styles = StyleSheet.create({
     checbox: {
-        height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
-        width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
+        height: Platform.OS === 'ios' ? heightPixel(15) : heightPixel(20),
+        width: Platform.OS === 'ios' ? widthPixel(15) : widthPixel(30),
     },
     mainTopDes: {
         fontSize: hp(1.6),
@@ -263,6 +359,11 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         padding: wp(3)
     },
+    itemContent: {
+        flex: 1,
+        minWidth: 0,
+        alignItems: "center",
+    },
     mainTitle: {
         fontSize: hp(1.6),
         fontFamily: fontFamily.UrbanistRegular,
@@ -276,6 +377,8 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.UrbanistSemiBold,
         color: colors.BlackSecondary,
         marginLeft: wp(4),
+        flex: 1,
+        flexShrink: 1,
     },
     Icon: {
         width: hp(5),

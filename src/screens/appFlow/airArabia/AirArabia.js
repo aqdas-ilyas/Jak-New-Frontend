@@ -33,27 +33,31 @@ const AddLoyaltyCard = props => {
   const [isUploadingBack, setIsUploadingBack] = useState(false);
 
   const validate = () => {
-    if (/\d/.test(name)) {
+    if (loyaltyName.trim().length < 2) {
       showMessage({
-        message: 'Name can only consists of alphabets between A to Z or a to z',
+        message: LocalizedStrings.please_enter_valid_loyalty_name,
         type: 'danger',
       });
       return false;
     }
 
-    if (loyaltyName.length < 2) {
-      showMessage({
-        message: 'Please select your Date of Birth',
-        type: 'danger',
-      });
-      return false;
-    }
+    const cleanCardNumber = cardNumber.replace(/\s/g, '');
 
-    if (cardNumber.length < 2) {
+    if (cleanCardNumber.length === 0) {
       showMessage({ message: LocalizedStrings.please_add_valid_card_number, type: 'danger' });
       return false;
     }
-    
+
+    if (!frontImage) {
+      showMessage({ message: LocalizedStrings.please_add_front_image, type: 'danger' });
+      return false;
+    }
+
+    if (!backImage) {
+      showMessage({ message: LocalizedStrings.please_add_back_image, type: 'danger' });
+      return false;
+    }
+
     return true;
   };
 
@@ -209,11 +213,8 @@ const AddLoyaltyCard = props => {
     // Remove all non-digit characters
     const cleaned = value.replace(/\D/g, '');
 
-    // Limit to 16 digits
-    const limited = cleaned.slice(0, 16);
-
     // Add space after every 4 digits
-    const formatted = limited.replace(/(.{4})/g, '$1 ').trim();
+    const formatted = cleaned.replace(/(.{4})/g, '$1 ').trim();
 
     return formatted;
   };
@@ -271,7 +272,9 @@ const AddLoyaltyCard = props => {
         onleftIconPress={() => props.navigation.goBack()}
         title={LocalizedStrings['new_card']}
       />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={styles.scrollViewContent}
+        contentContainerStyle={styles.scrollContent}>
         {/* <Input
                     value={name}
                     onChangeText={(value) => setName(value)}
@@ -297,7 +300,6 @@ const AddLoyaltyCard = props => {
             onChangeText={handleCardNumberChange}
             placeholder={LocalizedStrings['Card Number']}
             keyboardType="numeric"
-            maxLength={19}
           // WholeContainer={{ width: wp(78) }}
           >
             {LocalizedStrings['Card Number']}
@@ -308,12 +310,7 @@ const AddLoyaltyCard = props => {
         </View>
 
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            marginTop: wp(5),
-          }}>
+          style={styles.imageRow}>
           {frontImage != '' ? (
             <View style={styles.imageContainer}>
               <TouchableOpacity
@@ -445,7 +442,8 @@ const AddLoyaltyCard = props => {
             paddingVertical: wp(2),
             alignItems: 'flex-start',
           }}
-          WholeContainer={{ marginTop: -wp(5) }}
+          inputStyle={{ height: '100%', textAlignVertical: 'top' }}
+          WholeContainer={styles.notesContainer}
         />
       </ScrollView>
 
@@ -462,10 +460,27 @@ const AddLoyaltyCard = props => {
 export default AddLoyaltyCard;
 
 const styles = StyleSheet.create({
+  scrollViewContent: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: wp(8),
+  },
+  imageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: wp(5),
+    paddingHorizontal: wp(1),
+    // marginBottom: wp(3),
+  },
+  notesContainer: {
+    marginTop: wp(2),
+  },
   cameraBox: {
     backgroundColor: colors.offWhite,
     borderRadius: 12,
-    paddingHorizontal: wp(8),
+    // paddingHorizontal: wp(8),
     paddingVertical: wp(4),
     alignItems: 'center',
     justifyContent: 'center',
@@ -478,6 +493,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.UrbanistSemiBold,
     color: colors.BlackSecondary,
     marginTop: wp(2),
+    teaxtAlign: 'center',
   },
   imageContainer: {
     width: wp(40),

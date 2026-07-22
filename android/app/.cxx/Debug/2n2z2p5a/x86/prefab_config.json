@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "prefabPath": "/Users/aqdas/.gradle/caches/modules-2/files-2.1/com.google.prefab/cli/2.1.0/aa32fec809c44fa531f01dcfb739b5b3304d3050/cli-2.1.0-all.jar",
+  "packages": [
+    "/Users/aqdas/.gradle/caches/9.0.0/transforms/6ec4e7717edfe0130c9aa77d8dca9b67/transformed/jetified-react-android-0.82.1-debug/prefab",
+    "/Users/aqdas/.gradle/caches/9.0.0/transforms/b28625af2c5454bc77a31247fcce1571/transformed/jetified-hermes-android-0.82.1-debug/prefab",
+    "/Users/aqdas/.gradle/caches/9.0.0/transforms/9da3c9ab4a72a9b749adc29775354b14/transformed/jetified-fbjni-0.7.0/prefab"
+  ]
+}

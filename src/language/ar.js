@@ -32,6 +32,13 @@ export default {
   biometric_no_credentials: 'لم يتم العثور على بيانات محفوظة',
   biometric_login_error: 'فشلت المصادقة البيومترية',
   biometric_app_open_prompt: 'قم بالمصادقة لفتح التطبيق',
+  session_expired_title: 'انتهت الجلسة',
+  session_expired_message: 'انتهت الجلسة الخاصة بك. يرجى تسجيل الدخول مرة أخرى.',
+  session_verification_failed: 'تعذر التحقق من الجلسة الآن. يرجى المحاولة مرة أخرى.',
+  checking_for_updates: 'جارٍ التحقق من التحديثات...',
+  force_update_title: 'يلزم تحديث التطبيق',
+  force_update_message: 'يوجد إصدار أحدث من تطبيق جاك. يرجى تحديث التطبيق للمتابعة.',
+  force_update_button: 'تحديث التطبيق',
 
   // Contact Form
   send_us_message: 'أرسل لنا رسالة',
@@ -76,6 +83,8 @@ export default {
   logout_confirmation_message: 'هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟',
   yes: 'نعم',
   no: 'لا',
+  exit_confirmation_title: 'تطبيق جاك!',
+  exit_confirmation_message: 'هل أنت متأكد أنك تريد الخروج من التطبيق؟',
 
   // Subscription Plan
   subscription_plan: 'خطة الاشتراك',
@@ -215,11 +224,11 @@ export default {
   seconds: 'ثانية',
   edit_employer_information: 'تحرير معلومات صاحب العمل',
   preferences: 'التفضيلات',
-  preferences_title: 'أضف معلومات صاحب العمل',
+  preferences_title: 'خيارات العروض',
   "No_Favorite's_Found!": 'لم يتم العثور على المفضلة!',
   "no_favorites_message": 'لم تقم بإضافة أي مفضلات بعد. ابدأ في استكشاف العروض وأضفها إلى مفضلاتك!',
   select_your_company: 'اختر شركتك',
-  select_your_bank: 'اختر البنك الذي تتعامل معه',
+  select_your_bank: 'اختر تفضيلاتك من هنا :',
   select_your_card: 'حدد البطاقات الخاصة بك',
   select_loyalty_program: 'حدد برنامج الولاء',
   profile_created_successfully: 'تم إنشاء الملف الشخصي بنجاح',
@@ -244,7 +253,7 @@ export default {
   phone_Number: 'الجوال',
   Location: 'المدينة',
   location_Placeholder: 'تايم سكوير مدينة نيويورك، نيويورك',
-  my_preference: 'تفضيلاتي',
+  my_preference: 'خيارات العروض',
   Notification: 'إشعار',
   Logout: 'تسجيل خروج',
   complete_your_profile: 'تعديل الملف الشخصي',
@@ -282,7 +291,7 @@ export default {
   cardDes:
     'علاوة على ذلك، لا يوجد أحد، لأنه يحب الألم، يسعى إليه، ويريد الحصول عليه، ولكن ماذا',
   PreferenceDes:
-    'يمكن لك من هنا اختيار البنوك التي ترغب في رؤية عروضها في صفحة العروض',
+    'يمكنك اختيار الجهات التي ترغب في رؤية عروضها في صفحة العروض.',
   'Card Details': 'معلومات البطاقة',
   'Card Name': 'اسم البطاقة',
   'Card Number': 'رقم البطاقة',
@@ -495,7 +504,10 @@ export default {
   profile_updated: 'تم تحديث الملف الشخصي!',
 
   // AirArabia Screen
+  please_enter_valid_loyalty_name: 'يرجى إدخال اسم برنامج الولاء بشكل صحيح',
   please_add_valid_card_number: 'يرجى إضافة رقم بطاقة صحيح',
+  please_add_front_image: 'يرجى إضافة صورة الواجهة الأمامية',
+  please_add_back_image: 'يرجى إضافة صورة الواجهة الخلفية',
   updated_successfully: 'تم التحديث بنجاح',
 
   // SignUp Screen

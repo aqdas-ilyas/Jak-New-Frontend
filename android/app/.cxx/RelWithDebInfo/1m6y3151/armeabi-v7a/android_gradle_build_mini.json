@@ -1,0 +1,115 @@
+{
+  "buildFiles": [
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-community/geolocation/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-date-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-localize/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-permissions/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-webview/android/build/generated/source/codegen/jni/CMakeLists.txt",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/aqdas/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/RelWithDebInfo/1m6y3151/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/aqdas/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/RelWithDebInfo/1m6y3151/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "react_codegen_RNVectorIconsSpec::@479809fae146501fd34d": {
+      "artifactName": "react_codegen_RNVectorIconsSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "react_codegen_safeareacontext::@7984cd80db47aa7b952a": {
+      "artifactName": "react_codegen_safeareacontext",
+      "abi": "armeabi-v7a",
+      "output": "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/RelWithDebInfo/1m6y3151/obj/armeabi-v7a/libreact_codegen_safeareacontext.so",
+      "runtimeFiles": [
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/9da3c9ab4a72a9b749adc29775354b14/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/7731296151430c2c01a50f231672b87f/transformed/jetified-react-android-0.82.1-release/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/7731296151430c2c01a50f231672b87f/transformed/jetified-react-android-0.82.1-release/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so"
+      ]
+    },
+    "react_codegen_RNPermissionsSpec::@7ad697819b753921c957": {
+      "artifactName": "react_codegen_RNPermissionsSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "react_codegen_RNCGeolocation::@c3a2d2fea0635581bd06": {
+      "artifactName": "react_codegen_RNCGeolocation",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "react_codegen_RNCImageCropPickerSpec::@702b02f8d2524609d414": {
+      "artifactName": "react_codegen_RNCImageCropPickerSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "react_codegen_rngesturehandler_codegen::@39f233abcd2c728bc6ec": {
+      "artifactName": "react_codegen_rngesturehandler_codegen",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "react_codegen_RNCWebViewSpec::@eb48929f9f7453740a6c": {
+      "artifactName": "react_codegen_RNCWebViewSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "appmodules::@6890427a1f51a3e7e1df": {
+      "artifactName": "appmodules",
+      "abi": "armeabi-v7a",
+      "output": "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/RelWithDebInfo/1m6y3151/obj/armeabi-v7a/libappmodules.so",
+      "runtimeFiles": [
+        "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/RelWithDebInfo/1m6y3151/obj/armeabi-v7a/libreact_codegen_safeareacontext.so",
+        "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/RelWithDebInfo/1m6y3151/obj/armeabi-v7a/libreact_codegen_rnscreens.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/9da3c9ab4a72a9b749adc29775354b14/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/7731296151430c2c01a50f231672b87f/transformed/jetified-react-android-0.82.1-release/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/7731296151430c2c01a50f231672b87f/transformed/jetified-react-android-0.82.1-release/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so"
+      ]
+    },
+    "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe": {
+      "artifactName": "react_codegen_rnasyncstorage",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "react_codegen_rnscreens::@25bcbd507e98d3a854ad": {
+      "artifactName": "react_codegen_rnscreens",
+      "abi": "armeabi-v7a",
+      "output": "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/intermediates/cxx/RelWithDebInfo/1m6y3151/obj/armeabi-v7a/libreact_codegen_rnscreens.so",
+      "runtimeFiles": [
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/7731296151430c2c01a50f231672b87f/transformed/jetified-react-android-0.82.1-release/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/7731296151430c2c01a50f231672b87f/transformed/jetified-react-android-0.82.1-release/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
+        "/Users/aqdas/.gradle/caches/9.0.0/transforms/9da3c9ab4a72a9b749adc29775354b14/transformed/jetified-fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so"
+      ]
+    },
+    "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205": {
+      "artifactName": "react_codegen_RNLocalizeSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "react_codegen_RNShareSpec::@e6c4c2b5aedb2ea213b7": {
+      "artifactName": "react_codegen_RNShareSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    },
+    "react_codegen_RNDatePickerSpecs::@c00f981c6e74346c63d4": {
+      "artifactName": "react_codegen_RNDatePickerSpecs",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
+    }
+  }
+}

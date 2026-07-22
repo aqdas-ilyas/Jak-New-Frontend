@@ -50,6 +50,19 @@ const SignIn = props => {
   const [showPassword, setShowPassword] = useState(true);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const checkboxPlatformProps = Platform.OS === 'ios'
+    ? {
+      boxType: 'square',
+      onFillColor: colors.primaryColor,
+      onCheckColor: 'white',
+      onTintColor: colors.primaryColor,
+    }
+    : {
+      tintColors: {
+        true: colors.primaryColor,
+        false: colors.placeholderColor,
+      },
+    };
 
   // Fetch and set the State's
   const fetchCountryAbbrivaition = async code => {
@@ -113,20 +126,20 @@ const SignIn = props => {
         }
 
         if (response?.act === 'login-granted') {
-          props.navigation.navigate(routes.tab, { screen: routes.home });
+          props.navigation.replace(routes.tab, { screen: routes.home });
         } else if (response?.act === 'incomplete-profile') {
           props?.navigation?.navigate(routes.createProfile, {
             number: `${countryCode + phoneNumber}`,
           });
         } else {
-          props.navigation.navigate(routes.tab, { screen: routes.home });
+          props.navigation.replace(routes.tab, { screen: routes.home });
         }
         // else if (response?.act === 'incomplete-preferences') {
         //   if (!response?.data?.user?.isPreferencesSkipped) {
         //     props?.navigation?.navigate(routes.preferences);
         //   } else {
         //     if (response?.act == 'admin-pending') {
-        //       props.navigation.navigate(routes.tab, { screen: routes.home });
+        //       props.navigation.replace(routes.tab, { screen: routes.home });
         //       // props?.navigation?.navigate(routes.preferences);
         //       // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
         //     } else if (response?.act == 'incomplete-subscription') {
@@ -138,7 +151,7 @@ const SignIn = props => {
         //     }
         //   }
         // } else if (response?.act == 'admin-pending') {
-        //   props.navigation.navigate(routes.tab, { screen: routes.home });
+        //   props.navigation.replace(routes.tab, { screen: routes.home });
         //   // props?.navigation?.navigate(routes.preferences);
         //   // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
         // } else if (response?.act == 'incomplete-subscription') {
@@ -211,24 +224,24 @@ const SignIn = props => {
           refreshToken: response?.data?.refreshToken,
         }),
       );
-      // dispatch(saveLoginRemember(true));
+      dispatch(saveLoginRemember(true));
       dispatch(saveNumberLogin(true));
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       } else if (response?.act === 'incomplete-profile') {
         props?.navigation?.navigate(routes.createProfile, {
           number: `${credentials.countryCode + credentials.phoneNumber}`,
         });
       } else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
       //     props?.navigation?.navigate(routes.preferences);
       //   } else {
       //     if (response?.act == 'admin-pending') {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //     } else if (response?.act == 'incomplete-subscription') {
       //       props?.navigation?.navigate(routes.subscription);
       //       showMessage({
@@ -236,7 +249,7 @@ const SignIn = props => {
       //         type: 'danger',
       //       });
       //     } else {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //     }
       //   }
       // }
@@ -276,10 +289,10 @@ const SignIn = props => {
           refreshToken: response?.data?.refreshToken,
         }),
       );
-      // dispatch(saveLoginRemember(true));
+      dispatch(saveLoginRemember(true));
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       } else if (response?.act === 'email-unverified') {
         props.navigation.navigate(routes.otp, {
           email: credentials.email.toLowerCase(),
@@ -290,14 +303,14 @@ const SignIn = props => {
           email: credentials.email.toLowerCase(),
         });
       } else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
       //     props?.navigation?.navigate(routes.preferences);
       //   } else {
       //     if (response?.act == 'admin-pending') {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //     } else if (response?.act == 'incomplete-subscription') {
       //       props?.navigation?.navigate(routes.subscription);
       //       showMessage({
@@ -305,7 +318,7 @@ const SignIn = props => {
       //         type: 'danger',
       //       });
       //     } else {
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //     }
       //   }
       // }
@@ -510,7 +523,7 @@ const SignIn = props => {
           refreshToken: response?.data?.refreshToken,
         }),
       );
-      // dispatch(saveLoginRemember(true));
+      dispatch(saveLoginRemember(true));
 
       // Save credentials for biometric login if biometric is enabled
       if (biometricEnabled) {
@@ -526,7 +539,7 @@ const SignIn = props => {
       }
 
       if (response?.act === 'login-granted') {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       } else if (response?.act === 'email-unverified') {
         props.navigation.navigate(routes.otp, {
           email: user?.email.toLowerCase(),
@@ -538,7 +551,7 @@ const SignIn = props => {
           userName: user?.userFirstName + ' ' + user?.userLastName
         });
       } else {
-        props.navigation.navigate(routes.tab, { screen: routes.home });
+        props.navigation.replace(routes.tab, { screen: routes.home });
       }
       // else if (response?.act === 'incomplete-preferences') {
       //   if (!response?.data?.user?.isPreferencesSkipped) {
@@ -546,7 +559,7 @@ const SignIn = props => {
       //   } else {
       //     if (response?.act == 'admin-pending') {
       //       // props?.navigation?.navigate(routes.preferences);
-      //       props.navigation.navigate(routes.tab, { screen: routes.home });
+      //       props.navigation.replace(routes.tab, { screen: routes.home });
       //       // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
       //     } else if (response?.act == 'incomplete-subscription') {
       //       props?.navigation?.navigate(routes.subscription);
@@ -558,7 +571,7 @@ const SignIn = props => {
       //   }
       // } else if (response?.act == 'admin-pending') {
       //   // props?.navigation?.navigate(routes.preferences);
-      //   props.navigation.navigate(routes.tab, { screen: routes.home });
+      //   props.navigation.replace(routes.tab, { screen: routes.home });
       //   // showMessage({ message: 'Admin Not Approved yet!', type: 'danger' })
       // } else if (response?.act == 'incomplete-subscription') {
       //   props?.navigation?.navigate(routes.subscription);
@@ -693,26 +706,27 @@ const SignIn = props => {
         </View>
 
         <View style={[rtlStyles.rowBetween, { marginVertical: wp(5) }]}>
-          <View style={[rtlStyles.row, { paddingStart: wp(1) }]}>
-            <CheckBox
-              disabled={false}
-              onFillColor={colors.primaryColor}
-              onCheckColor="white"
-              value={toggleCheckBox}
-              onValueChange={newValue => setToggleCheckBox(newValue)}
-              boxType="square"
-              onTintColor={colors.primaryColor}
-              style={styles.checbox}
-              hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
-              tintColors={{
-                true: colors.primaryColor,
-                false: colors.placeholderColor,
-              }} // Change tint colors if needed
-            />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setToggleCheckBox(prev => !prev)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: toggleCheckBox }}
+            style={[rtlStyles.row, styles.rememberMePressable, { paddingStart: wp(1) }]}
+          >
+            <View pointerEvents="none">
+              <CheckBox
+                disabled={false}
+                value={toggleCheckBox}
+                onValueChange={newValue => setToggleCheckBox(newValue)}
+                style={styles.checbox}
+                hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
+                {...checkboxPlatformProps}
+              />
+            </View>
             <Text style={[styles.rememberMe, rtlStyles.writingDirection]}>
               {LocalizedStrings.remember_me}
             </Text>
-          </View>
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => props.navigation.navigate(routes.forgotPassword)}>
@@ -854,6 +868,10 @@ const styles = StyleSheet.create({
     color: colors.BlackSecondary,
     marginStart: wp(1.5),
   },
+  rememberMePressable: {
+    flex: 1,
+    alignItems: 'center',
+  },
   dontAccountTextStyle: {
     fontSize: hp(1.6),
     fontFamily: fontFamily.UrbanistRegular,
@@ -893,6 +911,7 @@ const styles = StyleSheet.create({
     marginHorizontal: wp(3),
   },
   checbox: {
+    marginHorizontal: wp(2),
     height: Platform.OS == 'ios' ? heightPixel(15) : heightPixel(20),
     width: Platform.OS == 'ios' ? widthPixel(15) : widthPixel(30),
   },
