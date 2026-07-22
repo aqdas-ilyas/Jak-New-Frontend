@@ -220,58 +220,6 @@
 		{
 			"isExternal" : true,
 			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/prefab/x86/prefab/lib/i686-linux-android/cmake/fbjni/fbjniConfig.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/@react-native-community/geolocation/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-date-picker/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-localize/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-permissions/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/Users/aqdas/Documents/GitHub/Jak-New-Frontend/node_modules/react-native-webview/android/build/generated/source/codegen/jni/CMakeLists.txt"
 		}
 	],
 	"kind" : "cmakeFiles",

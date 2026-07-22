@@ -42,23 +42,6 @@ if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/Users/aqdas/Library/Android/sdk/ndk/27.1.12297006/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-objdump")
 endif()
 
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/RNVectorIconsSpec_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/rnasyncstorage_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/RNCGeolocation_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/RNDatePickerSpecs_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/rngesturehandler_codegen_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/RNCImageCropPickerSpec_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/RNLocalizeSpec_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/RNPermissionsSpec_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/safeareacontext_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/rnscreens_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/RNShareSpec_autolinked_build/cmake_install.cmake")
-  include("/Users/aqdas/Documents/GitHub/Jak-New-Frontend/android/app/.cxx/Debug/2n2z2p5a/x86/RNCWebViewSpec_autolinked_build/cmake_install.cmake")
-
-endif()
-
 if(CMAKE_INSTALL_COMPONENT)
   set(CMAKE_INSTALL_MANIFEST "install_manifest_${CMAKE_INSTALL_COMPONENT}.txt")
 else()
