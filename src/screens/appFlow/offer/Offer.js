@@ -454,11 +454,13 @@ export default Offer = (props) => {
             endPoint += `&employer=${bankId}`;
         } else if (formattedCheckedStrings) {
             // Otherwise filter by category
-            endPoint += `&category=${formattedCheckedStrings}`;
+            endPoint += `&category=${encodeURIComponent(formattedCheckedStrings)}`;
         }
 
         const method = Method.GET;
         const bodyParams = {};
+
+        console.log('getMyOffersMore URL===', endPoint);
 
         setIsLoading(true);
         callApi(method, endPoint, bodyParams, onSuccess, onError);
